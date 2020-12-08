@@ -7,7 +7,7 @@
 
 
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="80dp"
+                  android:layout_height="70dp"
                   android:orientation="horizontal"
                   android:gravity="center_vertical">
 
@@ -15,8 +15,7 @@
                 android:id="@+id/icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_margin="3dp"
-                android:padding="5dp"
+                android:padding="2.5dp"
                 android:gravity="center"
                 android:src="@{userApp.icon}"/>
 
@@ -28,7 +27,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="#FFFFFF"
                 android:textAlignment="center"
-                android:text="@{userApp.label}"/>
+                android:text="@{userApp.labelNew}"/>
 
     </LinearLayout>
 </layout>

@@ -2,4 +2,8 @@
     <string name="app_name">Factor Launcher</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_to_home">Add to home</string>
+    <string name="edit">Edit</string>
+    <string name="info">Info</string>
+    <string name="uninstall">Uninstall</string>
 </resources>
