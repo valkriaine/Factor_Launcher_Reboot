@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:fitsSystemWindows="true">
+    <data>
+        <variable
+                name="home_screen_binding"
+                type="com.factor.launcher.fragments.HomeScreenFragment" />
+    </data>
+
+    <com.valkriaine.factor.HomePager
+            android:id="@+id/home_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/tiles_page"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <com.valkriaine.factor.BouncyRecyclerView
+                    android:id="@+id/tiles_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="200dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="70dp"
+                    android:clipToPadding="false"
+                    app:fling_bounce_animation_size=".7"
+                    app:overscroll_bounce_animation_size=".7"
+                    app:allow_drag_reorder="true"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/drawer_page"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <!--search bar-->
+
+            <com.valkriaine.factor.BouncyRecyclerView
+                    android:id="@+id/apps_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="80dp"
+                    android:paddingBottom="150dp"
+                    android:paddingHorizontal="20dp"
+                    android:clipToPadding="false"
+                    app:fling_bounce_animation_size=".7"
+                    app:overscroll_bounce_animation_size=".7"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </com.valkriaine.factor.HomePager>
+
+
+
+</layout>
+

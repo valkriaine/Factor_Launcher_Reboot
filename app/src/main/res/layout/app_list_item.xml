@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="userApp"
+                  type="com.factor.launcher.model.UserApp"/>
+    </data>
+
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="80dp"
+                  android:orientation="horizontal"
+                  android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="3dp"
+                android:padding="5dp"
+                android:gravity="center"
+                android:src="@{userApp.icon}"/>
+
+        <TextView
+                android:id="@+id/label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:layout_marginStart="10dp"
+                android:textColor="#FFFFFF"
+                android:textAlignment="center"
+                android:text="@{userApp.label}"/>
+
+    </LinearLayout>
+</layout>
+
+
