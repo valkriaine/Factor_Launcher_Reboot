@@ -32,4 +32,8 @@ class UserApp
     var isHidden: Boolean = false
 
     //... other attributes
+    fun changePinnedState()
+    {
+        this.isPinned = !isPinned
+    }
 }

@@ -5,10 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -36,6 +35,8 @@ public class AppListManager
 
     private final SharedPreferences factorSharedPreferences;
     private SharedPreferences.Editor editor;
+
+    private UserApp appToBeUninstalled;
 
     public AppListManager(Fragment fragment)
     {
@@ -121,6 +122,49 @@ public class AppListManager
         }
     }
 
+    private boolean changePin(UserApp userApp)
+    {
+        userApp.changePinnedState();
+        adapter.notifyItemChanged(userApps.indexOf(userApp));
+
+        //todo: add app to home screen
+        return userApps.contains(userApp);
+    }
+
+    //check if package exists
+    private boolean doesPackageExist(UserApp a)
+    {
+        boolean result = false;
+        PackageManager packageManager = fragment.requireContext().getPackageManager();
+        Intent i = new Intent(Intent.ACTION_MAIN, null);
+        i.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
+        for (ResolveInfo r : availableApps)
+        {
+            if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
+            {
+                if (r.activityInfo.packageName.equals(a.getName()))
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    //remove app from the list only if package no longer exists
+    public void removeApp()
+    {
+        if (appToBeUninstalled != null && !doesPackageExist(appToBeUninstalled))
+        {
+            int position = userApps.indexOf(appToBeUninstalled);
+            userApps.remove(appToBeUninstalled);
+            adapter.notifyItemRemoved(position);
+        }
+    }
 
 
     class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
@@ -152,14 +196,48 @@ public class AppListManager
             public AppListViewHolder(@NonNull View itemView)
             {
                 super(itemView);
-                fragment.registerForContextMenu(itemView);
                 binding = DataBindingUtil.bind(itemView);
             }
 
             public void bindApp(UserApp app)
             {
                 binding.setUserApp(app);
+                fragment.registerForContextMenu(itemView);
+                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+                {
+                    Log.d("tag", v.toString());
+                    UserApp a = binding.getUserApp();
+                    MenuInflater inflater = fragment.requireActivity().getMenuInflater();
+                    inflater.inflate(R.menu.app_list_item_menu, menu);
+                    if (a.isPinned())
+                        menu.getItem(0).setTitle("Remove from home");
 
+                    //add to home & remove from home
+                    menu.getItem(0).setOnMenuItemClickListener(item -> changePin(binding.getUserApp()));
+
+                    //todo: edit app
+                    menu.getItem(1).setOnMenuItemClickListener(item -> changePin(binding.getUserApp()));
+
+                    //info
+                    menu.getItem(2).setOnMenuItemClickListener(item ->
+                    {
+                        fragment.startActivity(
+                                new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package:"+binding.getUserApp().getName())));
+                        return true;
+                    });
+
+                    //uninstall
+                    menu.getItem(3).setOnMenuItemClickListener(item ->
+                    {
+                        appToBeUninstalled = binding.getUserApp();
+                        fragment.startActivityForResult(
+                                new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getName()))
+                                        .putExtra(Intent.EXTRA_RETURN_RESULT, true),
+                                999);
+                        return true;
+                    });
+                });
             }
         }
     }
