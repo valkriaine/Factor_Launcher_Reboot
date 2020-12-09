@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 class UserApp
 {
     @PrimaryKey
-    var name: String = ""
+    var packageName: String = ""
 
     @ColumnInfo(name = "labelOld")
     var labelOld: String = ""
@@ -37,8 +37,21 @@ class UserApp
         this.isPinned = !isPinned
     }
 
+    fun toFactor(): Factor
+    {
+        val factor = Factor()
+
+        factor.icon = this.icon
+        factor.isCustomized = this.isCustomized
+        factor.packageName = this.packageName
+        factor.labelNew = this.labelNew
+        factor.labelOld = this.labelOld
+
+        return factor
+    }
+
     override fun equals(other: Any?): Boolean
     {
-        return if (other is UserApp) this.name == other.name else false
+        return if (other is UserApp) this.packageName == other.packageName else false
     }
 }

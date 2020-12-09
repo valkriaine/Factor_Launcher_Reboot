@@ -40,10 +40,14 @@ public class AppListManager
     private final SharedPreferences factorSharedPreferences;
     private SharedPreferences.Editor editor;
 
+
+    private final FactorManager factorManager;
+
     //constructor
     public AppListManager(Activity activity)
     {
         this.activity = activity;
+        this.factorManager = new FactorManager(activity);
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
 
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
@@ -92,14 +96,14 @@ public class AppListManager
                                 app = new UserApp();
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
-                                app.setName(r.activityInfo.packageName);
+                                app.setPackageName(r.activityInfo.packageName);
                                 app.icon = r.activityInfo.loadIcon(packageManager);
                                 userApps.add(app);
                                 appListDatabase.appListDao().insert(app);
                             }
                             else
                             {
-                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getName(), 0).enabled)
+                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
                                     app.icon = r.activityInfo.loadIcon(packageManager);
                                     userApps.add(app);
@@ -140,13 +144,13 @@ public class AppListManager
                             UserApp app = new UserApp();
                             app.setLabelOld((String) r.loadLabel(packageManager));
                             app.setLabelNew(app.getLabelOld());
-                            app.setName(r.activityInfo.packageName);
+                            app.setPackageName(r.activityInfo.packageName);
                             app.icon = r.activityInfo.loadIcon(packageManager);
                             userApps.add(app);
-                            appListDatabase.appListDao().insert(app);
                         }
                     }
                     userApps.sort(first_letter);
+                    appListDatabase.appListDao().insertAll(userApps);
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                     editor.putBoolean("saved", true);
                     editor.apply();
@@ -171,8 +175,10 @@ public class AppListManager
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
-
-        //todo: add app to or remove app from home screen
+        if (userApp.isPinned())
+            factorManager.addToHome(userApp);
+        else
+            factorManager.removeFromHome(userApp);
         return userApps.contains(userApp);
     }
 
@@ -188,7 +194,7 @@ public class AppListManager
         {
             if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
             {
-                if (r.activityInfo.packageName.equals(a.getName()))
+                if (r.activityInfo.packageName.equals(a.getPackageName()))
                 {
                     result = true;
                     break;
@@ -225,8 +231,8 @@ public class AppListManager
             {
                 try
                 {
-                    ApplicationInfo info = packageManager.getApplicationInfo(app.getName(), 0);
-                    app.setIcon(packageManager.getApplicationIcon(app.getName()));
+                    ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
+                    app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
                     app.setLabelOld((String) packageManager.getApplicationLabel(info));
                     app.setLabelNew(app.getLabelOld());
                     appListDatabase.appListDao().insert(app);
@@ -247,7 +253,7 @@ public class AppListManager
     {
         PackageManager packageManager = activity.getPackageManager();
         try {
-            if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getName(), 0).enabled)
+            if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
             {
                 if (userApps.contains(app))
                 {
@@ -256,8 +262,8 @@ public class AppListManager
                     {
                         try
                         {
-                            ApplicationInfo info = packageManager.getApplicationInfo(app.getName(), 0);
-                            userApps.get(position).setIcon(packageManager.getApplicationIcon(app.getName()));
+                            ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
+                            userApps.get(position).setIcon(packageManager.getApplicationIcon(app.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
                             appListDatabase.appListDao().updateAppInfo(userApps.get(position));
                             userApps.sort(first_letter);
@@ -292,6 +298,11 @@ public class AppListManager
         {
             e.printStackTrace();
         }
+    }
+
+    public FactorManager getFactorManager()
+    {
+        return this.factorManager;
     }
 
     class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
@@ -336,7 +347,7 @@ public class AppListManager
                     MenuInflater inflater = activity.getMenuInflater();
                     inflater.inflate(R.menu.app_list_item_menu, menu);
                     if (a.isPinned())
-                        menu.getItem(0).setTitle("Remove from home");
+                        menu.getItem(0).setEnabled(false);
 
                     //add to home & remove from home
                     menu.getItem(0).setOnMenuItemClickListener(item -> changePin(binding.getUserApp()));
@@ -349,14 +360,14 @@ public class AppListManager
                     {
                         activity.startActivity(
                                 new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.parse("package:"+binding.getUserApp().getName())));
+                                        Uri.parse("package:"+binding.getUserApp().getPackageName())));
                         return true;
                     });
 
                     //uninstall
                     menu.getItem(3).setOnMenuItemClickListener(item ->
                     {
-                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getName()))
+                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getPackageName()))
                                 .putExtra(Intent.EXTRA_RETURN_RESULT, true));
                         return true;
                     });

@@ -1,5 +1,6 @@
 package com.factor.launcher;
 
+import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.factor.launcher.fragments.HomeScreenFragment;
@@ -12,6 +13,8 @@ public class HomeActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         if (savedInstanceState == null)
         {

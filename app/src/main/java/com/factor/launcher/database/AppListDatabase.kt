@@ -18,16 +18,16 @@ interface AppListDao
     @Query("SELECT * FROM userApp WHERE labelOld LIKE:label OR labelNew LIKE :label ")
     fun findByName(label: String): List<UserApp>
 
-    @Query("SELECT * FROM userApp WHERE name =:term LIMIT 1")
+    @Query("SELECT * FROM userApp WHERE packageName =:term LIMIT 1")
     fun findByPackage(term: String): UserApp
 
     @Update
     fun updateAppInfo(app: UserApp)
 
-    @Insert
-    fun insertAll(vararg apps: UserApp)
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(apps: List<UserApp>)
 
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     fun insert(app: UserApp)
 
     @Delete

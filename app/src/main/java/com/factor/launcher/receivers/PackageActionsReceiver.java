@@ -33,7 +33,7 @@ public class PackageActionsReceiver extends BroadcastReceiver
         switch (action) {
             case Intent.ACTION_PACKAGE_ADDED: {
                 UserApp app = new UserApp();
-                app.setName(intent.getData().getSchemeSpecificPart());
+                app.setPackageName(intent.getData().getSchemeSpecificPart());
                 if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false))
                     appListManager.addApp(app);
                 else
@@ -45,13 +45,13 @@ public class PackageActionsReceiver extends BroadcastReceiver
             case Intent.ACTION_PACKAGE_REMOVED:
                 if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                     UserApp app = new UserApp();
-                    app.setName(intent.getData().getSchemeSpecificPart());
+                    app.setPackageName(intent.getData().getSchemeSpecificPart());
                     appListManager.removeApp(app);
                 }
                 break;
             case Intent.ACTION_PACKAGE_CHANGED: {
                 UserApp app = new UserApp();
-                app.setName(intent.getData().getSchemeSpecificPart());
+                app.setPackageName(intent.getData().getSchemeSpecificPart());
                 appListManager.updateApp(app);
                 break;
             }
@@ -64,7 +64,7 @@ public class PackageActionsReceiver extends BroadcastReceiver
                     if (p.contains("package:")) {
                         p = p.replace("package:", "");
                     }
-                    app.setName(p);
+                    app.setPackageName(p);
                     appListManager.addApp(app);
                 }
                 break;
@@ -78,7 +78,7 @@ public class PackageActionsReceiver extends BroadcastReceiver
                     if (p.contains("package:")) {
                         p = p.replace("package:", "");
                     }
-                    app.setName(p);
+                    app.setPackageName(p);
                     appListManager.removeApp(app);
                 }
                 break;

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
@@ -66,10 +67,10 @@ public class HomeScreenFragment extends Fragment
         binding.appsList.setAdapter(appListManager.adapter);
 
         //tile list
-        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this.getContext());
-        layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
-
-
+        FlexboxLayoutManager flex = new FlexboxLayoutManager(this.getContext());
+        flex.setFlexDirection(FlexDirection.ROW);
+        flex.setJustifyContent(JustifyContent.FLEX_START);
+        binding.tilesList.setLayoutManager(flex);
+        binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
     }
 }
