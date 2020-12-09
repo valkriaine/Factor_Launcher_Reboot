@@ -40,7 +40,7 @@ public class AppListManager
     private final SharedPreferences factorSharedPreferences;
     private SharedPreferences.Editor editor;
 
-
+    //constructor
     public AppListManager(Activity activity)
     {
         this.activity = activity;
@@ -51,6 +51,7 @@ public class AppListManager
         loadApps(factorSharedPreferences.getBoolean("saved", false));
     }
 
+    //compare app label (new)
     private final Comparator<UserApp> first_letter = new Comparator<UserApp>()
     {
         private final Collator sCollator = Collator.getInstance();
@@ -61,12 +62,13 @@ public class AppListManager
         }
     };
 
+    //return activity
     public Activity getActivity()
     {
         return this.activity;
     }
 
-
+    //load app drawer list
     private void loadApps(Boolean isSaved)
     {
         if (isSaved)
@@ -84,7 +86,8 @@ public class AppListManager
                         if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
                         {
                             UserApp app = appListDatabase.appListDao().findByPackage(r.activityInfo.packageName);
-                            if (app == null)
+                            //noinspection ConstantConditions
+                            if (app == null) //package name does not exist in database
                             {
                                 app = new UserApp();
                                 app.setLabelOld((String) r.loadLabel(packageManager));
@@ -158,6 +161,7 @@ public class AppListManager
 
     }
 
+    //pin & unpin
     private boolean changePin(UserApp userApp)
     {
         userApp.changePinnedState();
@@ -352,10 +356,8 @@ public class AppListManager
                     //uninstall
                     menu.getItem(3).setOnMenuItemClickListener(item ->
                     {
-                        activity.startActivityForResult(
-                                new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getName()))
-                                        .putExtra(Intent.EXTRA_RETURN_RESULT, true),
-                                999);
+                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getName()))
+                                .putExtra(Intent.EXTRA_RETURN_RESULT, true));
                         return true;
                     });
                 });

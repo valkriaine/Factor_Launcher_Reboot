@@ -39,6 +39,6 @@ class UserApp
 
     override fun equals(other: Any?): Boolean
     {
-        return if (other is UserApp) this.name.equals(other.name) else false
+        return if (other is UserApp) this.name == other.name else false
     }
 }
