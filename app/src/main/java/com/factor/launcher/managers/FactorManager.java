@@ -151,6 +151,9 @@ public class FactorManager
         {
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
+
+            //this prevents item views from collapsing
+            factorsViewHolder.setIsRecyclable(false);
         }
 
         @Override
