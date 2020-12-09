@@ -36,4 +36,9 @@ class UserApp
     {
         this.isPinned = !isPinned
     }
+
+    override fun equals(other: Any?): Boolean
+    {
+        return if (other is UserApp) this.name.equals(other.name) else false
+    }
 }

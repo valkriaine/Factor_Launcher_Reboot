@@ -21,12 +21,15 @@ interface AppListDao
     @Query("SELECT * FROM userApp WHERE name =:term LIMIT 1")
     fun findByPackage(term: String): UserApp
 
-    @Insert
-    fun insertAll(vararg users: UserApp)
+    @Update
+    fun updateAppInfo(app: UserApp)
 
     @Insert
-    fun insert(user: UserApp)
+    fun insertAll(vararg apps: UserApp)
+
+    @Insert
+    fun insert(app: UserApp)
 
     @Delete
-    fun delete(user: UserApp)
+    fun delete(app: UserApp)
 }
