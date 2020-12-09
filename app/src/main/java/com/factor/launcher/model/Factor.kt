@@ -1,14 +1,18 @@
 package com.factor.launcher.model
 
 import android.graphics.drawable.Drawable
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
 @Entity
 class Factor
 {
-    //todo: add auto increment primary key
-    //package name is not ideal
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    var id: Int? = null
+
+    @ColumnInfo(name = "packageName")
     var packageName: String = ""
 
     @ColumnInfo(name = "labelOld")

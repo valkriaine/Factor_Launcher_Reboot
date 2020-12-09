@@ -171,14 +171,13 @@ public class AppListManager
         userApp.changePinnedState();
         new Thread(() ->
         {
+            if (userApp.isPinned())
+                factorManager.addToHome(userApp);
+
             appListDatabase.appListDao().updateAppInfo(userApp);
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
-        if (userApp.isPinned())
-            factorManager.addToHome(userApp);
-        else
-            factorManager.removeFromHome(userApp);
         return userApps.contains(userApp);
     }
 
@@ -213,6 +212,7 @@ public class AppListManager
             userApps.remove(app);
             new Thread(() ->
             {
+                factorManager.remove(app);
                 appListDatabase.appListDao().delete(app);
                 activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
             }).start();
@@ -284,13 +284,7 @@ public class AppListManager
             {
                 if (userApps.contains(app))
                 {
-                    int position = userApps.indexOf(app);
-                    new Thread(()->
-                    {
-                        appListDatabase.appListDao().delete(app);
-                        userApps.remove(app);
-                        activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
-                    }).start();
+                    removeApp(app);
                 }
             }
         }
@@ -304,6 +298,7 @@ public class AppListManager
     {
         return this.factorManager;
     }
+
 
     class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {

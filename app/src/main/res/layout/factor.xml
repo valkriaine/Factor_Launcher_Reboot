@@ -34,7 +34,6 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tileIcon"
-                    android:src="@{factor.icon}"
                     android:layout_height="70dp"
                     android:layout_width="70dp"
                     android:gravity="center"
