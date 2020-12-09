@@ -72,5 +72,7 @@ public class HomeScreenFragment extends Fragment
         flex.setJustifyContent(JustifyContent.FLEX_START);
         binding.tilesList.setLayoutManager(flex);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
+
+        binding.tilesList.getRecycledViewPool().setMaxRecycledViews(0, 0);
     }
 }

@@ -1,9 +1,8 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +16,12 @@ import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorBinding;
 import com.factor.launcher.model.Factor;
 import com.factor.launcher.model.UserApp;
-import com.factor.launcher.util.Constants;
 import com.valkriaine.factor.BouncyRecyclerView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class FactorManager
 {
@@ -53,48 +50,62 @@ public class FactorManager
     {
         new Thread(()->
         {
-            PackageManager packageManager = activity.getPackageManager();
             userFactors.addAll(factorsDatabase.factorsDao().getAll());
+            PackageManager packageManager = activity.getPackageManager();
+            userFactors.sort(index_order);
             for (Factor f: userFactors)
             {
                 try
                 {
-                    if (doesPackageExist(f) && packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
+                    if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
+                    {
                         f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
-                    else
-                        factorsDatabase.factorsDao().delete(f);
+                    }
+
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
+                    factorsDatabase.factorsDao().delete(f);
                 }
             }
-            userFactors.sort(index_order);
             activity.runOnUiThread(adapter::notifyDataSetChanged);
         }).start();
     }
+
 
     public void addToHome(UserApp app)
     {
         Factor factor = app.toFactor();
         userFactors.add(factor);
         factor.setOrder(userFactors.indexOf(factor));
-        factorsDatabase.factorsDao().insert(factor);
-        activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
+        new Thread(() ->
+        {
+            factorsDatabase.factorsDao().insert(factor);
+            activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
+        }).start();
+
     }
 
     public void removeFromHome(Factor factor)
     {
-        userFactors.remove(factor);
-
-        factorsDatabase.factorsDao().delete(factor);
-        updateOrders();
-        activity.runOnUiThread(adapter::notifyDataSetChanged);
-
+        new Thread(() ->
+        {
+            userFactors.remove(factor);
+            factorsDatabase.factorsDao().delete(factor);
+            updateOrders();
+            activity.runOnUiThread(adapter::notifyDataSetChanged);
+        }).start();
     }
 
-    public void updateFactor()
+    public void updateFactor(UserApp app)
     {
+        ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
+        for (Factor f : factorsToUpdate)
+        {
+            loadIcon(f);
+            adapter.notifyItemChanged(userFactors.indexOf(f));
+        }
 
     }
 
@@ -110,14 +121,18 @@ public class FactorManager
 
     public void remove(UserApp app)
     {
-        ArrayList<Factor> factorsToRemove = getFactorsByPackage(app);
-        for (Factor f : factorsToRemove)
+        new Thread(()->
         {
-            if (userFactors.contains(f))
+            ArrayList<Factor> factorsToRemove = getFactorsByPackage(app);
+            for (Factor f : factorsToRemove)
             {
-                removeFromHome(f);
+                if (userFactors.contains(f))
+                {
+                    removeFromHome(f);
+                }
             }
-        }
+        }).start();
+
     }
 
     private ArrayList<Factor> getFactorsByPackage(UserApp app)
@@ -134,26 +149,22 @@ public class FactorManager
     }
 
 
-    private boolean doesPackageExist(Factor f)
+
+    private void loadIcon(Factor f)
     {
-        boolean result = false;
         PackageManager packageManager = activity.getPackageManager();
-        Intent i = new Intent(Intent.ACTION_MAIN, null);
-        i.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-        for (ResolveInfo r : availableApps)
+        try
         {
-            if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
-            {
-                if (r.activityInfo.packageName.equals(f.getPackageName()))
-                {
-                    result = true;
-                    break;
-                }
-            }
+            if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
+                f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
         }
-        return result;
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            new Thread(() -> factorsDatabase.factorsDao().delete(f)).start();
+        }
     }
+
 
 
 
@@ -250,10 +261,8 @@ public class FactorManager
                 }
                 catch (Exception e)
                 {
-                    //todo: for some reason disabled apps are not removed from database
-                    Log.d("", factor.getPackageName());
-                    new Thread(() ->removeFromHome(factor)).start();
-
+                    Log.d("icon", factor.getPackageName() + " " + e.getMessage());
+                    loadIcon(factor);
                 }
 
             }

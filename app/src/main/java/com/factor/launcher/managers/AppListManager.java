@@ -41,17 +41,15 @@ public class AppListManager
     private SharedPreferences.Editor editor;
 
 
-    private final FactorManager factorManager;
+    private FactorManager factorManager;
 
     //constructor
     public AppListManager(Activity activity)
     {
         this.activity = activity;
-        this.factorManager = new FactorManager(activity);
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
-
+        this.factorManager = new FactorManager(activity);
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
-
         loadApps(factorSharedPreferences.getBoolean("saved", false));
     }
 
@@ -116,7 +114,6 @@ public class AppListManager
                             }
                         }
                     }
-
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
                 catch (Exception ex)
@@ -163,17 +160,20 @@ public class AppListManager
             }).start();
         }
 
+
+
+
     }
 
     //pin & unpin
     private boolean changePin(UserApp userApp)
     {
         userApp.changePinnedState();
+        if (userApp.isPinned())
+            factorManager.addToHome(userApp);
+
         new Thread(() ->
         {
-            if (userApp.isPinned())
-                factorManager.addToHome(userApp);
-
             appListDatabase.appListDao().updateAppInfo(userApp);
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
@@ -212,10 +212,11 @@ public class AppListManager
             userApps.remove(app);
             new Thread(() ->
             {
-                factorManager.remove(app);
+
                 appListDatabase.appListDao().delete(app);
                 activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
             }).start();
+            factorManager.remove(app);
         }
 
         //todo: remove from home screen if pinned
@@ -268,6 +269,9 @@ public class AppListManager
                             appListDatabase.appListDao().updateAppInfo(userApps.get(position));
                             userApps.sort(first_letter);
                             activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
+
+                            if (app.isPinned())
+                                factorManager.updateFactor(app);
                         }
                         catch (PackageManager.NameNotFoundException e)
                         {
