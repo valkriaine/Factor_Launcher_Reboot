@@ -1,5 +1,6 @@
 package com.factor.launcher.fragments;
 
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -9,8 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
@@ -23,7 +24,10 @@ import com.google.android.flexbox.JustifyContent;
 public class HomeScreenFragment extends Fragment
 {
     private FragmentHomeScreenBinding binding;
-    private AppListManager appListManager;
+
+    private WallpaperManager wm;
+
+    private final long timeUnit = (long) 0.000001;
 
 
     public HomeScreenFragment()
@@ -35,15 +39,8 @@ public class HomeScreenFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        appListManager = new AppListManager(this.requireActivity());
-        PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
 
-        IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
-        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-        filter.addDataScheme("package");
-
-        requireActivity().registerReceiver(packageActionsReceiver, filter);
+        wm = WallpaperManager.getInstance(requireContext());
     }
 
 
@@ -58,6 +55,17 @@ public class HomeScreenFragment extends Fragment
 
     private void initializeComponents()
     {
+        binding.image.setImageDrawable(wm.getDrawable());
+        AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+        PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
+        filter.addDataScheme("package");
+
+        requireActivity().registerReceiver(packageActionsReceiver, filter);
+
         //home pager
         binding.homePager.addView(binding.tilesPage, 0);
         binding.homePager.addView(binding.drawerPage, 1);
@@ -74,5 +82,53 @@ public class HomeScreenFragment extends Fragment
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
 
         binding.tilesList.getRecycledViewPool().setMaxRecycledViews(0, 0);
+        binding.blur.setViewBehind(binding.backgroundHost);
+
+
+        binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+            {
+                float xOffset = position + positionOffset;
+                binding.dim.setAlpha(xOffset / 0.5f);
+                binding.arrowButton.setRotation(+180 * xOffset - 180);
+
+                binding.blur.enable();
+                binding.blur.setAlpha(xOffset / 0.5f);
+                binding.blur.setBlurRadius(xOffset * 40);
+                binding.blur.updateForMilliSeconds(timeUnit);
+            }
+
+            @Override
+            public void onPageSelected(int position)
+            {
+                if (position == 0)
+                {
+                    binding.arrowButton.setRotation(180);
+                    binding.blur.setAlpha(0);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state)
+            {
+            }
+        });
     }
+
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        binding.blur.disable();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        binding.blur.disable();
+    }
+
 }

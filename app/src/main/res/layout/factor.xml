@@ -16,13 +16,18 @@
             android:minWidth="150dp">
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/background"
-                app:cardBackgroundColor="@android:color/white"
-                android:translationZ="0dp"
-                android:alpha="50"
+                android:translationZ="-20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardCornerRadius="5dp"/>
+                app:cardCornerRadius="5dp">
+
+            <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/trans"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:blurOverlayColor="#99FFFFFF"/>
+
+        </androidx.cardview.widget.CardView>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,8 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.qhutch.elevationimageview.ElevationImageView
                     android:id="@+id/tileIcon"
                     android:layout_height="70dp"
                     android:layout_width="70dp"

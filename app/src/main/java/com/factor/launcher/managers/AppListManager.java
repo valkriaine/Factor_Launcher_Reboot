@@ -40,15 +40,14 @@ public class AppListManager
     private final SharedPreferences factorSharedPreferences;
     private SharedPreferences.Editor editor;
 
-
-    private FactorManager factorManager;
+    private final FactorManager factorManager;
 
     //constructor
-    public AppListManager(Activity activity)
+    public AppListManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
-        this.factorManager = new FactorManager(activity);
+        this.factorManager = new FactorManager(activity, background);
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
         loadApps(factorSharedPreferences.getBoolean("saved", false));
     }

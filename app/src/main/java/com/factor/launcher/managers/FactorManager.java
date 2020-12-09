@@ -1,7 +1,6 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import com.factor.launcher.databinding.FactorBinding;
 import com.factor.launcher.model.Factor;
 import com.factor.launcher.model.UserApp;
 import com.valkriaine.factor.BouncyRecyclerView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,13 +33,16 @@ public class FactorManager
 
     private final Activity activity;
 
+    private final ViewGroup background;
+
 
     private final Comparator<Factor> index_order= Comparator.comparingInt(Factor::getOrder);
 
 
-    public FactorManager(Activity activity)
+    public FactorManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
+        this.background = background;
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -255,6 +258,10 @@ public class FactorManager
             public void bindFactor(Factor factor)
             {
                 binding.setFactor(factor);
+                binding.trans.setupWith(background)
+                        .setBlurAlgorithm(new RenderScriptBlur(activity))
+                        .setBlurRadius(18F)
+                        .setHasFixedTransformationMatrix(false);
                 try
                 {
                     binding.tileIcon.setImageDrawable(factor.getIcon());
