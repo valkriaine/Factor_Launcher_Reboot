@@ -17,6 +17,7 @@ import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.model.Factor;
 import com.factor.launcher.model.UserApp;
 import com.valkriaine.factor.BouncyRecyclerView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,13 +34,15 @@ public class FactorManager
 
     private final Activity activity;
 
+    private final ViewGroup background;
+
     private final Comparator<Factor> index_order= Comparator.comparingInt(Factor::getOrder);
 
 
     public FactorManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
-        //this.background = background;
+        this.background = background;
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -248,14 +251,18 @@ public class FactorManager
             assert viewHolder != null;
             viewHolder.itemView.setScaleX(1);
             viewHolder.itemView.setScaleY(1);
+
+            viewHolder.itemView.setAlpha(1f);
         }
 
         @Override
         public void onItemSelected(@Nullable RecyclerView.ViewHolder viewHolder)
         {
             assert viewHolder != null;
-            viewHolder.itemView.setScaleX(1.2f);
-            viewHolder.itemView.setScaleY(1.2f);
+            viewHolder.itemView.setScaleX(1.1f);
+            viewHolder.itemView.setScaleY(1.1f);
+
+            viewHolder.itemView.setAlpha(0.9f);
         }
 
         @Override
@@ -291,6 +298,11 @@ public class FactorManager
                     try
                     {
                         ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                        ((FactorSmallBinding) binding).trans
+                                .setupWith(background)
+                                .setBlurAlgorithm(new RenderScriptBlur(activity))
+                                .setBlurRadius(18F)
+                                .setHasFixedTransformationMatrix(false);
                     }
                     catch (Exception e)
                     {
@@ -304,6 +316,11 @@ public class FactorManager
                     try
                     {
                         ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                        ((FactorMediumBinding) binding).trans
+                                .setupWith(background)
+                                .setBlurAlgorithm(new RenderScriptBlur(activity))
+                                .setBlurRadius(18F)
+                                .setHasFixedTransformationMatrix(false);
                     }
                     catch (Exception e)
                     {
@@ -317,6 +334,11 @@ public class FactorManager
                     try
                     {
                         ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                        ((FactorLargeBinding) binding).trans
+                                .setupWith(background)
+                                .setBlurAlgorithm(new RenderScriptBlur(activity))
+                                .setBlurRadius(18F)
+                                .setHasFixedTransformationMatrix(false);
                     }
                     catch (Exception e)
                     {

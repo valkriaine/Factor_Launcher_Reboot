@@ -59,6 +59,7 @@
 
 
 
+                <!--arrow-->
                 <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/arrowButton"
                         android:hapticFeedbackEnabled="true"
@@ -75,7 +76,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
-                <!--arrow-->
 
                 <com.valkriaine.factor.BouncyRecyclerView
                         android:id="@+id/tiles_list"
@@ -86,8 +86,8 @@
                         android:paddingStart="20dp"
                         android:paddingEnd="70dp"
                         android:clipToPadding="false"
-                        app:fling_bounce_animation_size=".7"
-                        app:overscroll_bounce_animation_size=".7"
+                        app:fling_bounce_animation_size=".5"
+                        app:overscroll_bounce_animation_size=".5"
                         app:allow_drag_reorder="true"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -109,8 +109,8 @@
                         android:paddingBottom="150dp"
                         android:paddingHorizontal="20dp"
                         android:clipToPadding="false"
-                        app:fling_bounce_animation_size=".7"
-                        app:overscroll_bounce_animation_size=".7"/>
+                        app:fling_bounce_animation_size=".5"
+                        app:overscroll_bounce_animation_size=".5"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

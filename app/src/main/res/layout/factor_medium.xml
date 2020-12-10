@@ -13,19 +13,18 @@
             android:layout_height="155dp">
 
         <androidx.cardview.widget.CardView
-                app:cardBackgroundColor="@android:color/white"
                 android:translationZ="-20dp"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:cardCornerRadius="5dp">
 
-            <!-- blur causing lag
             <eightbitlab.com.blurview.BlurView
                     android:id="@+id/trans"
+                    app:blurOverlayColor="#99FFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-            -->
+
         </androidx.cardview.widget.CardView>
 
 
