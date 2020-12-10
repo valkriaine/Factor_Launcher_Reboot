@@ -10,6 +10,7 @@ import com.factor.launcher.models.UserApp;
 
 import java.util.List;
 
+//listen for app update, install, uninstall, and other changes related to the app drawer
 public class PackageActionsReceiver extends BroadcastReceiver
 {
     private final AppListManager appListManager;

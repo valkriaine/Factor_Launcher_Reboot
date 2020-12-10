@@ -1,6 +1,7 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -33,6 +34,8 @@ public class FactorManager
 
     private final FactorsDatabase factorsDatabase;
 
+    private final PackageManager packageManager;
+
     public final FactorsAdapter adapter;
 
     private final Activity activity;
@@ -42,10 +45,11 @@ public class FactorManager
     private final Comparator<Factor> index_order= Comparator.comparingInt(Factor::getOrder);
 
 
-    public FactorManager(Activity activity, ViewGroup background)
+    public FactorManager(Activity activity, ViewGroup background, PackageManager pm)
     {
         this.activity = activity;
         this.background = background;
+        packageManager = pm;
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -57,7 +61,6 @@ public class FactorManager
         new Thread(()->
         {
             userFactors.addAll(factorsDatabase.factorsDao().getAll());
-            PackageManager packageManager = activity.getPackageManager();
             userFactors.sort(index_order);
             for (Factor f: userFactors)
             {
@@ -83,12 +86,6 @@ public class FactorManager
     public void addToHome(UserApp app)
     {
         Factor factor = app.toFactor();
-        if (userFactors.size() == 3)
-            factor.setSize(Factor.Size.medium);
-        if (userFactors.size() == 6)
-            factor.setSize(Factor.Size.large);
-
-
         userFactors.add(factor);
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
@@ -189,7 +186,6 @@ public class FactorManager
 
     private void loadIcon(Factor f)
     {
-        PackageManager packageManager = activity.getPackageManager();
         try
         {
             if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
@@ -338,7 +334,7 @@ public class FactorManager
                         ((FactorSmallBinding) binding).trans
                                 .setupWith(background)
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
-                                .setBlurRadius(18F)
+                                .setBlurRadius(25F)
                                 .setHasFixedTransformationMatrix(false);
                     }
                     catch (Exception e)
@@ -436,6 +432,14 @@ public class FactorManager
 
                     }
 
+                });
+
+                //todo: customize activity transition animation
+                itemView.setOnClickListener(v -> {
+                    Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
+                    if (intent != null)
+                        activity.startActivity(intent,
+                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                 });
 
             }

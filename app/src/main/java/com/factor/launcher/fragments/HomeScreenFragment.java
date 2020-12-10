@@ -4,15 +4,11 @@ import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
@@ -20,10 +16,11 @@ import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
+import com.factor.launcher.util.OnBackPressedCallBack;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 
-public class HomeScreenFragment extends Fragment
+public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
 {
     private FragmentHomeScreenBinding binding;
 
@@ -39,7 +36,6 @@ public class HomeScreenFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         wm = WallpaperManager.getInstance(requireContext());
     }
 
@@ -85,10 +81,6 @@ public class HomeScreenFragment extends Fragment
                 .setScrollingEnabled(true)
                 .build();
 
-        //todo: chips layout manager sometimes does not display all the tiles
-        //todo: research on grid layout manager changing both column and row span
-        StaggeredGridLayoutManager grid = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
 
@@ -109,7 +101,7 @@ public class HomeScreenFragment extends Fragment
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
                 float xOffset = position + positionOffset;
-                binding.dim.setAlpha(xOffset / 0.5f);
+                binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
 
                 binding.blur.setAlpha(xOffset / 0.5f);
@@ -130,5 +122,17 @@ public class HomeScreenFragment extends Fragment
             {
             }
         });
+    }
+
+    @Override
+    public boolean onBackPressed()
+    {
+        if (binding.homePager.getCurrentItem() == 1)
+        {
+            binding.homePager.setCurrentItem(0, true);
+            return true;
+        }
+        else
+            return false;
     }
 }

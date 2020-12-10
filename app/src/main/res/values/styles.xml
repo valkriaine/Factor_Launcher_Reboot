@@ -17,5 +17,4 @@
         <!--todo: restyle context menu-->
         <item name="android:itemBackground">@android:color/holo_blue_dark</item>
     </style>
-
 </resources>

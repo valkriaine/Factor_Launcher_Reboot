@@ -1,6 +1,7 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,12 +43,15 @@ public class AppListManager
 
     private final FactorManager factorManager;
 
+    private final PackageManager packageManager;
+
     //constructor
     public AppListManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
+        packageManager = activity.getPackageManager();
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
-        this.factorManager = new FactorManager(activity, background);
+        this.factorManager = new FactorManager(activity, background, packageManager);
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
         loadApps(factorSharedPreferences.getBoolean("saved", false));
     }
@@ -78,7 +82,6 @@ public class AppListManager
             {
                 try
                 {
-                    PackageManager packageManager = activity.getPackageManager();
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
@@ -128,8 +131,6 @@ public class AppListManager
             {
                 try
                 {
-                    PackageManager packageManager = activity.getPackageManager();
-
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
@@ -184,7 +185,6 @@ public class AppListManager
     private boolean doesPackageExist(UserApp a)
     {
         boolean result = false;
-        PackageManager packageManager = activity.getPackageManager();
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
@@ -224,7 +224,6 @@ public class AppListManager
     {
         if (doesPackageExist(app))
         {
-            PackageManager packageManager = activity.getPackageManager();
             new Thread(() ->
             {
                 try
@@ -250,7 +249,6 @@ public class AppListManager
     public void updateApp(UserApp app)
     {
         UserApp appToUpdate;
-        PackageManager packageManager = activity.getPackageManager();
         try {
             if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
             {
@@ -388,6 +386,15 @@ public class AppListManager
                                 .putExtra(Intent.EXTRA_RETURN_RESULT, true));
                         return true;
                     });
+                });
+
+
+                itemView.setOnClickListener(v ->
+                {
+                    Intent intent = packageManager.getLaunchIntentForPackage(binding.getUserApp().getPackageName());
+                    if (intent != null)
+                        activity.startActivity(intent,
+                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                 });
             }
         }
