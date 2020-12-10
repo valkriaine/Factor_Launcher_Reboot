@@ -4,11 +4,11 @@
 
     <data>
         <variable name="factor"
-                  type="com.factor.launcher.model.Factor"/>
+                  type="com.factor.launcher.models.Factor"/>
     </data>
 
 
-    <com.factor.launcher.BouncyConstraintLayout
+    <com.factor.launcher.ui.BouncyConstraintLayout
             android:layout_width="310dp"
             android:layout_height="155dp">
 
@@ -62,5 +62,5 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.factor.launcher.BouncyConstraintLayout>
+    </com.factor.launcher.ui.BouncyConstraintLayout>
 </layout>

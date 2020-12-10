@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import com.factor.launcher.managers.AppListManager;
-import com.factor.launcher.model.UserApp;
+import com.factor.launcher.models.UserApp;
 
 import java.util.List;
 

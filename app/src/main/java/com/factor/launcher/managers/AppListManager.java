@@ -17,7 +17,7 @@ import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
-import com.factor.launcher.model.UserApp;
+import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 
 import java.text.Collator;
@@ -217,8 +217,6 @@ public class AppListManager
             }).start();
             factorManager.remove(app);
         }
-
-        //todo: remove from home screen if pinned
     }
 
     //add app after receiving PACKAGE_ADDED broadcast
@@ -251,6 +249,7 @@ public class AppListManager
     //called when receiving PACKAGE_ADDED broadcast with EXTRA_REPLACING set to true
     public void updateApp(UserApp app)
     {
+        UserApp appToUpdate;
         PackageManager packageManager = activity.getPackageManager();
         try {
             if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
@@ -258,6 +257,7 @@ public class AppListManager
                 if (userApps.contains(app))
                 {
                     int position = userApps.indexOf(app);
+                    appToUpdate = userApps.get(position);
                     new Thread(() ->
                     {
                         try
@@ -268,15 +268,18 @@ public class AppListManager
                             appListDatabase.appListDao().updateAppInfo(userApps.get(position));
                             userApps.sort(first_letter);
                             activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
-
-                            if (app.isPinned())
-                                factorManager.updateFactor(app);
                         }
                         catch (PackageManager.NameNotFoundException e)
                         {
                             e.printStackTrace();
                         }
                     }).start();
+
+                    if (appToUpdate.isPinned())
+                    {
+                        factorManager.updateFactor(appToUpdate);
+                    }
+
                 }
                 else
                 {
@@ -293,9 +296,25 @@ public class AppListManager
         }
         catch (PackageManager.NameNotFoundException e)
         {
-            e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
     }
+
+    public void unPin(String packageName)
+    {
+        UserApp appToUnPin = new UserApp();
+        for (UserApp app : userApps)
+        {
+            if (app.getPackageName().equals(packageName))
+            {
+                appToUnPin = app;
+                break;
+            }
+        }
+        if (!appToUnPin.getPackageName().isEmpty())
+            changePin(appToUnPin);
+    }
+
 
     public FactorManager getFactorManager()
     {

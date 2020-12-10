@@ -3,7 +3,16 @@
     <item android:id="@+id/factor_remove"
           android:title="@string/remove_from_home"/>
     <item android:id="@+id/factor_edit"
-          android:title="@string/edit" />
+          android:title="@string/resize" >
+        <menu>
+            <item android:id="@+id/one_by_one"
+                  android:title="@string/_1_x_1" />
+            <item android:id="@+id/two_by_one"
+                  android:title="@string/_2_x_1" />
+            <item android:id="@+id/two_by_two"
+                  android:title="@string/_2_x_2" />
+        </menu>
+    </item>
     <item android:id="@+id/info"
           android:title="@string/info" />
     <item android:id="@+id/uninstall"

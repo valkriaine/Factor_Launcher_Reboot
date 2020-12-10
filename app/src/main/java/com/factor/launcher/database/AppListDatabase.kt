@@ -1,7 +1,7 @@
 package com.factor.launcher.database
 
 import androidx.room.*
-import com.factor.launcher.model.UserApp
+import com.factor.launcher.models.UserApp
 
 @Database(entities = [UserApp::class], version = 1)
 abstract class AppListDatabase : RoomDatabase()

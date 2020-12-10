@@ -1,4 +1,4 @@
-package com.factor.launcher;
+package com.factor.launcher.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

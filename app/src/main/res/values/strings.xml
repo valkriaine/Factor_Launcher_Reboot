@@ -7,4 +7,8 @@
     <string name="info">Info</string>
     <string name="uninstall">Uninstall</string>
     <string name="remove_from_home">Remove from home</string>
+    <string name="resize">Resize</string>
+    <string name="_1_x_1">1 x 1</string>
+    <string name="_2_x_1">2 x 1</string>
+    <string name="_2_x_2">2 x 2</string>
 </resources>

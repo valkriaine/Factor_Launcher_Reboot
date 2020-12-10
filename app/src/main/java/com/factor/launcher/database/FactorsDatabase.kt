@@ -1,7 +1,7 @@
 package com.factor.launcher.database
 
 import androidx.room.*
-import com.factor.launcher.model.Factor
+import com.factor.launcher.models.Factor
 
 @Database(entities = [Factor::class], version = 1)
 abstract class FactorsDatabase : RoomDatabase()

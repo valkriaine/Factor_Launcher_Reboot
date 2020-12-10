@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable name="userApp"
-                  type="com.factor.launcher.model.UserApp"/>
+                  type="com.factor.launcher.models.UserApp"/>
     </data>
 
 

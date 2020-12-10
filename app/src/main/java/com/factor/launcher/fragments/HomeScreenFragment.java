@@ -18,6 +18,7 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
+import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -57,6 +58,8 @@ public class HomeScreenFragment extends Fragment
         binding.image.setImageDrawable(wm.getDrawable());
         AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
+
+        new AppActionReceiver(appListManager);
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);

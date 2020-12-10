@@ -1,4 +1,4 @@
-package com.factor.launcher.model
+package com.factor.launcher.models
 
 import android.graphics.drawable.Drawable
 import androidx.room.ColumnInfo
@@ -53,5 +53,16 @@ class UserApp
     override fun equals(other: Any?): Boolean
     {
         return if (other is UserApp) this.packageName == other.packageName else false
+    }
+
+    override fun hashCode(): Int {
+        var result = packageName.hashCode()
+        result = 31 * result + labelOld.hashCode()
+        result = 31 * result + labelNew.hashCode()
+        result = 31 * result + icon.hashCode()
+        result = 31 * result + isPinned.hashCode()
+        result = 31 * result + isCustomized.hashCode()
+        result = 31 * result + isHidden.hashCode()
+        return result
     }
 }

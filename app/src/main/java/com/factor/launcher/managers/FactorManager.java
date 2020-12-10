@@ -1,7 +1,9 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -14,8 +16,9 @@ import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
 import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
-import com.factor.launcher.model.Factor;
-import com.factor.launcher.model.UserApp;
+import com.factor.launcher.models.Factor;
+import com.factor.launcher.models.UserApp;
+import com.factor.launcher.util.Constants;
 import com.valkriaine.factor.BouncyRecyclerView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
@@ -108,13 +111,38 @@ public class FactorManager
         }).start();
     }
 
+    private boolean resizeFactor(Factor factor, int size)
+    {
+        factor.setSize(size);
+        return  updateFactor(factor);
+    }
+
+    private boolean updateFactor(Factor factor)
+    {
+        if (userFactors.contains(factor))
+        {
+            int position = userFactors.indexOf(factor);
+            new Thread(()->
+            {
+                factorsDatabase.factorsDao().updateFactorInfo(factor);
+                activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
+            }).start();
+        }
+        return userFactors.contains(factor);
+    }
+
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
         for (Factor f : factorsToUpdate)
         {
             loadIcon(f);
-            adapter.notifyItemChanged(userFactors.indexOf(f));
+            f.setLabelOld(app.getLabelOld());
+            new Thread(()->
+            {
+                factorsDatabase.factorsDao().updateFactorInfo(f);
+                activity.runOnUiThread(() -> adapter.notifyItemChanged(userFactors.indexOf(f)));
+            }).start();
         }
 
     }
@@ -174,6 +202,15 @@ public class FactorManager
         }
     }
 
+    private boolean removeFactorBroadcast(Factor factor)
+    {
+        Intent intent = new Intent();
+        intent.setAction(Constants.BROADCAST_ACTION_REMOVE);
+        intent.putExtra(Constants.REMOVE_KEY, factor.getPackageName());
+        activity.sendBroadcast(intent);
+        removeFromHome(factor);
+        return true;
+    }
 
 
 
@@ -350,7 +387,8 @@ public class FactorManager
 
                 activity.registerForContextMenu(itemView);
 
-                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+                {
                     Factor selectedFactor = getFactor();
 
                     if (!selectedFactor.getPackageName().isEmpty())
@@ -358,12 +396,47 @@ public class FactorManager
                         MenuInflater inflater = activity.getMenuInflater();
                         inflater.inflate(R.menu.factor_item_menu, menu);
 
+                        //remove from home
+                        menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
 
-                        //change options here
+                        //resize
+                        SubMenu subMenu = menu.getItem(1).getSubMenu();
+                        subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
+                        subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
+                        subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
+
+                        //info
+                        menu.getItem(2).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(
+                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.parse("package:"+factor.getPackageName())));
+                            return true;
+                        });
+
+                        //uninstall
+                        menu.getItem(3).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
+                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                            return true;
+                        });
+
+                        switch (factor.getSize()) {
+                            case Factor.Size.small:
+                                subMenu.getItem(0).setEnabled(false);
+                                break;
+                            case Factor.Size.medium:
+                                subMenu.getItem(1).setEnabled(false);
+                                break;
+                            case Factor.Size.large:
+                                subMenu.getItem(2).setEnabled(false);
+                                break;
+                        }
+
                     }
 
                 });
-
 
             }
 

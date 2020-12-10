@@ -1,4 +1,4 @@
-package com.factor.launcher.model
+package com.factor.launcher.models
 
 import android.graphics.drawable.Drawable
 import androidx.room.ColumnInfo
