@@ -133,7 +133,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         binding.searchBlur.setupWith(binding.rootContent)
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                .setBlurRadius(10f)
+                .setBlurRadius(20f)
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(false);
 

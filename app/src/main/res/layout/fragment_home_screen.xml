@@ -26,7 +26,7 @@
                 app:cardCornerRadius="5dp">
             <eightbitlab.com.blurview.BlurView
                     android:id="@+id/search_blur"
-                    app:blurOverlayColor="#9AFFFFFF"
+                    app:blurOverlayColor="#4DFFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 <androidx.appcompat.widget.SearchView
