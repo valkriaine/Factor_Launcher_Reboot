@@ -27,6 +27,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private WallpaperManager wm;
 
+    private AppListManager appListManager;
+
 
     public HomeScreenFragment()
     {
@@ -53,7 +55,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private void initializeComponents()
     {
         binding.image.setImageDrawable(wm.getDrawable());
-        AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
 
         new AppActionReceiver(appListManager);

@@ -25,8 +25,6 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class FactorManager
 {
@@ -41,9 +39,6 @@ public class FactorManager
     private final Activity activity;
 
     private final ViewGroup background;
-
-    private final Comparator<Factor> index_order= Comparator.comparingInt(Factor::getOrder);
-
 
     public FactorManager(Activity activity, ViewGroup background, PackageManager pm)
     {
@@ -61,9 +56,10 @@ public class FactorManager
         new Thread(()->
         {
             userFactors.addAll(factorsDatabase.factorsDao().getAll());
-            userFactors.sort(index_order);
+            //updateOrders();
             for (Factor f: userFactors)
             {
+                Log.d("LOAD", f.getPackageName() + " index " + f.getOrder());
                 try
                 {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
@@ -90,10 +86,11 @@ public class FactorManager
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
+            Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
             factorsDatabase.factorsDao().insert(factor);
             activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
         }).start();
-
+        updateOrders();
     }
 
     public void removeFromHome(Factor factor)
@@ -119,6 +116,7 @@ public class FactorManager
         if (userFactors.contains(factor))
         {
             int position = userFactors.indexOf(factor);
+            factor.setOrder(position);
             new Thread(()->
             {
                 factorsDatabase.factorsDao().updateFactorInfo(factor);
@@ -144,15 +142,18 @@ public class FactorManager
 
     }
 
-    private void updateOrders()
+    public void updateOrders()
     {
-        for (Factor f: userFactors)
+        new Thread(() ->
         {
-            f.setOrder(userFactors.indexOf(f));
-            new Thread(()->factorsDatabase.factorsDao().updateFactorInfo(f)).start();
-        }
+            for (Factor f: userFactors)
+            {
+                f.setOrder(userFactors.indexOf(f));
+                Log.d("YAYA", f.getPackageName() + " index: " + f.getOrder());
+                factorsDatabase.factorsDao().updateFactorOrder(f.getPackageName(), f.getOrder());
+            }
+        }).start();
     }
-
 
     public void remove(UserApp app)
     {
@@ -182,7 +183,6 @@ public class FactorManager
 
         return factorsToRemove;
     }
-
 
     private void loadIcon(Factor f)
     {
@@ -251,23 +251,10 @@ public class FactorManager
         @Override
         public void onItemMoved(int fromPosition, int toPosition)
         {
-            if (fromPosition < toPosition)
-            {
-                for (int i = fromPosition; i < toPosition; i++)
-                {
-                    Collections.swap(userFactors, i, i + 1);
-                }
-            }
-            else
-                {
-                for (int i = fromPosition; i > toPosition; i--)
-                {
-                    Collections.swap(userFactors, i, i - 1);
-                }
-            }
-
-            notifyItemMoved(fromPosition, toPosition);
             activity.closeContextMenu();
+            Factor f = userFactors.remove(fromPosition);
+            userFactors.add(toPosition, f);
+            notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
@@ -284,7 +271,6 @@ public class FactorManager
             assert viewHolder != null;
             viewHolder.itemView.setScaleX(1);
             viewHolder.itemView.setScaleY(1);
-
             viewHolder.itemView.setAlpha(1f);
         }
 
