@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.factor_small.launcher"
+        applicationId "com.factor.launcher"
         minSdkVersion 27
         targetSdkVersion 30
         versionCode 1

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
@@ -81,8 +82,9 @@ public class HomeScreenFragment extends Fragment
                 .setScrollingEnabled(true)
                 .build();
 
+        //todo: chips layout manager sometimes does not display all the tiles
         //todo: research on grid layout manager changing both column and row span
-        //StaggeredGridLayoutManager grid = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager grid = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);

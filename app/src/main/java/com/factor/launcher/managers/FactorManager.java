@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
@@ -211,6 +212,7 @@ public class FactorManager
         {
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
+            //factorsViewHolder.setIsRecyclable(false);
         }
 
         @Override
