@@ -8,15 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
-import com.factor.launcher.databinding.FactorBinding;
+import com.factor.launcher.databinding.FactorLargeBinding;
+import com.factor.launcher.databinding.FactorMediumBinding;
+import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.model.Factor;
 import com.factor.launcher.model.UserApp;
 import com.valkriaine.factor.BouncyRecyclerView;
-import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,16 +35,13 @@ public class FactorManager
 
     private final Activity activity;
 
-    private final ViewGroup background;
-
-
     private final Comparator<Factor> index_order= Comparator.comparingInt(Factor::getOrder);
 
 
     public FactorManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
-        this.background = background;
+        //this.background = background;
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -80,6 +79,12 @@ public class FactorManager
     public void addToHome(UserApp app)
     {
         Factor factor = app.toFactor();
+        if (userFactors.size() == 3)
+            factor.setSize(Factor.Size.medium);
+        if (userFactors.size() == 6)
+            factor.setSize(Factor.Size.large);
+
+
         userFactors.add(factor);
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
@@ -94,10 +99,11 @@ public class FactorManager
     {
         new Thread(() ->
         {
+            int position = userFactors.indexOf(factor);
             userFactors.remove(factor);
             factorsDatabase.factorsDao().delete(factor);
             updateOrders();
-            activity.runOnUiThread(adapter::notifyDataSetChanged);
+            activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
         }).start();
     }
 
@@ -151,6 +157,10 @@ public class FactorManager
         return factorsToRemove;
     }
 
+    public int getFactorSize(int position)
+    {
+        return adapter.getItemViewType(position);
+    }
 
 
     private void loadIcon(Factor f)
@@ -178,7 +188,21 @@ public class FactorManager
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.factor, parent, false);
+            int id = 0;
+            switch (viewType)
+            {
+                case Factor.Size.small:
+                    id = R.layout.factor_small;
+                    break;
+                case Factor.Size.medium:
+                    id = R.layout.factor_medium;
+                    break;
+                case Factor.Size.large:
+                    id = R.layout.factor_large;
+                    break;
+
+            }
+            View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
             return new FactorsViewHolder(view);
         }
 
@@ -187,11 +211,7 @@ public class FactorManager
         {
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
-
-            //this prevents item views from collapsing
-            factorsViewHolder.setIsRecyclable(false);
         }
-
 
         @Override
         public int getItemCount()
@@ -222,15 +242,27 @@ public class FactorManager
         }
 
         @Override
+        public int getItemViewType(int position)
+        {
+            Factor f = userFactors.get(position);
+            return f.getSize();
+        }
+
+        @Override
         public void onItemReleased(@Nullable RecyclerView.ViewHolder viewHolder)
         {
            updateOrders();
+            assert viewHolder != null;
+            viewHolder.itemView.setScaleX(1);
+            viewHolder.itemView.setScaleY(1);
         }
 
         @Override
         public void onItemSelected(@Nullable RecyclerView.ViewHolder viewHolder)
         {
-
+            assert viewHolder != null;
+            viewHolder.itemView.setScaleX(1.2f);
+            viewHolder.itemView.setScaleY(1.2f);
         }
 
         @Override
@@ -247,7 +279,7 @@ public class FactorManager
 
         class FactorsViewHolder extends RecyclerView.ViewHolder
         {
-            private final FactorBinding binding;
+            private final ViewDataBinding binding;
 
             public FactorsViewHolder(@NonNull View itemView)
             {
@@ -257,21 +289,45 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                binding.setFactor(factor);
-                binding.trans.setupWith(background)
-                        .setBlurAlgorithm(new RenderScriptBlur(activity))
-                        .setBlurRadius(18F)
-                        .setHasFixedTransformationMatrix(false);
-                try
+                if (factor.getSize() == Factor.Size.small)
                 {
-                    binding.tileIcon.setImageDrawable(factor.getIcon());
+                    ((FactorSmallBinding)binding).setFactor(factor);
+                    try
+                    {
+                        ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
+                        loadIcon(factor);
+                    }
                 }
-                catch (Exception e)
+                else if (factor.getSize() == Factor.Size.medium)
                 {
-                    Log.d("icon", factor.getPackageName() + " " + e.getMessage());
-                    loadIcon(factor);
+                    ((FactorMediumBinding)binding).setFactor(factor);
+                    try
+                    {
+                        ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
+                        loadIcon(factor);
+                    }
                 }
-
+                else if (factor.getSize() == Factor.Size.large)
+                {
+                    ((FactorLargeBinding)binding).setFactor(factor);
+                    try
+                    {
+                        ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
+                        loadIcon(factor);
+                    }
+                }
             }
         }
     }

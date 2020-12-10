@@ -4,6 +4,7 @@ import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +13,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
+import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
 import com.factor.launcher.receivers.PackageActionsReceiver;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 
 public class HomeScreenFragment extends Fragment
@@ -26,8 +26,6 @@ public class HomeScreenFragment extends Fragment
     private FragmentHomeScreenBinding binding;
 
     private WallpaperManager wm;
-
-    private final long timeUnit = (long) 0.000001;
 
 
     public HomeScreenFragment()
@@ -75,14 +73,29 @@ public class HomeScreenFragment extends Fragment
         binding.appsList.setAdapter(appListManager.adapter);
 
         //tile list
-        FlexboxLayoutManager flex = new FlexboxLayoutManager(this.getContext());
-        flex.setFlexDirection(FlexDirection.ROW);
-        flex.setJustifyContent(JustifyContent.FLEX_START);
-        binding.tilesList.setLayoutManager(flex);
+        ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())
+                .setOrientation(ChipsLayoutManager.HORIZONTAL)
+                .setChildGravity(Gravity.CENTER)
+                .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                .setMaxViewsInRow(2)
+                .setScrollingEnabled(true)
+                .build();
+
+        //todo: research on grid layout manager changing both column and row span
+        //StaggeredGridLayoutManager grid = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
 
-        binding.tilesList.getRecycledViewPool().setMaxRecycledViews(0, 0);
-        binding.blur.setViewBehind(binding.backgroundHost);
+
+
+        binding.blur.setupWith(binding.backgroundHost)
+                .setFrameClearDrawable(wm.getDrawable())
+                .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                .setBlurRadius(10f)
+                .setBlurAutoUpdate(false)
+                .setHasFixedTransformationMatrix(true);
+
 
 
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -94,10 +107,7 @@ public class HomeScreenFragment extends Fragment
                 binding.dim.setAlpha(xOffset / 0.5f);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
 
-                binding.blur.enable();
                 binding.blur.setAlpha(xOffset / 0.5f);
-                binding.blur.setBlurRadius(xOffset * 40);
-                binding.blur.updateForMilliSeconds(timeUnit);
             }
 
             @Override
@@ -106,7 +116,7 @@ public class HomeScreenFragment extends Fragment
                 if (position == 0)
                 {
                     binding.arrowButton.setRotation(180);
-                    binding.blur.setAlpha(0);
+                    binding.blur.setAlpha(0f);
                 }
             }
 
@@ -116,19 +126,4 @@ public class HomeScreenFragment extends Fragment
             }
         });
     }
-
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
-        binding.blur.disable();
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        binding.blur.disable();
-    }
-
 }

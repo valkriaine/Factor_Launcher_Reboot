@@ -27,6 +27,18 @@ class Factor
     @ColumnInfo(name = "order")
     var order: Int = 0
 
+    @ColumnInfo(name = "size")
+    var size: Int = Size.small
+
     @Ignore
     lateinit var icon: Drawable
+
+
+
+    object Size
+    {
+        const val small : Int = 1
+        const val medium : Int = 2
+        const val large : Int = 3
+    }
 }

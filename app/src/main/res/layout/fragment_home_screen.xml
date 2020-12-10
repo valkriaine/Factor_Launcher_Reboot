@@ -15,12 +15,10 @@
 
 
 
-        <no.danielzeller.blurbehindlib.BlurBehindLayout
+        <!--blurred wallpaper-->
+        <eightbitlab.com.blurview.BlurView
                 android:id="@+id/blur"
                 android:translationZ="-10dp"
-                app:updateMode="manually"
-                app:useTextureView="false"
-                app:blurTextureScale="0.5"
                 android:alpha="0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

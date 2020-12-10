@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.factor.launcher"
+        applicationId "com.factor_small.launcher"
         minSdkVersion 27
         targetSdkVersion 30
         versionCode 1
@@ -50,7 +50,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation 'com.google.android:flexbox:2.0.1'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.fragment:fragment:$fragment_version"
@@ -66,9 +65,10 @@ dependencies {
     implementation 'com.github.Valkriaine:Factor:1.7'
 
 
-    implementation 'com.eightbitlab:blurview:1.6.3'
+    implementation 'com.eightbitlab:blurview:1.6.5'
     implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
     implementation 'no.danielzeller.blurbehindlib:blurbehindlib:1.0.0'
+    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 }
 repositories {
     mavenCentral()
