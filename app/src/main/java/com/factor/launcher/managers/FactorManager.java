@@ -56,7 +56,6 @@ public class FactorManager
         new Thread(()->
         {
             userFactors.addAll(factorsDatabase.factorsDao().getAll());
-            //updateOrders();
             for (Factor f: userFactors)
             {
                 Log.d("LOAD", f.getPackageName() + " index " + f.getOrder());
@@ -155,6 +154,11 @@ public class FactorManager
         }).start();
     }
 
+    public void updateAll()
+    {
+        new Thread(()->factorsDatabase.factorsDao().updateAll(userFactors)).start();
+    }
+
     public void remove(UserApp app)
     {
         new Thread(()->
@@ -218,6 +222,8 @@ public class FactorManager
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             int id = 0;
+
+            //determine factor size
             switch (viewType)
             {
                 case Factor.Size.small:
@@ -231,7 +237,31 @@ public class FactorManager
                     break;
 
             }
+
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
+
+            //resize to fit screen
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            int scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
+
+            switch (viewType)
+            {
+                case Factor.Size.small:
+                    layoutParams.width = (int) (scale/2 + 0.5f);
+                    layoutParams.height = (int) (scale/2 + 0.5f);
+                    break;
+                case Factor.Size.medium:
+                    layoutParams.height = (int) (scale/2 + 0.5f);
+                    layoutParams.width =scale;
+                    break;
+                case Factor.Size.large:
+                    layoutParams.width = scale;
+                    layoutParams.height = scale;
+                    break;
+            }
+            view.setLayoutParams(layoutParams);
+
+
             return new FactorsViewHolder(view);
         }
 

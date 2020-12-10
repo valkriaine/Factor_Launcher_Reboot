@@ -25,7 +25,6 @@ interface FactorsDao
     @Query("UPDATE factor SET `order`=:position where packageName =:packageName")
     fun updateFactorOrder(packageName: String, position: Int)
 
-
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateAll(wordEntities: List<Factor>)
 

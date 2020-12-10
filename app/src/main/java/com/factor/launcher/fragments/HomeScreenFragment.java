@@ -4,7 +4,9 @@ import android.animation.ObjectAnimator;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -87,6 +89,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
 
+
+
+
+        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+        int paddingLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        int paddingBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+
+
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        binding.tilesList.setPadding(paddingLeft, paddingTop, width/5, paddingBottom);
 
 
         binding.blur.setupWith(binding.backgroundHost)

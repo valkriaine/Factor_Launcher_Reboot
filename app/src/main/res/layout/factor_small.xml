@@ -9,8 +9,8 @@
 
 
     <com.factor.launcher.ui.BouncyConstraintLayout
-            android:layout_width="155dp"
-            android:layout_height="155dp">
+            android:layout_width="160dp"
+            android:layout_height="160dp">
 
         <androidx.cardview.widget.CardView
                 android:translationZ="-20dp"
