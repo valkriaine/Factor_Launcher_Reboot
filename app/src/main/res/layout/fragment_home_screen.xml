@@ -5,121 +5,142 @@
     <data>
         <variable
                 name="home_screen_binding"
-                type="com.factor.launcher.fragments.HomeScreenFragment" />
+                type="com.factor.launcher.fragments.HomeScreenFragment"/>
     </data>
 
+    <!--main layout-->
     <androidx.constraintlayout.widget.ConstraintLayout
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-
-        <!--blurred wallpaper-->
-        <eightbitlab.com.blurview.BlurView
-                android:id="@+id/blur"
-                android:translationZ="-10dp"
-                android:alpha="0"
+        <!--search bar holder-->
+        <androidx.cardview.widget.CardView
+                android:id="@+id/search_base"
+                android:translationZ="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="45dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginHorizontal="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:cardCornerRadius="5dp">
+            <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/search_blur"
+                    app:blurOverlayColor="#9AFFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <androidx.appcompat.widget.SearchView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+            </eightbitlab.com.blurview.BlurView>
+        </androidx.cardview.widget.CardView>
 
 
-        <!--wall paper-->
+        <!--main content-->
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/background_host"
-                android:translationZ="-20dp"
+                android:id="@+id/rootContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    tools:ignore="PrivateResource"/>
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/dim"
-                    android:background="#80000000"
+            <!--blurred wallpaper-->
+            <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/blur"
+                    android:translationZ="-10dp"
                     android:alpha="0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
+            <!--wall paper-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/background_host"
+                    android:translationZ="-20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        tools:ignore="PrivateResource"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/dim"
+                        android:background="#80000000"
+                        android:alpha="0"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--home page-->
+            <com.valkriaine.factor.HomePager
+                    android:id="@+id/home_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:translationZ="-5dp">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/tiles_page"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                    <!--arrow-->
+                    <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/arrowButton"
+                            android:hapticFeedbackEnabled="true"
+                            android:src="@drawable/arrow"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:foregroundGravity="left"
+                            android:layout_marginTop="100dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="25dp"
+                            android:background="@drawable/circle"
+                            android:scaleType="center"
+                            android:rotation="180"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+                    <com.valkriaine.factor.BouncyRecyclerView
+                            android:id="@+id/tiles_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingTop="80dp"
+                            android:paddingBottom="200dp"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="70dp"
+                            android:clipToPadding="false"
+                            app:fling_bounce_animation_size=".5"
+                            app:overscroll_bounce_animation_size=".5"
+                            app:allow_drag_reorder="true"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/drawer_page"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                    <com.valkriaine.factor.BouncyRecyclerView
+                            android:id="@+id/apps_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:translationZ="-10dp"
+                            android:paddingTop="100dp"
+                            android:paddingBottom="150dp"
+                            android:paddingHorizontal="20dp"
+                            android:clipToPadding="false"
+                            app:fling_bounce_animation_size=".5"
+                            app:overscroll_bounce_animation_size=".5"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.valkriaine.factor.HomePager>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <com.valkriaine.factor.HomePager
-                android:id="@+id/home_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:translationZ="50dp">
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/tiles_page"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-
-                <!--arrow-->
-                <androidx.appcompat.widget.AppCompatImageButton
-                        android:id="@+id/arrowButton"
-                        android:hapticFeedbackEnabled="true"
-                        android:src="@drawable/arrow"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:foregroundGravity="left"
-                        android:layout_marginTop="100dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="25dp"
-                        android:background="@drawable/circle"
-                        android:scaleType="center"
-                        android:rotation="180"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
-
-
-                <com.valkriaine.factor.BouncyRecyclerView
-                        android:id="@+id/tiles_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingTop="80dp"
-                        android:paddingBottom="200dp"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="70dp"
-                        android:clipToPadding="false"
-                        app:fling_bounce_animation_size=".5"
-                        app:overscroll_bounce_animation_size=".5"
-                        app:allow_drag_reorder="true"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/drawer_page"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                <!--search bar-->
-
-                <com.valkriaine.factor.BouncyRecyclerView
-                        android:id="@+id/apps_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingTop="80dp"
-                        android:paddingBottom="150dp"
-                        android:paddingHorizontal="20dp"
-                        android:clipToPadding="false"
-                        app:fling_bounce_animation_size=".5"
-                        app:overscroll_bounce_animation_size=".5"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        </com.valkriaine.factor.HomePager>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
 </layout>

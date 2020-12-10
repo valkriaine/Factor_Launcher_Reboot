@@ -1,5 +1,6 @@
 package com.factor.launcher.fragments;
 
+import android.animation.ObjectAnimator;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -95,6 +96,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+
+
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
@@ -103,7 +106,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 float xOffset = position + positionOffset;
                 binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
-
                 binding.blur.setAlpha(xOffset / 0.5f);
             }
 
@@ -114,6 +116,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 {
                     binding.arrowButton.setRotation(180);
                     binding.blur.setAlpha(0f);
+                    ObjectAnimator.ofFloat(binding.searchBase, "translationY", -500f).setDuration(200).start();
+                }
+                else
+                {
+                    ObjectAnimator.ofFloat(binding.searchBase, "translationY", 0f).setDuration(200).start();
                 }
             }
 
@@ -122,6 +129,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
             }
         });
+
+
+        binding.searchBlur.setupWith(binding.rootContent)
+                .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                .setBlurRadius(10f)
+                .setBlurAutoUpdate(true)
+                .setHasFixedTransformationMatrix(false);
+
+        binding.searchBase.setTranslationY(-500f);
     }
 
     @Override
