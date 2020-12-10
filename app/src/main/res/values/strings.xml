@@ -6,4 +6,5 @@
     <string name="edit">Edit</string>
     <string name="info">Info</string>
     <string name="uninstall">Uninstall</string>
+    <string name="remove_from_home">Remove from home</string>
 </resources>

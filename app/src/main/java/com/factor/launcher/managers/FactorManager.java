@@ -3,14 +3,11 @@ package com.factor.launcher.managers;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
@@ -158,11 +155,6 @@ public class FactorManager
         return factorsToRemove;
     }
 
-    public int getFactorSize(int position)
-    {
-        return adapter.getItemViewType(position);
-    }
-
 
     private void loadIcon(Factor f)
     {
@@ -212,7 +204,6 @@ public class FactorManager
         {
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
-            //factorsViewHolder.setIsRecyclable(false);
         }
 
         @Override
@@ -224,7 +215,6 @@ public class FactorManager
         @Override
         public void onItemMoved(int fromPosition, int toPosition)
         {
-
             if (fromPosition < toPosition)
             {
                 for (int i = fromPosition; i < toPosition; i++)
@@ -241,6 +231,7 @@ public class FactorManager
             }
 
             notifyItemMoved(fromPosition, toPosition);
+            activity.closeContextMenu();
         }
 
         @Override
@@ -253,7 +244,7 @@ public class FactorManager
         @Override
         public void onItemReleased(@Nullable RecyclerView.ViewHolder viewHolder)
         {
-           updateOrders();
+            updateOrders();
             assert viewHolder != null;
             viewHolder.itemView.setScaleX(1);
             viewHolder.itemView.setScaleY(1);
@@ -282,6 +273,7 @@ public class FactorManager
         class FactorsViewHolder extends RecyclerView.ViewHolder
         {
             private final ViewDataBinding binding;
+            private int size = 0;
 
             public FactorsViewHolder(@NonNull View itemView)
             {
@@ -291,7 +283,9 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                if (factor.getSize() == Factor.Size.small)
+                size = factor.getSize();
+                //determine layout based on size
+                if (size == Factor.Size.small)
                 {
                     ((FactorSmallBinding)binding).setFactor(factor);
                     try
@@ -304,7 +298,7 @@ public class FactorManager
                         loadIcon(factor);
                     }
                 }
-                else if (factor.getSize() == Factor.Size.medium)
+                else if (size == Factor.Size.medium)
                 {
                     ((FactorMediumBinding)binding).setFactor(factor);
                     try
@@ -317,7 +311,7 @@ public class FactorManager
                         loadIcon(factor);
                     }
                 }
-                else if (factor.getSize() == Factor.Size.large)
+                else if (size == Factor.Size.large)
                 {
                     ((FactorLargeBinding)binding).setFactor(factor);
                     try
@@ -330,6 +324,45 @@ public class FactorManager
                         loadIcon(factor);
                     }
                 }
+
+
+                activity.registerForContextMenu(itemView);
+
+                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+                    Factor selectedFactor = getFactor();
+
+                    if (!selectedFactor.getPackageName().isEmpty())
+                    {
+                        MenuInflater inflater = activity.getMenuInflater();
+                        inflater.inflate(R.menu.factor_item_menu, menu);
+
+
+                        //change options here
+                    }
+
+                });
+
+
+            }
+
+
+            //return the factor of this view holder
+            public Factor getFactor()
+            {
+                if (size == Factor.Size.small)
+                {
+                    return ((FactorSmallBinding)binding).getFactor();
+                }
+                else if (size == Factor.Size.medium)
+                {
+                    return ((FactorMediumBinding)binding).getFactor();
+                }
+                else if (size == Factor.Size.large)
+                {
+                    return ((FactorLargeBinding)binding).getFactor();
+                }
+                else
+                    return new Factor();
             }
         }
     }

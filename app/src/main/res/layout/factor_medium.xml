@@ -8,7 +8,7 @@
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.factor.launcher.BouncyConstraintLayout
             android:layout_width="310dp"
             android:layout_height="155dp">
 
@@ -63,5 +63,5 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.factor.launcher.BouncyConstraintLayout>
 </layout>

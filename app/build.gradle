@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-
+    def dynamicanimation_version = '1.0.0'
     def fragment_version = "1.2.5"
     def room_version = "2.2.5"
 
@@ -50,6 +50,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.fragment:fragment:$fragment_version"
