@@ -404,7 +404,6 @@ public class AppListManager
             protected void publishResults(CharSequence constraint, FilterResults results)
             {
                 appsShown.clear();
-                ArrayList<UserApp> dataSet;
                 //noinspection unchecked
                 appsShown.addAll((ArrayList<UserApp>)results.values);
                 notifyDataSetChanged();

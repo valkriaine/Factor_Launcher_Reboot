@@ -29,10 +29,24 @@
                     app:blurOverlayColor="#4DFFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                <androidx.appcompat.widget.SearchView
-                        android:id="@+id/search_view"
+                <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent">
+                    <androidx.appcompat.widget.SearchView
+                            android:id="@+id/search_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginEnd="50dp"/>
+                    <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/menu_button"
+                            android:layout_width="50dp"
+                            android:src="@drawable/menu_icon"
+                            android:background="@android:color/transparent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </eightbitlab.com.blurview.BlurView>
         </androidx.cardview.widget.CardView>
 
