@@ -11,6 +11,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 import android.view.*;
+import android.widget.Filter;
+import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +35,7 @@ public class AppListManager
     private static final String TAG = "AppListManager";
 
     private final ArrayList<UserApp> userApps = new ArrayList<>();
-    public final AppListAdapter adapter = new AppListAdapter();
+    public final AppListAdapter adapter = new AppListAdapter(userApps);
     private final Activity activity;
 
     private final AppListDatabase appListDatabase;
@@ -116,6 +118,7 @@ public class AppListManager
                             }
                         }
                     }
+                    adapter.updateList();
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
                 catch (Exception ex)
@@ -148,6 +151,8 @@ public class AppListManager
                     }
                     userApps.sort(first_letter);
                     appListDatabase.appListDao().insertAll(userApps);
+
+                    adapter.updateList();
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                     editor.putBoolean("saved", true);
                     editor.apply();
@@ -159,10 +164,6 @@ public class AppListManager
                 }
             }).start();
         }
-
-
-
-
     }
 
     //pin & unpin
@@ -175,6 +176,7 @@ public class AppListManager
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
+            adapter.updateList();
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
@@ -213,6 +215,7 @@ public class AppListManager
             {
 
                 appListDatabase.appListDao().delete(app);
+                adapter.updateList();
                 activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
             }).start();
             factorManager.remove(app);
@@ -235,6 +238,8 @@ public class AppListManager
                     appListDatabase.appListDao().insert(app);
                     userApps.add(app);
                     userApps.sort(first_letter);
+
+                    adapter.updateList();
                     activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
                 }
                 catch (PackageManager.NameNotFoundException e)
@@ -265,6 +270,8 @@ public class AppListManager
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
                             appListDatabase.appListDao().updateAppInfo(userApps.get(position));
                             userApps.sort(first_letter);
+
+                            adapter.updateList();
                             activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
                         }
                         catch (PackageManager.NameNotFoundException e)
@@ -319,9 +326,27 @@ public class AppListManager
         return this.factorManager;
     }
 
-
-    class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
+    public void filter(String newText)
     {
+        adapter.getFilter().filter(newText);
+    }
+
+
+    public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder> implements Filterable
+    {
+        private final ArrayList<UserApp> appsShown;
+
+        public AppListAdapter(ArrayList<UserApp> apps)
+        {
+            this.appsShown = new ArrayList<>(apps);
+        }
+
+        public void updateList()
+        {
+            this.appsShown.clear();
+            this.appsShown.addAll(userApps);
+        }
+
         @NonNull
         @Override
         public AppListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -333,14 +358,60 @@ public class AppListManager
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
-            holder.bindApp(userApps.get(position));
+            holder.bindApp(appsShown.get(position));
         }
 
         @Override
         public int getItemCount()
         {
-            return userApps.size();
+            return appsShown.size();
         }
+
+        @Override
+        public Filter getFilter()
+        {
+            return appsFilter;
+        }
+
+        private final Filter appsFilter = new Filter()
+        {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint)
+            {
+                List<UserApp> filteredList = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0)
+                {
+                    filteredList.addAll(userApps);
+                }
+                else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (UserApp app : userApps)
+                    {
+                        if (app.getLabelNew().toLowerCase().contains(filterPattern.toLowerCase())
+                                || app.getLabelOld().toLowerCase().contains(filterPattern.toLowerCase()))
+                        {
+                            filteredList.add(app);
+                        }
+                    }
+                }
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results)
+            {
+                appsShown.clear();
+                ArrayList<UserApp> dataSet;
+                //noinspection unchecked
+                appsShown.addAll((ArrayList<UserApp>)results.values);
+                notifyDataSetChanged();
+            }
+        };
+
+
 
 
         class AppListViewHolder extends RecyclerView.ViewHolder

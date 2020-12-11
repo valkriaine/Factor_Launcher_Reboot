@@ -1,6 +1,5 @@
 package com.factor.launcher.fragments;
 
-import android.animation.ObjectAnimator;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,7 +7,9 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.*;
+import android.view.inputmethod.EditorInfo;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,8 +29,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private FragmentHomeScreenBinding binding;
 
     private WallpaperManager wm;
-
-    private AppListManager appListManager;
 
 
     public HomeScreenFragment()
@@ -57,7 +56,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private void initializeComponents()
     {
         binding.image.setImageDrawable(wm.getDrawable());
-        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+        AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
 
         new AppActionReceiver(appListManager);
@@ -104,7 +103,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.blur.setupWith(binding.backgroundHost)
                 .setFrameClearDrawable(wm.getDrawable())
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                .setBlurRadius(10f)
+                .setBlurRadius(15f)
                 .setBlurAutoUpdate(false)
                 .setHasFixedTransformationMatrix(true);
 
@@ -121,6 +120,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
                 binding.blur.setAlpha(xOffset / 0.5f);
+
+                binding.searchBase.setTranslationY(-500f + 500*xOffset);
             }
 
             @Override
@@ -130,11 +131,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 {
                     binding.arrowButton.setRotation(180);
                     binding.blur.setAlpha(0f);
-                    ObjectAnimator.ofFloat(binding.searchBase, "translationY", -500f).setDuration(200).start();
-                }
-                else
-                {
-                    ObjectAnimator.ofFloat(binding.searchBase, "translationY", 0f).setDuration(200).start();
                 }
             }
 
@@ -152,6 +148,26 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setHasFixedTransformationMatrix(false);
 
         binding.searchBase.setTranslationY(-500f);
+
+
+        binding.searchView.setIconifiedByDefault(false);
+
+        binding.searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String query)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                appListManager.filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override

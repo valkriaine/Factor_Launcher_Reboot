@@ -12,7 +12,7 @@ abstract class AppListDatabase : RoomDatabase()
 @Dao
 interface AppListDao
 {
-    @Query("SELECT * FROM userApp")
+    @Query("SELECT * FROM userApp ORDER BY labelNew")
     fun getAll(): List<UserApp>
 
     @Query("SELECT * FROM userApp WHERE labelOld LIKE:label OR labelNew LIKE :label ")
