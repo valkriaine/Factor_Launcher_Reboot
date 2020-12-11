@@ -3,7 +3,14 @@
     <item android:id="@+id/add_to_home"
           android:title="@string/add_to_home"/>
     <item android:id="@+id/edit"
-          android:title="@string/edit" />
+          android:title="@string/edit" >
+        <menu>
+            <item android:id="@+id/rename"
+                  android:title="@string/rename" />
+            <item android:id="@+id/hide"
+                  android:title="@string/hide" />
+        </menu>
+    </item>
     <item android:id="@+id/info"
           android:title="@string/info" />
     <item android:id="@+id/uninstall"

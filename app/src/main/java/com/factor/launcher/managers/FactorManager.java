@@ -58,7 +58,6 @@ public class FactorManager
             userFactors.addAll(factorsDatabase.factorsDao().getAll());
             for (Factor f: userFactors)
             {
-                Log.d("LOAD", f.getPackageName() + " index " + f.getOrder());
                 try
                 {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
@@ -69,7 +68,7 @@ public class FactorManager
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    Log.d("icon", "failed to load icon for " + f.getPackageName() + " " +  e.getMessage());
                     factorsDatabase.factorsDao().delete(f);
                 }
             }
@@ -102,6 +101,18 @@ public class FactorManager
             updateOrders();
             activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
         }).start();
+    }
+
+    public boolean isAppPinned(UserApp app)
+    {
+        boolean isPinned = false;
+        for (Factor f : userFactors)
+        {
+            if (f.getPackageName().equals(app.getPackageName()))
+                isPinned = true;
+        }
+
+        return isPinned;
     }
 
     private boolean resizeFactor(Factor factor, int size)
@@ -148,15 +159,9 @@ public class FactorManager
             for (Factor f: userFactors)
             {
                 f.setOrder(userFactors.indexOf(f));
-                Log.d("YAYA", f.getPackageName() + " index: " + f.getOrder());
                 factorsDatabase.factorsDao().updateFactorOrder(f.getPackageName(), f.getOrder());
             }
         }).start();
-    }
-
-    public void updateAll()
-    {
-        new Thread(()->factorsDatabase.factorsDao().updateAll(userFactors)).start();
     }
 
     public void remove(UserApp app)

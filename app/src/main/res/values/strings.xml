@@ -11,4 +11,6 @@
     <string name="_1_x_1">1 x 1</string>
     <string name="_2_x_1">2 x 1</string>
     <string name="_2_x_2">2 x 2</string>
+    <string name="rename">Rename</string>
+    <string name="hide">Hide</string>
 </resources>

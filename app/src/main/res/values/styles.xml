@@ -16,5 +16,8 @@
 
         <!--todo: restyle context menu-->
         <item name="android:itemBackground">@android:color/holo_blue_dark</item>
+
+
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 </resources>

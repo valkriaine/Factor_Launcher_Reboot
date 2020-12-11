@@ -91,7 +91,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
-        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
         int paddingLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
         int paddingBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
 
@@ -106,6 +106,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setBlurRadius(15f)
                 .setBlurAutoUpdate(false)
                 .setHasFixedTransformationMatrix(true);
+
 
 
 

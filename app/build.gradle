@@ -74,7 +74,6 @@ dependencies {
 
     implementation 'com.eightbitlab:blurview:1.6.5'
     implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
-    implementation 'no.danielzeller.blurbehindlib:blurbehindlib:1.0.0'
     implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'

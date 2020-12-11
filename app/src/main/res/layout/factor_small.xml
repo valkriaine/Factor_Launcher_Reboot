@@ -17,6 +17,7 @@
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:tag="background"
                 app:cardCornerRadius="5dp">
 
 
@@ -43,6 +44,7 @@
                     android:padding="10dp"
                     android:scaleType="fitCenter"
                     android:elevation="150dp"
+                    android:tag="foreground"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

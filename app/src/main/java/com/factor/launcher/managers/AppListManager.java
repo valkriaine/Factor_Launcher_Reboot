@@ -15,6 +15,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 import com.factor.launcher.R;
@@ -109,6 +110,7 @@ public class AppListManager
                                 {
                                     app.icon = r.activityInfo.loadIcon(packageManager);
                                     userApps.add(app);
+                                    app.setPinned(factorManager.isAppPinned(app));
                                     userApps.sort(first_letter);
                                 }
                                 else
@@ -181,6 +183,19 @@ public class AppListManager
         }).start();
 
         return userApps.contains(userApp);
+    }
+
+    private boolean hideApp(UserApp userApp)
+    {
+        userApp.setHidden(true);
+        new Thread(() ->
+        {
+            appListDatabase.appListDao().updateAppInfo(userApp);
+            adapter.updateList();
+            activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
+        }).start();
+
+        return userApp.isHidden();
     }
 
     //check if package exists
@@ -351,20 +366,37 @@ public class AppListManager
         @Override
         public AppListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_list_item, parent, false);
+            int id;
+            if (viewType == 1)
+                id = R.layout.app_list_item;
+            else
+                id = R.layout.hidden_app;
+
+            View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
             return new AppListViewHolder(view);
+
         }
 
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
-            holder.bindApp(appsShown.get(position));
+            if (!userApps.get(position).isHidden())
+                holder.bindApp(appsShown.get(position));
         }
 
         @Override
         public int getItemCount()
         {
             return appsShown.size();
+        }
+
+        @Override
+        public int getItemViewType(int position)
+        {
+            if (userApps.get(position).isHidden())
+                return 0; //do not show
+            else
+                return 1; //show
         }
 
         @Override
@@ -415,7 +447,7 @@ public class AppListManager
 
         class AppListViewHolder extends RecyclerView.ViewHolder
         {
-            private final AppListItemBinding binding;
+            private final ViewDataBinding binding;
             public AppListViewHolder(@NonNull View itemView)
             {
                 super(itemView);
@@ -424,35 +456,39 @@ public class AppListManager
 
             public void bindApp(UserApp app)
             {
-                binding.setUserApp(app);
+                AppListItemBinding appBinding = (AppListItemBinding)binding;
+                appBinding.setUserApp(app);
                 activity.registerForContextMenu(itemView);
                 itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                 {
-                    UserApp a = binding.getUserApp();
+                    UserApp a = appBinding.getUserApp();
                     MenuInflater inflater = activity.getMenuInflater();
                     inflater.inflate(R.menu.app_list_item_menu, menu);
                     if (a.isPinned())
                         menu.getItem(0).setEnabled(false);
 
                     //add to home & remove from home
-                    menu.getItem(0).setOnMenuItemClickListener(item -> changePin(binding.getUserApp()));
+                    menu.getItem(0).setOnMenuItemClickListener(item -> changePin(appBinding.getUserApp()));
 
-                    //todo: edit app
-                    menu.getItem(1).setOnMenuItemClickListener(item -> changePin(binding.getUserApp()));
-
+                    //edit
+                    SubMenu sub = menu.getItem(1).getSubMenu();
+                    //todo: rename
+                    sub.getItem(0).setOnMenuItemClickListener(item -> false);
+                    //hide
+                    sub.getItem(1).setOnMenuItemClickListener(item -> hideApp(appBinding.getUserApp()));
                     //info
                     menu.getItem(2).setOnMenuItemClickListener(item ->
                     {
                         activity.startActivity(
                                 new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.parse("package:"+binding.getUserApp().getPackageName())));
+                                        Uri.parse("package:"+appBinding.getUserApp().getPackageName())));
                         return true;
                     });
 
                     //uninstall
                     menu.getItem(3).setOnMenuItemClickListener(item ->
                     {
-                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+binding.getUserApp().getPackageName()))
+                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+appBinding.getUserApp().getPackageName()))
                                 .putExtra(Intent.EXTRA_RETURN_RESULT, true));
                         return true;
                     });
@@ -461,7 +497,7 @@ public class AppListManager
 
                 itemView.setOnClickListener(v ->
                 {
-                    Intent intent = packageManager.getLaunchIntentForPackage(binding.getUserApp().getPackageName());
+                    Intent intent = packageManager.getLaunchIntentForPackage(appBinding.getUserApp().getPackageName());
                     if (intent != null)
                         activity.startActivity(intent,
                                 ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
