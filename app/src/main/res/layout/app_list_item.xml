@@ -1,35 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="userApp"
                   type="com.factor.launcher.models.UserApp"/>
     </data>
 
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="70dp"
-                  android:orientation="horizontal"
-                  android:gravity="center_vertical">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:padding="2.5dp"
-                android:gravity="center"
-                android:src="@{userApp.icon}"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/app_list_main"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-                android:id="@+id/label"
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="2.5dp"
+                    android:gravity="center"
+                    android:src="@{userApp.icon}"/>
+
+            <TextView
+                    android:id="@+id/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:text="@{userApp.labelNew}"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:visibility="gone"
+                    android:id="@+id/label_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:text="@{userApp.labelNew}"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/edit_button_group"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:layout_marginStart="10dp"
-                android:textColor="#FFFFFF"
-                android:textAlignment="center"
-                android:text="@{userApp.labelNew}"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/confirm_edit_button"
+                    android:src="@drawable/icon_confirm"
+                    android:background="@android:color/transparent"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"/>
+
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/reset_edit_button"
+                    android:src="@drawable/icon_reset"
+                    android:background="@android:color/transparent"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"/>
+
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/cancel_edit_button"
+                    android:src="@drawable/icon_cancel"
+                    android:background="@android:color/transparent"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"/>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 
 

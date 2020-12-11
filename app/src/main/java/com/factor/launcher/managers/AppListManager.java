@@ -28,6 +28,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
@@ -42,6 +43,7 @@ public class AppListManager
     private final AppListDatabase appListDatabase;
 
     private final SharedPreferences factorSharedPreferences;
+
     private SharedPreferences.Editor editor;
 
     private final FactorManager factorManager;
@@ -52,6 +54,7 @@ public class AppListManager
     public AppListManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
+
         packageManager = activity.getPackageManager();
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
         this.factorManager = new FactorManager(activity, background, packageManager);
@@ -74,6 +77,12 @@ public class AppListManager
     public Activity getActivity()
     {
         return this.activity;
+    }
+
+    //return factor manager
+    public FactorManager getFactorManager()
+    {
+        return this.factorManager;
     }
 
     //load app drawer list
@@ -185,6 +194,7 @@ public class AppListManager
         return userApps.contains(userApp);
     }
 
+    //set app to hidden
     private boolean hideApp(UserApp userApp)
     {
         userApp.setHidden(true);
@@ -217,6 +227,18 @@ public class AppListManager
             }
         }
         return result;
+    }
+
+    private UserApp findAppByPackage(String packageName)
+    {
+        UserApp app = new UserApp();
+        for (UserApp a : userApps)
+        {
+            if (a.getPackageName().equals(packageName))
+                app = a;
+        }
+
+        return app;
     }
 
     //remove app from the list only if package no longer exists
@@ -265,8 +287,17 @@ public class AppListManager
         }
     }
 
-    //called when receiving PACKAGE_ADDED broadcast with EXTRA_REPLACING set to true
     public void updateApp(UserApp app)
+    {
+        UserApp appToUpdate = findAppByPackage(app.getPackageName());
+        if (!appToUpdate.getLabelNew().equals(app.getLabelNew()) && !appToUpdate.isCustomized())
+            updateAppReorder(app);
+        else
+            updateAppNoReorder(app);
+    }
+
+    //called when receiving PACKAGE_ADDED broadcast with EXTRA_REPLACING set to true
+    private void updateAppNoReorder(UserApp app)
     {
         UserApp appToUpdate;
         try {
@@ -280,10 +311,10 @@ public class AppListManager
                     {
                         try
                         {
-                            ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
-                            userApps.get(position).setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+                            ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
+                            userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
-                            appListDatabase.appListDao().updateAppInfo(userApps.get(position));
+                            appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
                             adapter.updateList();
@@ -320,6 +351,63 @@ public class AppListManager
         }
     }
 
+    //same as updateAppNoReorder, but notifyDatasetChanged because the app name has changed
+    //todo: better animation (remove at position, insert at new position)
+    private void updateAppReorder(UserApp app)
+    {
+        UserApp appToUpdate;
+        try {
+            if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+            {
+                if (userApps.contains(app))
+                {
+                    int position = userApps.indexOf(app);
+                    appToUpdate = userApps.get(position);
+                    new Thread(() ->
+                    {
+                        try
+                        {
+                            ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
+                            userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
+                            userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
+                            appListDatabase.appListDao().updateAppInfo(appToUpdate);
+                            userApps.sort(first_letter);
+
+                            adapter.updateList();
+                            activity.runOnUiThread(adapter::notifyDataSetChanged);
+                        }
+                        catch (PackageManager.NameNotFoundException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+                    if (appToUpdate.isPinned())
+                    {
+                        factorManager.updateFactor(appToUpdate);
+                    }
+
+                }
+                else
+                {
+                    addApp(app);
+                }
+            }
+            else
+            {
+                if (userApps.contains(app))
+                {
+                    removeApp(app);
+                }
+            }
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
+    //remove from home
     public void unPin(String packageName)
     {
         UserApp appToUnPin = new UserApp();
@@ -335,15 +423,29 @@ public class AppListManager
             changePin(appToUnPin);
     }
 
-
-    public FactorManager getFactorManager()
-    {
-        return this.factorManager;
-    }
-
+    //search bar filter app list
     public void filter(String newText)
     {
         adapter.getFilter().filter(newText);
+    }
+
+    //edit app dialog
+    public void renameApp(UserApp app, String newLabel)
+    {
+        if (!userApps.contains(app))
+            return;
+
+        app.setCustomized(true);
+        app.setLabelNew(newLabel);
+        updateAppReorder(app);
+    }
+
+    public void resetAppEdit(UserApp app)
+    {
+        if (!userApps.contains(app)) return;
+        app.setCustomized(false);
+        app.setLabelNew(app.getLabelOld());
+        updateAppReorder(app);
     }
 
 
@@ -473,7 +575,11 @@ public class AppListManager
                     //edit
                     SubMenu sub = menu.getItem(1).getSubMenu();
                     //todo: rename
-                    sub.getItem(0).setOnMenuItemClickListener(item -> false);
+                    sub.getItem(0).setOnMenuItemClickListener(item ->
+                    {
+                        enterEditMode(appBinding);
+                        return true;
+                    });
                     //hide
                     sub.getItem(1).setOnMenuItemClickListener(item -> hideApp(appBinding.getUserApp()));
                     //info
@@ -494,15 +600,51 @@ public class AppListManager
                     });
                 });
 
+                setOnClickListener(appBinding);
+            }
 
+
+            private void enterEditMode(AppListItemBinding binding)
+            {
+                itemView.setOnClickListener(v ->{});
+                binding.label.setVisibility(View.GONE);
+                binding.labelEdit.setVisibility(View.VISIBLE);
+                binding.labelEdit.setText(binding.getUserApp().getLabelNew());
+                binding.editButtonGroup.setVisibility(View.VISIBLE);
+
+                binding.cancelEditButton.setOnClickListener(view -> exitEditMode(binding));
+                binding.resetEditButton.setOnClickListener(view -> resetAppEdit(binding.getUserApp()));
+                binding.confirmEditButton.setOnClickListener(view ->
+                {
+                    String newName = Objects.requireNonNull(binding.labelEdit.getText()).toString();
+                    if (newName.isEmpty() || newName.equals(binding.getUserApp().getLabelOld()))
+                        exitEditMode(binding);
+                    else
+                        renameApp(binding.getUserApp(), newName);
+
+                });
+
+            }
+
+            private void exitEditMode(AppListItemBinding binding)
+            {
+                itemView.setOnClickListener(v ->{});
+                binding.label.setVisibility(View.VISIBLE);
+                binding.labelEdit.setVisibility(View.GONE);
+                binding.editButtonGroup.setVisibility(View.GONE);
+            }
+
+            private void setOnClickListener(AppListItemBinding binding)
+            {
                 itemView.setOnClickListener(v ->
                 {
-                    Intent intent = packageManager.getLaunchIntentForPackage(appBinding.getUserApp().getPackageName());
+                    Intent intent = packageManager.getLaunchIntentForPackage(binding.getUserApp().getPackageName());
                     if (intent != null)
                         activity.startActivity(intent,
                                 ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                 });
             }
+
         }
     }
 }

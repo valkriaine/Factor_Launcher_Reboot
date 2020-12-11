@@ -38,7 +38,9 @@ public class PackageActionsReceiver extends BroadcastReceiver
                 if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false))
                     appListManager.addApp(app);
                 else
+                {
                     appListManager.updateApp(app);
+                }
 
 
                 break;

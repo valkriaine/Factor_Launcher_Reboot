@@ -139,10 +139,12 @@ public class FactorManager
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
+        Log.d("updateFactor", "size: " + factorsToUpdate.size());
         for (Factor f : factorsToUpdate)
         {
             loadIcon(f);
             f.setLabelOld(app.getLabelOld());
+            f.setLabelNew(app.getLabelNew());
             new Thread(()->
             {
                 factorsDatabase.factorsDao().updateFactorInfo(f);

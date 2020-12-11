@@ -42,7 +42,7 @@
                     <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/menu_button"
                             android:layout_width="50dp"
-                            android:src="@drawable/menu_icon"
+                            android:src="@drawable/icon_menu"
                             android:background="@android:color/transparent"
                             android:layout_height="match_parent"
                             app:layout_constraintEnd_toEndOf="parent"/>

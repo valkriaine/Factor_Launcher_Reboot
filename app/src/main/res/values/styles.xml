@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/TransparentDialogTheme</item>
 
 
         <!--show system wallpaper and hide navigation bar-->
@@ -19,5 +20,11 @@
 
 
         <item name="android:windowActivityTransitions">true</item>
+    </style>
+
+
+    <style name="TransparentDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="background">@android:color/transparent</item>
     </style>
 </resources>
