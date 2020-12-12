@@ -21,7 +21,9 @@ import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
 import com.factor.launcher.receivers.AppActionReceiver;
+import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
+import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -57,6 +59,37 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         return binding.getRoot();
     }
 
+    @Override
+    public boolean onBackPressed()
+    {
+        if (binding.homePager.getCurrentItem() == 1)
+        {
+            if (appListManager.isDisplayingHidden())
+            {
+                binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
+                return true;
+            }
+            binding.homePager.setCurrentItem(0, true);
+            return true;
+        }
+        else if (binding.homePager.getCurrentItem() == 0)
+        {
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
+            {
+                @Override protected int getVerticalSnapPreference()
+                {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(0);
+            Objects.requireNonNull((ChipsLayoutManager)binding.tilesList.getLayoutManager())
+                    .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+            return true;
+        }
+        else
+            return true;
+    }
+
 
     //initialize views and listeners
     private void initializeComponents()
@@ -83,6 +116,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         filter.addDataScheme("package");
         requireActivity().registerReceiver(packageActionsReceiver, filter);
+
+        IntentFilter notificationFilter = new IntentFilter();
+        notificationFilter.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
+        notificationFilter.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
+        requireActivity().registerReceiver(new NotificationBroadcastReceiver(appListManager), notificationFilter);
 
         //home pager
         binding.homePager.addView(binding.tilesPage, 0);
@@ -134,7 +172,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setHasFixedTransformationMatrix(true);
 
         //search bar
-        //todo: better implement search
         binding.searchBlur.setupWith(binding.rootContent)
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                 .setBlurRadius(20f)
@@ -190,37 +227,5 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             });
             popup.show();
         });
-    }
-
-
-    @Override
-    public boolean onBackPressed()
-    {
-        if (binding.homePager.getCurrentItem() == 1)
-        {
-            if (appListManager.isDisplayingHidden())
-            {
-                binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
-                return true;
-            }
-            binding.homePager.setCurrentItem(0, true);
-            return true;
-        }
-        else if (binding.homePager.getCurrentItem() == 0)
-        {
-            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
-            {
-                @Override protected int getVerticalSnapPreference()
-                {
-                    return LinearSmoothScroller.SNAP_TO_START;
-                }
-            };
-            smoothScroller.setTargetPosition(0);
-            Objects.requireNonNull((ChipsLayoutManager)binding.tilesList.getLayoutManager())
-                    .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
-            return true;
-        }
-        else
-            return true;
     }
 }

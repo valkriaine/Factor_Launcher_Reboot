@@ -26,6 +26,13 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
-    </application>
 
+        <service android:name=".NotificationListener"
+                 android:label="notification_service"
+                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+    </application>
 </manifest>

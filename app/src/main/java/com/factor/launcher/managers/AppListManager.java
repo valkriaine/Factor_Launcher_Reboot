@@ -14,6 +14,7 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -456,12 +457,12 @@ public class AppListManager
             if (a.getSearchReference().contains(newText.toLowerCase()))
             {
                 smoothScroller.setTargetPosition(userApps.indexOf(a));
-                Objects.requireNonNull(rc.getLayoutManager()).startSmoothScroll(smoothScroller);
+                Objects.requireNonNull((LinearLayoutManager)rc.getLayoutManager()).startSmoothScroll(smoothScroller);
                 return;
             }
         }
         smoothScroller.setTargetPosition(0);
-        Objects.requireNonNull(rc.getLayoutManager()).startSmoothScroll(smoothScroller);
+        Objects.requireNonNull((LinearLayoutManager)rc.getLayoutManager()).startSmoothScroll(smoothScroller);
     }
 
     //edit app dialog
@@ -496,6 +497,19 @@ public class AppListManager
     {
         return this.displayHidden;
     }
+
+    //received notifications
+    public void onReceiveNotification(Intent intent)
+    {
+        //todo: update notification counts/messages here
+    }
+
+    //cleared notification
+    public void onClearNotification(Intent intent)
+    {
+        //todo: update notification counts/messages here
+    }
+
 
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
