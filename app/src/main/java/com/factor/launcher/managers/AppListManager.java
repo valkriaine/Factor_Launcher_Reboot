@@ -14,6 +14,7 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 import com.factor.launcher.R;
@@ -446,17 +447,26 @@ public class AppListManager
     }
 
     //search bar filter app list
-    public int findPosition(String newText)
+    public void findPosition(RecyclerView rc, String newText)
     {
-        for (UserApp app : userApps)
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(activity)
         {
-            if (!app.isHidden() && app.getSearchReference().contains(newText.toLowerCase()))
+            @Override protected int getVerticalSnapPreference()
             {
-                Log.d("target", "found: " + newText + " matching " + app.getSearchReference());
-                return userApps.indexOf(app);
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        for (UserApp a : userApps)
+        {
+            if (a.getSearchReference().contains(newText.toLowerCase()))
+            {
+                smoothScroller.setTargetPosition(userApps.indexOf(a));
+                Objects.requireNonNull(rc.getLayoutManager()).startSmoothScroll(smoothScroller);
+                return;
             }
         }
-        return 0;
+        smoothScroller.setTargetPosition(0);
+        Objects.requireNonNull(rc.getLayoutManager()).startSmoothScroll(smoothScroller);
     }
 
     //edit app dialog

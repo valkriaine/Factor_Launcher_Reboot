@@ -58,7 +58,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
-    private void initializeComponents() {
+    //initialize views and listeners
+    private void initializeComponents()
+    {
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
         int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
         int paddingBottom200 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
@@ -131,7 +133,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setBlurAutoUpdate(false)
                 .setHasFixedTransformationMatrix(true);
 
-
         //search bar
         //todo: better implement search
         binding.searchBlur.setupWith(binding.rootContent)
@@ -148,22 +149,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext()) {
-                    @Override
-                    protected int getVerticalSnapPreference() {
-                        return LinearSmoothScroller.SNAP_TO_START;
-                    }
-                };
                 binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
                 String queryText = newText.toLowerCase().trim();
-                int position = appListManager.findPosition(queryText);
-                smoothScroller.setTargetPosition(position);
-                binding.appsList.smoothScrollToPosition(position);
-
+                appListManager.findPosition(binding.appsList, queryText);
                 return true;
             }
         });
-
         binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) ->
         {
             if (hasFocus) {
@@ -172,6 +163,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
         });
 
+
+        //menu button
         binding.menuButton.setOnClickListener(view ->
         {
             boolean isDisplayingHidden = appListManager.isDisplayingHidden();
@@ -183,7 +176,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             MenuItem options = popup.getMenu().getItem(1);
 
             displayMode.setTitle(isDisplayingHidden ? "My apps" : "Hidden apps");
-
             displayMode.setOnMenuItemClickListener(item ->
             {
                 binding.appsList.setAdapter(isDisplayingHidden?
@@ -191,7 +183,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             });
 
-
+            options.setOnMenuItemClickListener(item ->
+            {
+                //todo: launch settings fragment
+                return true;
+            });
             popup.show();
         });
     }
