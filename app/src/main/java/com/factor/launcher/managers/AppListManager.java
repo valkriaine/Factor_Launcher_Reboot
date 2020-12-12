@@ -613,7 +613,7 @@ public class AppListManager
                 binding.editButtonGroup.setVisibility(View.VISIBLE);
 
                 binding.cancelEditButton.setOnClickListener(view -> exitEditMode(binding));
-                binding.resetEditButton.setOnClickListener(view -> resetAppEdit(binding.getUserApp()));
+                binding.resetEditButton.setOnClickListener(view -> resetEditMode(binding));
                 binding.confirmEditButton.setOnClickListener(view ->
                 {
                     String newName = Objects.requireNonNull(binding.labelEdit.getText()).toString();
@@ -628,10 +628,18 @@ public class AppListManager
 
             private void exitEditMode(AppListItemBinding binding)
             {
-                itemView.setOnClickListener(v ->{});
+                setOnClickListener(binding);
                 binding.label.setVisibility(View.VISIBLE);
                 binding.labelEdit.setVisibility(View.GONE);
                 binding.editButtonGroup.setVisibility(View.GONE);
+            }
+
+            private void resetEditMode(AppListItemBinding binding)
+            {
+                if (!binding.getUserApp().isCustomized())
+                    exitEditMode(binding);
+                else
+                    resetAppEdit(binding.getUserApp());
             }
 
             private void setOnClickListener(AppListItemBinding binding)
