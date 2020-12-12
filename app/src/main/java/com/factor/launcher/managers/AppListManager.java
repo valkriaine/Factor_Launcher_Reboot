@@ -67,7 +67,7 @@ public class AppListManager
     //initialize adapter and background view for blur
     public void initialize(ViewGroup background)
     {
-        this.adapter = new AppListAdapter(userApps);
+        this.adapter = new AppListAdapter();
         this.factorManager = new FactorManager(activity, background, packageManager);
     }
 
@@ -138,7 +138,6 @@ public class AppListManager
                             }
                         }
                     }
-                    adapter.updateList();
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
                 catch (Exception ex)
@@ -172,7 +171,6 @@ public class AppListManager
                     userApps.sort(first_letter);
                     appListDatabase.appListDao().insertAll(userApps);
 
-                    adapter.updateList();
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                     editor.putBoolean("saved", true);
                     editor.apply();
@@ -196,7 +194,6 @@ public class AppListManager
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
-            adapter.updateList();
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
@@ -210,7 +207,6 @@ public class AppListManager
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
-            adapter.updateList();
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
@@ -224,7 +220,6 @@ public class AppListManager
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
-            adapter.updateList();
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
@@ -275,7 +270,6 @@ public class AppListManager
             {
 
                 appListDatabase.appListDao().delete(app);
-                adapter.updateList();
                 activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
             }).start();
             factorManager.remove(app);
@@ -299,7 +293,6 @@ public class AppListManager
                     userApps.add(app);
                     userApps.sort(first_letter);
 
-                    adapter.updateList();
                     activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
                 }
                 catch (PackageManager.NameNotFoundException e)
@@ -340,7 +333,6 @@ public class AppListManager
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
-                            adapter.updateList();
                             activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
                         }
                         catch (PackageManager.NameNotFoundException e)
@@ -375,7 +367,6 @@ public class AppListManager
     }
 
     //same as updateAppNoReorder, but notifyDatasetChanged because the app name has changed
-    //todo: better animation (remove at position, insert at new position)
     private void updateAppReorder(UserApp app)
     {
         UserApp appToUpdate;
@@ -396,8 +387,12 @@ public class AppListManager
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
-                            adapter.updateList();
-                            activity.runOnUiThread(adapter::notifyDataSetChanged);
+                            int newPosition = userApps.indexOf(app);
+                            activity.runOnUiThread(() ->
+                            {
+                                adapter.notifyItemRemoved(position);
+                                adapter.notifyItemInserted(newPosition);
+                            });
                         }
                         catch (PackageManager.NameNotFoundException e)
                         {
@@ -492,7 +487,7 @@ public class AppListManager
     public AppListAdapter setDisplayHidden(boolean displayHidden)
     {
         this.displayHidden = displayHidden;
-        this.adapter = new AppListAdapter(userApps);
+        this.adapter = new AppListAdapter();
         return adapter;
     }
 
@@ -505,19 +500,6 @@ public class AppListManager
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
-        private final ArrayList<UserApp> appsShown;
-
-        public AppListAdapter(ArrayList<UserApp> apps)
-        {
-            this.appsShown = new ArrayList<>(apps);
-        }
-
-        public void updateList()
-        {
-            this.appsShown.clear();
-            this.appsShown.addAll(userApps);
-        }
-
         @NonNull
         @Override
         public AppListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -538,13 +520,13 @@ public class AppListManager
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
-            holder.bindApp(appsShown.get(position));
+            holder.bindApp(userApps.get(position));
         }
 
         @Override
         public int getItemCount()
         {
-            return appsShown.size();
+            return userApps.size();
         }
 
         @Override
@@ -573,6 +555,7 @@ public class AppListManager
                 {
                     AppListItemBinding appBinding = (AppListItemBinding)binding;
                     appBinding.setUserApp(app);
+                    exitEditMode(appBinding);
                     activity.registerForContextMenu(itemView);
                     itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                     {
@@ -586,7 +569,8 @@ public class AppListManager
 
                         //edit
                         SubMenu sub = menu.getItem(1).getSubMenu();
-                        //todo: rename
+
+                        //rename
                         sub.getItem(0).setOnMenuItemClickListener(item ->
                         {
                             enterEditMode(appBinding);
@@ -615,8 +599,6 @@ public class AppListManager
                             return true;
                         });
                     });
-
-                    setOnClickListener(appBinding);
                 }
             }
 
@@ -637,8 +619,10 @@ public class AppListManager
                     if (newName.isEmpty() || newName.equals(binding.getUserApp().getLabelOld()))
                         exitEditMode(binding);
                     else
+                    {
+                        exitEditMode(binding);
                         renameApp(binding.getUserApp(), newName);
-
+                    }
                 });
 
             }
