@@ -34,6 +34,8 @@ public class AppListManager
 {
     private final String TAG = "AppListManager";
 
+    private boolean displayHidden = false;
+
     private final ArrayList<UserApp> userApps = new ArrayList<>();
 
     private final Activity activity;
@@ -211,7 +213,21 @@ public class AppListManager
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
-        return userApp.isHidden();
+        return userApps.contains(userApp);
+    }
+
+    //set app to not hidden
+    private boolean showApp(UserApp userApp)
+    {
+        userApp.setHidden(false);
+        new Thread(() ->
+        {
+            appListDatabase.appListDao().updateAppInfo(userApp);
+            adapter.updateList();
+            activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
+        }).start();
+
+        return userApps.contains(userApp);
     }
 
     //check if package exists
@@ -462,6 +478,20 @@ public class AppListManager
         updateAppReorder(app);
     }
 
+    //change display mode, return a new adapter
+    public AppListAdapter setDisplayHidden(boolean displayHidden)
+    {
+        this.displayHidden = displayHidden;
+        this.adapter = new AppListAdapter(userApps);
+        return adapter;
+    }
+
+    //get display mode
+    public boolean isDisplayingHidden()
+    {
+        return this.displayHidden;
+    }
+
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
@@ -483,10 +513,12 @@ public class AppListManager
         public AppListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             int id;
-            if (viewType == 1)
-                id = R.layout.app_list_item;
+            if (displayHidden)
+                id = viewType == 1 ? R.layout.hidden_app : R.layout.app_list_item;
             else
-                id = R.layout.hidden_app;
+                id = viewType == 1 ? R.layout.app_list_item : R.layout.hidden_app;
+
+
 
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
             return new AppListViewHolder(view);
@@ -496,8 +528,7 @@ public class AppListManager
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
-            if (!userApps.get(position).isHidden())
-                holder.bindApp(appsShown.get(position));
+            holder.bindApp(appsShown.get(position));
         }
 
         @Override
@@ -528,49 +559,55 @@ public class AppListManager
 
             public void bindApp(UserApp app)
             {
-                AppListItemBinding appBinding = (AppListItemBinding)binding;
-                appBinding.setUserApp(app);
-                activity.registerForContextMenu(itemView);
-                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+                if (binding instanceof AppListItemBinding)
                 {
-                    UserApp a = appBinding.getUserApp();
-                    MenuInflater inflater = activity.getMenuInflater();
-                    inflater.inflate(R.menu.app_list_item_menu, menu);
-                    if (a.isPinned())
-                        menu.getItem(0).setEnabled(false);
-
-                    //add to home & remove from home
-                    menu.getItem(0).setOnMenuItemClickListener(item -> changePin(appBinding.getUserApp()));
-
-                    //edit
-                    SubMenu sub = menu.getItem(1).getSubMenu();
-                    //todo: rename
-                    sub.getItem(0).setOnMenuItemClickListener(item ->
+                    AppListItemBinding appBinding = (AppListItemBinding)binding;
+                    appBinding.setUserApp(app);
+                    activity.registerForContextMenu(itemView);
+                    itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                     {
-                        enterEditMode(appBinding);
-                        return true;
-                    });
-                    //hide
-                    sub.getItem(1).setOnMenuItemClickListener(item -> hideApp(appBinding.getUserApp()));
-                    //info
-                    menu.getItem(2).setOnMenuItemClickListener(item ->
-                    {
-                        activity.startActivity(
-                                new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.parse("package:"+appBinding.getUserApp().getPackageName())));
-                        return true;
+                        MenuInflater inflater = activity.getMenuInflater();
+                        inflater.inflate(R.menu.app_list_item_menu, menu);
+                        if (app.isPinned())
+                            menu.getItem(0).setEnabled(false);
+
+                        //add to home & remove from home
+                        menu.getItem(0).setOnMenuItemClickListener(item -> changePin(app));
+
+                        //edit
+                        SubMenu sub = menu.getItem(1).getSubMenu();
+                        //todo: rename
+                        sub.getItem(0).setOnMenuItemClickListener(item ->
+                        {
+                            enterEditMode(appBinding);
+                            return true;
+                        });
+                        //hide
+                        MenuItem hide = sub.getItem(1);
+                        if (app.isHidden())
+                        hide.setTitle("Show");
+                        else hide.setTitle("Hide");
+                        hide.setOnMenuItemClickListener(item -> !app.isHidden() ? hideApp(app) : showApp(app));
+                        //info
+                        menu.getItem(2).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(
+                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.parse("package:"+app.getPackageName())));
+                            return true;
+                        });
+
+                        //uninstall
+                        menu.getItem(3).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+app.getPackageName()))
+                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                            return true;
+                        });
                     });
 
-                    //uninstall
-                    menu.getItem(3).setOnMenuItemClickListener(item ->
-                    {
-                        activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+appBinding.getUserApp().getPackageName()))
-                                .putExtra(Intent.EXTRA_RETURN_RESULT, true));
-                        return true;
-                    });
-                });
-
-                setOnClickListener(appBinding);
+                    setOnClickListener(appBinding);
+                }
             }
 
 

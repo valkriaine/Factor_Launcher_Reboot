@@ -13,4 +13,6 @@
     <string name="_2_x_2">2 x 2</string>
     <string name="rename">Rename</string>
     <string name="hide">Hide</string>
+    <string name="hidden_apps">Hidden apps</string>
+    <string name="options">Options</string>
 </resources>

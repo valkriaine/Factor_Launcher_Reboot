@@ -7,8 +7,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.*;
-import android.view.inputmethod.EditorInfo;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -34,6 +34,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private WallpaperManager wm;
 
+    private AppListManager appListManager;
 
     public HomeScreenFragment()
     {
@@ -57,20 +58,28 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
-    private void initializeComponents()
-    {
+    private void initializeComponents() {
+        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
+        int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        int paddingBottom200 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+        int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
+        int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
+        int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+
+        //get system wallpaper
+        //todo: request permission, handle live wallpaper
         binding.image.setImageDrawable(wm.getDrawable());
-        AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
-        appListManager.initialize(binding.backgroundHost);
-        PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
 
+        //initialize data manager
+        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+
+        //register broadcast receivers
         new AppActionReceiver(appListManager);
-
+        PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         filter.addDataScheme("package");
-
         requireActivity().registerReceiver(packageActionsReceiver, filter);
 
         //home pager
@@ -80,6 +89,28 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //app drawer
         binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.appsList.setAdapter(appListManager.adapter);
+        binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                float xOffset = position + positionOffset;
+                binding.dim.setAlpha(xOffset);
+                binding.arrowButton.setRotation(+180 * xOffset - 180);
+                binding.blur.setAlpha(xOffset / 0.5f);
+                binding.searchBase.setTranslationY(-500f + 500 * xOffset);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    binding.arrowButton.setRotation(180);
+                    binding.blur.setAlpha(0f);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         //tile list
         ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())
@@ -89,25 +120,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setMaxViewsInRow(2)
                 .setScrollingEnabled(true)
                 .build();
-
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
-
-
-
-
-        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
-        int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int paddingBottom200 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-        int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
-        int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
-        int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
-
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom200);
-
-
-
+        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom200);
         binding.blur.setupWith(binding.backgroundHost)
                 .setFrameClearDrawable(wm.getDrawable())
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
@@ -116,67 +132,25 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setHasFixedTransformationMatrix(true);
 
 
-
-
-
-
-        binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-        {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
-            {
-                float xOffset = position + positionOffset;
-                binding.dim.setAlpha(xOffset);
-                binding.arrowButton.setRotation(+180 * xOffset - 180);
-                binding.blur.setAlpha(xOffset / 0.5f);
-
-                binding.searchBase.setTranslationY(-500f + 500*xOffset);
-            }
-
-            @Override
-            public void onPageSelected(int position)
-            {
-                if (position == 0)
-                {
-                    binding.arrowButton.setRotation(180);
-                    binding.blur.setAlpha(0f);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state)
-            {
-            }
-        });
-
-
+        //search bar
+        //todo: better implement search
         binding.searchBlur.setupWith(binding.rootContent)
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                 .setBlurRadius(20f)
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(false);
-
         binding.searchBase.setTranslationY(-500f);
-
-
-        binding.searchView.setIconifiedByDefault(false);
-
-        binding.searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-        {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query)
-            {
+            public boolean onQueryTextSubmit(String query) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText)
-            {
-                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
-                {
-                    @Override protected int getVerticalSnapPreference()
-                    {
+            public boolean onQueryTextChange(String newText) {
+                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext()) {
+                    @Override
+                    protected int getVerticalSnapPreference() {
                         return LinearSmoothScroller.SNAP_TO_START;
                     }
                 };
@@ -190,23 +164,49 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             }
         });
 
-
         binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) ->
         {
-            if (hasFocus)
-            {
+            if (hasFocus) {
                 binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
-            }
-            else
+            } else
                 binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
         });
+
+        binding.menuButton.setOnClickListener(view ->
+        {
+            boolean isDisplayingHidden = appListManager.isDisplayingHidden();
+
+            PopupMenu popup = new PopupMenu(requireContext(), binding.menuButton);
+            popup.getMenuInflater().inflate(R.menu.app_menu, popup.getMenu());
+
+            MenuItem displayMode = popup.getMenu().getItem(0);
+            MenuItem options = popup.getMenu().getItem(1);
+
+            displayMode.setTitle(isDisplayingHidden ? "My apps" : "Hidden apps");
+
+            displayMode.setOnMenuItemClickListener(item ->
+            {
+                binding.appsList.setAdapter(isDisplayingHidden?
+                        appListManager.setDisplayHidden(false) : appListManager.setDisplayHidden(true));
+                return true;
+            });
+
+
+            popup.show();
+        });
     }
+
 
     @Override
     public boolean onBackPressed()
     {
         if (binding.homePager.getCurrentItem() == 1)
         {
+            if (appListManager.isDisplayingHidden())
+            {
+                binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
+                return true;
+            }
             binding.homePager.setCurrentItem(0, true);
             return true;
         }
