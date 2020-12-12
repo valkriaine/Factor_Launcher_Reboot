@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity
 class UserApp
@@ -49,6 +50,12 @@ class UserApp
 
         return factor
     }
+
+    fun getSearchReference() : String
+    {
+        return (packageName + labelNew + labelOld).trim('.', '_', ' ','-').toLowerCase(Locale.ROOT)
+    }
+
 
     override fun equals(other: Any?): Boolean
     {

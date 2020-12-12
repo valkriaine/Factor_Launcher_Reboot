@@ -13,6 +13,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
@@ -22,6 +24,8 @@ import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import eightbitlab.com.blurview.RenderScriptBlur;
+
+import java.util.Objects;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
@@ -57,6 +61,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         binding.image.setImageDrawable(wm.getDrawable());
         AppListManager appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+        appListManager.initialize(binding.backgroundHost);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
 
         new AppActionReceiver(appListManager);
@@ -73,7 +78,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.homePager.addView(binding.drawerPage, 1);
 
         //app drawer
-        binding.appsList.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.appsList.setAdapter(appListManager.adapter);
 
         //tile list
@@ -92,12 +97,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
-        int paddingLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int paddingBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-
+        int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        int paddingBottom200 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+        int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
+        int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
+        int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        binding.tilesList.setPadding(paddingLeft, paddingTop, width/5, paddingBottom);
+        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom200);
+
 
 
         binding.blur.setupWith(binding.backgroundHost)
@@ -165,9 +173,32 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             @Override
             public boolean onQueryTextChange(String newText)
             {
-                appListManager.filter(newText);
-                return false;
+                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
+                {
+                    @Override protected int getVerticalSnapPreference()
+                    {
+                        return LinearSmoothScroller.SNAP_TO_START;
+                    }
+                };
+                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
+                String queryText = newText.toLowerCase().trim();
+                int position = appListManager.findPosition(queryText);
+                smoothScroller.setTargetPosition(position);
+                binding.appsList.smoothScrollToPosition(position);
+
+                return true;
             }
+        });
+
+
+        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) ->
+        {
+            if (hasFocus)
+            {
+                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
+            }
+            else
+                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
         });
     }
 
@@ -179,7 +210,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.homePager.setCurrentItem(0, true);
             return true;
         }
+        else if (binding.homePager.getCurrentItem() == 0)
+        {
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
+            {
+                @Override protected int getVerticalSnapPreference()
+                {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(0);
+            Objects.requireNonNull((ChipsLayoutManager)binding.tilesList.getLayoutManager())
+                    .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+            return true;
+        }
         else
-            return false;
+            return true;
     }
 }

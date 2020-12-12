@@ -10,7 +10,6 @@ import com.factor.launcher.util.OnBackPressedCallBack;
 
 public class HomeActivity extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -19,9 +18,6 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
-
-
-
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
@@ -34,9 +30,6 @@ public class HomeActivity extends AppCompatActivity
     public void onBackPressed()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed())
-        {
-            super.onBackPressed();
-        }
+        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) super.onBackPressed();
     }
 }

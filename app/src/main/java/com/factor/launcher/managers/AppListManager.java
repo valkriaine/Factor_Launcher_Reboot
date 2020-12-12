@@ -11,8 +11,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 import android.view.*;
-import android.widget.Filter;
-import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -34,32 +32,40 @@ import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 public class AppListManager
 {
-    private static final String TAG = "AppListManager";
+    private final String TAG = "AppListManager";
 
     private final ArrayList<UserApp> userApps = new ArrayList<>();
-    public final AppListAdapter adapter = new AppListAdapter(userApps);
+
     private final Activity activity;
 
     private final AppListDatabase appListDatabase;
 
     private final SharedPreferences factorSharedPreferences;
 
+    private final PackageManager packageManager;
+
     private SharedPreferences.Editor editor;
 
-    private final FactorManager factorManager;
+    private FactorManager factorManager;
 
-    private final PackageManager packageManager;
+    public AppListAdapter adapter;
 
     //constructor
     public AppListManager(Activity activity, ViewGroup background)
     {
         this.activity = activity;
-
         packageManager = activity.getPackageManager();
+        initialize(background);
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
-        this.factorManager = new FactorManager(activity, background, packageManager);
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
         loadApps(factorSharedPreferences.getBoolean("saved", false));
+    }
+
+    //initialize adapter and background view for blur
+    public void initialize(ViewGroup background)
+    {
+        this.adapter = new AppListAdapter(userApps);
+        this.factorManager = new FactorManager(activity, background, packageManager);
     }
 
     //compare app label (new)
@@ -424,9 +430,17 @@ public class AppListManager
     }
 
     //search bar filter app list
-    public void filter(String newText)
+    public int findPosition(String newText)
     {
-        adapter.getFilter().filter(newText);
+        for (UserApp app : userApps)
+        {
+            if (!app.isHidden() && app.getSearchReference().contains(newText.toLowerCase()))
+            {
+                Log.d("target", "found: " + newText + " matching " + app.getSearchReference());
+                return userApps.indexOf(app);
+            }
+        }
+        return 0;
     }
 
     //edit app dialog
@@ -448,8 +462,8 @@ public class AppListManager
         updateAppReorder(app);
     }
 
-
-    public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder> implements Filterable
+    //adapter for app drawer
+    public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
         private final ArrayList<UserApp> appsShown;
 
@@ -500,50 +514,6 @@ public class AppListManager
             else
                 return 1; //show
         }
-
-        @Override
-        public Filter getFilter()
-        {
-            return appsFilter;
-        }
-
-        private final Filter appsFilter = new Filter()
-        {
-
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint)
-            {
-                List<UserApp> filteredList = new ArrayList<>();
-                if (constraint == null || constraint.length() == 0)
-                {
-                    filteredList.addAll(userApps);
-                }
-                else {
-                    String filterPattern = constraint.toString().toLowerCase().trim();
-                    for (UserApp app : userApps)
-                    {
-                        if (app.getLabelNew().toLowerCase().contains(filterPattern.toLowerCase())
-                                || app.getLabelOld().toLowerCase().contains(filterPattern.toLowerCase()))
-                        {
-                            filteredList.add(app);
-                        }
-                    }
-                }
-                FilterResults results = new FilterResults();
-                results.values = filteredList;
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results)
-            {
-                appsShown.clear();
-                //noinspection unchecked
-                appsShown.addAll((ArrayList<UserApp>)results.values);
-                notifyDataSetChanged();
-            }
-        };
-
 
 
 
