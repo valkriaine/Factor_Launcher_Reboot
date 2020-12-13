@@ -23,7 +23,7 @@ import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.Payloads;
+import com.factor.launcher.util.Payload;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -502,13 +502,13 @@ public class AppListManager
     //received notifications
     public void onReceiveNotification(Intent intent)
     {
-
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        int notificationId = intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
-            app.incrementNotificationCount();
-            adapter.notifyItemChanged(userApps.indexOf(app), Payloads.NOTIFICATION_RECEIVED);
+            app.incrementNotificationCount(notificationId);
+            adapter.notifyItemChanged(userApps.indexOf(app), new Payload(notificationId, Payload.NOTIFICATION_RECEIVED));
         }
 
         //todo: update tiles notification count
@@ -519,11 +519,12 @@ public class AppListManager
     public void onClearNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        int notificationId = intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
-            app.decreaseNotificationCount();
-            adapter.notifyItemChanged(userApps.indexOf(app), Payloads.NOTIFICATION_CLEARED);
+            app.decreaseNotificationCount(notificationId);
+            adapter.notifyItemChanged(userApps.indexOf(app), new Payload(notificationId, Payload.NOTIFICATION_CLEARED));
         }
 
         //todo: update tiles notification count
@@ -563,30 +564,32 @@ public class AppListManager
                 Log.d("payload", "received");
                 AppListItemBinding binding = (AppListItemBinding)holder.binding;
 
+                if (!(payloads.get(0) instanceof Payload))
+                    onBindViewHolder(holder, position);
+                else {
+                    Payload receivedPayload = (Payload) payloads.get(0);
 
-                //after receiving notification, change the notification counter
-                if (Payloads.NOTIFICATION_RECEIVED.equals(payloads.get(0)) || Payloads.NOTIFICATION_CLEARED.equals(payloads.get(0)))
-                {
-                    assert binding != null;
-                    UserApp appToChange = binding.getUserApp();
-                    if (appToChange.getNotificationCount() < 1 || appToChange.isBeingEdited())
+                    //after receiving notification, change the notification counter
+                    switch (receivedPayload.getNotificationCode())
                     {
-                        binding.notificationCount.setVisibility(View.GONE);
-                    }
-                    else if (appToChange.getNotificationCount() > 0 || !appToChange.isBeingEdited())
-                    {
-                        binding.notificationCount.setVisibility(View.VISIBLE);
-                        binding.notificationCount.setText(appToChange.retrieveNotificationCount());
+                        case Payload.NOTIFICATION_RECEIVED:
+                        case Payload.NOTIFICATION_CLEARED:
+                            assert binding != null;
+                            UserApp appToChange = binding.getUserApp();
+                            if (appToChange.getCurrentNotifications().size() < 1 || appToChange.isBeingEdited())
+                                binding.notificationCount.setVisibility(View.GONE);
+                            else if (appToChange.getCurrentNotifications().size() > 0 || !appToChange.isBeingEdited())
+                            {
+                                binding.notificationCount.setVisibility(View.VISIBLE);
+                                binding.notificationCount.setText(appToChange.retrieveNotificationCount());
+                            }
+                            break;
                     }
                 }
-                else
-                    onBindViewHolder(holder, position);
             }
             else
-            {
-                Log.d("payload", "empty or not received");
                 onBindViewHolder(holder, position);
-            }
+
 
         }
 

@@ -28,7 +28,7 @@ class Factor
     lateinit var icon: Drawable
 
     @Ignore
-    var notificationCount : Int = 0
+    var currentNotifications : ArrayList<Int> = ArrayList()
 
     object Size
     {

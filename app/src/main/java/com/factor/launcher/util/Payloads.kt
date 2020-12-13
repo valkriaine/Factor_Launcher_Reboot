@@ -1,7 +1,15 @@
 package com.factor.launcher.util
 
-object Payloads
+class Payload (id : Int, code : String)
 {
-    const val NOTIFICATION_RECEIVED = "NOTIFICATION_RECEIVED"
-    const val NOTIFICATION_CLEARED = "NOTIFICATION_CLEARED"
+    companion object
+    {
+        const val NOTIFICATION_RECEIVED = "NOTIFICATION_RECEIVED"
+        const val NOTIFICATION_CLEARED = "NOTIFICATION_CLEARED"
+    }
+
+    val notificationId = id
+
+    val notificationCode = code
 }
+

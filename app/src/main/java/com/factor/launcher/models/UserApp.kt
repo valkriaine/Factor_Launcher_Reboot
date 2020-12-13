@@ -8,6 +8,7 @@ import androidx.room.Ignore
 
 import androidx.room.PrimaryKey
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Entity
 class UserApp
@@ -31,11 +32,10 @@ class UserApp
     var isHidden: Boolean = false
 
     @Ignore
-    var notificationCount : Int = 0
-
-    @Ignore
     var isBeingEdited : Boolean = false
 
+    @Ignore
+    val currentNotifications : ArrayList<Int> = ArrayList()
 
     @Ignore
     lateinit var icon: Drawable
@@ -54,21 +54,24 @@ class UserApp
         factor.packageName = this.packageName
         factor.labelNew = this.labelNew
         factor.labelOld = this.labelOld
-        factor.notificationCount = this.notificationCount
+        factor.currentNotifications = this.currentNotifications
         return factor
     }
 
-    fun retrieveNotificationCount() : String = notificationCount.toString()
+    fun retrieveNotificationCount() : String = currentNotifications.size.toString()
 
-    fun incrementNotificationCount() = notificationCount++
 
-    fun decreaseNotificationCount()
+    fun incrementNotificationCount(id : Int)
     {
-        when (notificationCount)
-        {
-            0 -> return
-            else -> notificationCount --
-        }
+        if (!currentNotifications.contains(id))
+            currentNotifications.add(id)
+    }
+
+
+    fun decreaseNotificationCount(id : Int)
+    {
+        if (currentNotifications.contains(id))
+        currentNotifications.remove(id)
     }
 
     fun visibilityEditing() : Int
@@ -79,7 +82,7 @@ class UserApp
 
     fun visibilityNotificationCount() : Int
     {
-        return if (notificationCount > 0 && !isBeingEdited) View.VISIBLE
+        return if (currentNotifications.size > 0 && !isBeingEdited) View.VISIBLE
         else View.GONE
     }
 
