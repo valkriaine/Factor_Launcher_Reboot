@@ -20,11 +20,13 @@ import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.Payload;
 import com.valkriaine.factor.BouncyRecyclerView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FactorManager
 {
@@ -204,6 +206,17 @@ public class FactorManager
         return factorsToRemove;
     }
 
+    //search for factor given package name
+    private Factor getFactorByPackage(String packageName)
+    {
+        for (Factor f : userFactors)
+        {
+            if (f.getPackageName().equals(packageName))
+                return f;
+        }
+        return new Factor();
+    }
+
     //retrieve the icon for a given factor
     private void loadIcon(Factor factor)
     {
@@ -231,15 +244,27 @@ public class FactorManager
     }
 
     //received notification
-    public void onReceivedNotification(Intent intent)
+    public void onReceivedNotification(Intent intent, UserApp app)
     {
-
+        Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_RECEIVED);
+        if (userFactors.contains(factorToUpdate))
+        {
+            factorToUpdate.setUserApp(app);
+            adapter.notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+        }
     }
 
     //cleared notification
-    public void onClearedNotification(Intent intent)
+    public void onClearedNotification(Intent intent, UserApp app)
     {
-
+        Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_CLEARED);
+        if (userFactors.contains(factorToUpdate))
+        {
+            factorToUpdate.setUserApp(app);
+            adapter.notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+        }
     }
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
@@ -300,6 +325,73 @@ public class FactorManager
         }
 
         @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads)
+        {
+            if (!payloads.isEmpty())
+            {
+                Log.d("payload", "received");
+                ViewDataBinding binding = ((FactorsViewHolder)holder).binding;
+                if (!(payloads.get(0) instanceof Payload))
+                    onBindViewHolder(holder, position);
+                else {
+                    assert binding != null;
+                    if (userFactors.get(position).getSize() == Factor.Size.small)
+                    {
+                        FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
+                        Factor factorToChange = tileBinding.getFactor();
+
+                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
+                            tileBinding.notificationCount.setVisibility(View.GONE);
+                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
+                        {
+                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                            tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                        }
+
+                        //todo
+                    }
+                    else if (userFactors.get(position).getSize() == Factor.Size.medium)
+                    {
+                        FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
+                        Factor factorToChange = tileBinding.getFactor();
+
+                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
+                            tileBinding.notificationCount.setVisibility(View.GONE);
+                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
+                        {
+                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                            tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                        }
+
+
+                        //todo
+                    }
+                    else if (userFactors.get(position).getSize() == Factor.Size.large)
+                    {
+                        FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
+                        Factor factorToChange = tileBinding.getFactor();
+
+
+                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
+                            tileBinding.notificationCount.setVisibility(View.GONE);
+                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
+                        {
+                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                            tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                        }
+
+
+                        //todo
+                    }
+                }
+            }
+            else
+                onBindViewHolder(holder, position);
+
+
+        }
+
+        @Override
         public int getItemCount()
         {
             return userFactors.size();
@@ -355,7 +447,7 @@ public class FactorManager
 
         class FactorsViewHolder extends RecyclerView.ViewHolder
         {
-            private final ViewDataBinding binding;
+            public final ViewDataBinding binding;
             private int size = 0;
 
             public FactorsViewHolder(@NonNull View itemView)
@@ -381,6 +473,9 @@ public class FactorManager
                                 .setBlurRadius(25F)
                                 .setHasFixedTransformationMatrix(false);
 
+                        ((FactorSmallBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                        if (factor.retrieveNotificationCountInNumber() > 0)
+                            ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     }
                     else if (size == Factor.Size.medium)
                     {
@@ -392,6 +487,10 @@ public class FactorManager
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
+
+                        ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                        if (factor.retrieveNotificationCountInNumber() > 0)
+                            ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     }
                     else if (size == Factor.Size.large)
                     {
@@ -403,6 +502,10 @@ public class FactorManager
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
+
+                        ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                        if (factor.retrieveNotificationCountInNumber() > 0)
+                            ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     }
 
                     itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->

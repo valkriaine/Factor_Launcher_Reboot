@@ -55,7 +55,7 @@ class UserApp
         factor.packageName = this.packageName
         factor.labelNew = this.labelNew
         factor.labelOld = this.labelOld
-        factor.currentNotifications = this.currentNotifications
+        factor.userApp = this
         return factor
     }
 

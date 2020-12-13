@@ -514,7 +514,7 @@ public class AppListManager
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
 
             if (app.isPinned())
-                factorManager.onReceivedNotification(intent);
+                factorManager.onReceivedNotification(intent, app);
         }
     }
 
@@ -530,7 +530,7 @@ public class AppListManager
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
 
             if (app.isPinned())
-                factorManager.onClearedNotification(intent);
+                factorManager.onClearedNotification(intent, app);
         }
     }
 
@@ -593,8 +593,6 @@ public class AppListManager
             }
             else
                 onBindViewHolder(holder, position);
-
-
         }
 
         @Override

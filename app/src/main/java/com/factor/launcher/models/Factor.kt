@@ -1,6 +1,7 @@
 package com.factor.launcher.models
 
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.room.*
 
 @Entity
@@ -28,7 +29,20 @@ class Factor
     lateinit var icon: Drawable
 
     @Ignore
-    var currentNotifications : ArrayList<Int> = ArrayList()
+    var userApp : UserApp = UserApp()
+
+    //get notification count
+    fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
+
+    //get notification count
+    fun retrieveNotificationCountInNumber() : Int = userApp.currentNotifications.size
+
+    //for data binding, only return VISIBLE if notification count is greater than 0 and the app is not being edited
+    fun visibilityNotificationCount() : Int
+    {
+        return if (userApp.currentNotifications.size > 0) View.VISIBLE
+        else View.GONE
+    }
 
     object Size
     {
