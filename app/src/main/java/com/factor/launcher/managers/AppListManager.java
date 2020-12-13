@@ -564,6 +564,8 @@ public class AppListManager
                 Log.d("payload", "received");
                 AppListItemBinding binding = (AppListItemBinding)holder.binding;
 
+
+                //after receiving notification, change the notification counter
                 if (Payloads.NOTIFICATION_RECEIVED.equals(payloads.get(0)) || Payloads.NOTIFICATION_CLEARED.equals(payloads.get(0)))
                 {
                     assert binding != null;
