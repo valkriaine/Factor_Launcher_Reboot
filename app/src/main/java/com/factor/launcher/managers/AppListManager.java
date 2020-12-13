@@ -249,6 +249,7 @@ public class AppListManager
         return result;
     }
 
+    //find app object given package name
     private UserApp findAppByPackage(String packageName)
     {
         UserApp app = new UserApp();
@@ -305,6 +306,7 @@ public class AppListManager
         }
     }
 
+    //update app info in database
     public void updateApp(UserApp app)
     {
         UserApp appToUpdate = findAppByPackage(app.getPackageName());
@@ -477,6 +479,7 @@ public class AppListManager
         updateAppReorder(app);
     }
 
+    //reset app's name back to original label
     public void resetAppEdit(UserApp app)
     {
         if (!userApps.contains(app)) return;
@@ -500,7 +503,7 @@ public class AppListManager
     }
 
     //received notifications
-    public void onReceiveNotification(Intent intent)
+    public void onReceivedNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
         Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_RECEIVED);
@@ -509,14 +512,14 @@ public class AppListManager
             Log.d("payload", app.getPackageName() + " created payload");
             if (app.incrementNotificationCount(payload.getNotificationId()))
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
+
+            if (app.isPinned())
+                factorManager.onReceivedNotification(intent);
         }
-
-        //todo: update tiles notification count
-
     }
 
     //cleared notification
-    public void onClearNotification(Intent intent)
+    public void onClearedNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
         Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_CLEARED);
@@ -525,9 +528,10 @@ public class AppListManager
             Log.d("payload", app.getPackageName() + " created payload");
             if (app.decreaseNotificationCount(payload.getNotificationId()))
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
-        }
 
-        //todo: update tiles notification count
+            if (app.isPinned())
+                factorManager.onClearedNotification(intent);
+        }
     }
 
     //adapter for app drawer

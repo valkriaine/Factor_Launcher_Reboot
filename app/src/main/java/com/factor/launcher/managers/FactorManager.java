@@ -40,6 +40,7 @@ public class FactorManager
 
     private final ViewGroup background;
 
+    //constructor
     public FactorManager(Activity activity, ViewGroup background, PackageManager pm)
     {
         this.activity = activity;
@@ -50,7 +51,7 @@ public class FactorManager
         loadFactors();
     }
 
-
+    //load factors from sqlite
     private void loadFactors()
     {
         new Thread(()->
@@ -76,7 +77,7 @@ public class FactorManager
         }).start();
     }
 
-
+    //add new app to home
     public void addToHome(UserApp app)
     {
         Factor factor = app.toFactor();
@@ -91,6 +92,7 @@ public class FactorManager
         updateOrders();
     }
 
+    //remove factor from home
     public void removeFromHome(Factor factor)
     {
         new Thread(() ->
@@ -103,6 +105,7 @@ public class FactorManager
         }).start();
     }
 
+    //check if the app is added to home
     public boolean isAppPinned(UserApp app)
     {
         boolean isPinned = false;
@@ -115,12 +118,14 @@ public class FactorManager
         return isPinned;
     }
 
+    //resize a factor
     private boolean resizeFactor(Factor factor, int size)
     {
         factor.setSize(size);
         return  updateFactor(factor);
     }
 
+    //update factor info after editing
     private boolean updateFactor(Factor factor)
     {
         if (userFactors.contains(factor))
@@ -136,6 +141,7 @@ public class FactorManager
         return userFactors.contains(factor);
     }
 
+    //update factor info after its app has changed
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
@@ -154,6 +160,7 @@ public class FactorManager
 
     }
 
+    //update the index of each factor after reordering
     public void updateOrders()
     {
         new Thread(() ->
@@ -166,6 +173,7 @@ public class FactorManager
         }).start();
     }
 
+    //remove all related factors from home given an app
     public void remove(UserApp app)
     {
         new Thread(()->
@@ -182,6 +190,7 @@ public class FactorManager
 
     }
 
+    //search for factors related to the same app (deprecate, as currently each app can only have one factor pinned)
     private ArrayList<Factor> getFactorsByPackage(UserApp app)
     {
         ArrayList<Factor> factorsToRemove = new ArrayList<>();
@@ -195,20 +204,22 @@ public class FactorManager
         return factorsToRemove;
     }
 
-    private void loadIcon(Factor f)
+    //retrieve the icon for a given factor
+    private void loadIcon(Factor factor)
     {
         try
         {
-            if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
-                f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
+            if (packageManager.getApplicationInfo(factor.getPackageName(), 0).enabled)
+                factor.setIcon(packageManager.getApplicationIcon(factor.getPackageName()));
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            new Thread(() -> factorsDatabase.factorsDao().delete(f)).start();
+            new Thread(() -> factorsDatabase.factorsDao().delete(factor)).start();
         }
     }
 
+    //send a broadcast after removing a factor to update app list
     private boolean removeFactorBroadcast(Factor factor)
     {
         Intent intent = new Intent();
@@ -219,8 +230,17 @@ public class FactorManager
         return true;
     }
 
+    //received notification
+    public void onReceivedNotification(Intent intent)
+    {
 
+    }
 
+    //cleared notification
+    public void onClearedNotification(Intent intent)
+    {
+
+    }
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {

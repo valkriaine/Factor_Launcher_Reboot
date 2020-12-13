@@ -1,5 +1,7 @@
 package com.factor.launcher.util
 
+
+//payload class for updating notification count/message
 class Payload (id : Int, code : String)
 {
     companion object

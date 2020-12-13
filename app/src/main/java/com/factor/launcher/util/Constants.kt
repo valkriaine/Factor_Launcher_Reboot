@@ -1,5 +1,6 @@
 package com.factor.launcher.util
 
+//constant values
 object Constants
 {
     const val PACKAGE_NAME = "com.factor.launcher"

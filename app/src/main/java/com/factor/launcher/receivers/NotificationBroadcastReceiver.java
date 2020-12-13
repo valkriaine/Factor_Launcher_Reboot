@@ -21,12 +21,12 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver
         //receive new notification
         if (intent.getAction().equals(Constants.NOTIFICATION_INTENT_ACTION_POST))
         {
-            appListManager.onReceiveNotification(intent);
+            appListManager.onReceivedNotification(intent);
         }
         //notification removed
         else if (intent.getAction().equals(Constants.NOTIFICATION_INTENT_ACTION_CLEAR))
         {
-            appListManager.onClearNotification(intent);
+            appListManager.onClearedNotification(intent);
         }
     }
 }

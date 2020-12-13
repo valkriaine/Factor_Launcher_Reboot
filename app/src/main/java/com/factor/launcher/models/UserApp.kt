@@ -46,6 +46,7 @@ class UserApp
         this.isPinned = !isPinned
     }
 
+    //generate new factor
     fun toFactor(): Factor
     {
         val factor = Factor()
@@ -58,9 +59,10 @@ class UserApp
         return factor
     }
 
+    //get notification count
     fun retrieveNotificationCount() : String = currentNotifications.size.toString()
 
-
+    //increment notification count when new notifications arrive, only increment if notification id is different
     fun incrementNotificationCount(id : Int) : Boolean
     {
         return if (!currentNotifications.contains(id))
@@ -71,7 +73,7 @@ class UserApp
         else false
     }
 
-
+    //decrease notification count when a notification is dismissed, only decrease if notification has record here
     fun decreaseNotificationCount(id : Int) : Boolean
     {
         return if (currentNotifications.contains(id))
@@ -82,35 +84,40 @@ class UserApp
         else false
     }
 
+    //for data binding, only return VISIBLE if the app is being edited
     fun visibilityEditing() : Int
     {
         return if (isBeingEdited) View.VISIBLE
         else View.GONE
     }
 
+    //for data binding, only return VISIBLE if notification count is greater than 0 and the app is not being edited
     fun visibilityNotificationCount() : Int
     {
         return if (currentNotifications.size > 0 && !isBeingEdited) View.VISIBLE
         else View.GONE
     }
 
+    //for data binding, only return VISIBLE if the app is not being edited
     fun visibilityLabel() : Int
     {
         return if (!isBeingEdited) View.VISIBLE
         else View.GONE
     }
 
+    //return search reference consisting of package name, labelNew, and labelOld
     fun getSearchReference() : String
     {
         return (packageName + labelNew + labelOld).trim('.', '_', ' ','-').toLowerCase(Locale.ROOT)
     }
 
-
+    //equal if package names are the same
     override fun equals(other: Any?): Boolean
     {
         return if (other is UserApp) this.packageName == other.packageName else false
     }
 
+    //hash code
     override fun hashCode(): Int {
         var result = packageName.hashCode()
         result = 31 * result + labelOld.hashCode()

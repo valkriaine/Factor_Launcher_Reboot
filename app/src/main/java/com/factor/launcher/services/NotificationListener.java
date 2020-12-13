@@ -1,4 +1,4 @@
-package com.factor.launcher;
+package com.factor.launcher.services;
 
 import android.content.Intent;
 import android.service.notification.NotificationListenerService;

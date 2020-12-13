@@ -17,9 +17,7 @@ import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 
 public class HomeActivity extends AppCompatActivity
 {
-
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

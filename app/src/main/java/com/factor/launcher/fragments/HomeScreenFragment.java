@@ -69,6 +69,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
                 return true;
             }
+            binding.appsList.scrollToPosition(0);
             binding.homePager.setCurrentItem(0, true);
             return true;
         }
@@ -89,7 +90,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else
             return true;
     }
-
 
     //initialize views and listeners
     private void initializeComponents()
