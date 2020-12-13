@@ -65,7 +65,7 @@
                     android:alpha="0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-            <!--wall paper-->
+            <!--wallpaper-->
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/background_host"
                     android:translationZ="-20dp"
@@ -125,6 +125,7 @@
 
                     <com.valkriaine.factor.BouncyRecyclerView
                             android:id="@+id/tiles_list"
+                            android:nestedScrollingEnabled="false"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:clipToPadding="false"
@@ -143,6 +144,7 @@
 
                     <com.valkriaine.factor.BouncyRecyclerView
                             android:id="@+id/apps_list"
+                            android:nestedScrollingEnabled="false"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:translationZ="-10dp"

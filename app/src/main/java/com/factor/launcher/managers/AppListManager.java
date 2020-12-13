@@ -546,8 +546,8 @@ public class AppListManager
 
 
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
+            activity.registerForContextMenu(view);
             return new AppListViewHolder(view);
-
         }
 
         @Override
@@ -625,8 +625,36 @@ public class AppListManager
                 {
                     AppListItemBinding appBinding = (AppListItemBinding)binding;
                     appBinding.setUserApp(app);
+                    appBinding.labelEdit.setText(app.getLabelNew());
+                    appBinding.icon.setImageDrawable(app.getIcon());
 
-                    activity.registerForContextMenu(itemView);
+                    if (!app.isBeingEdited())
+                    {
+                        setOnClickListener(app);
+                    }
+                    else
+                    {
+                        removeOnClickListener();
+                        appBinding.labelEdit.setText(app.getLabelNew());
+                        appBinding.cancelEditButton.setOnClickListener(view -> exitEditMode(app));
+                        appBinding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
+                        appBinding.confirmEditButton.setOnClickListener(view ->
+                        {
+                            String newName = Objects.requireNonNull(appBinding.labelEdit.getText()).toString();
+                            if (newName.isEmpty())
+                                exitEditMode(app);
+                            else if (app.isCustomized() && newName.equals(app.getLabelNew()))
+                                exitEditMode(app);
+                            else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
+                                exitEditMode(app);
+                            else
+                            {
+                                exitEditMode(app);
+                                renameApp(app, newName);
+                            }
+                        });
+                    }
+
                     itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                     {
                         MenuInflater inflater = activity.getMenuInflater();
@@ -643,13 +671,13 @@ public class AppListManager
                         //rename
                         sub.getItem(0).setOnMenuItemClickListener(item ->
                         {
-                            enterEditMode(app);
+                            enterEditMode(appBinding);
                             return true;
                         });
                         //hide
                         MenuItem hide = sub.getItem(1);
                         if (app.isHidden())
-                        hide.setTitle("Show");
+                            hide.setTitle("Show");
                         else hide.setTitle("Hide");
                         hide.setOnMenuItemClickListener(item -> !app.isHidden() ? hideApp(app) : showApp(app));
                         //info
@@ -669,42 +697,33 @@ public class AppListManager
                             return true;
                         });
                     });
-                    appBinding.labelEdit.setText(app.getLabelNew());
-
-                    appBinding.cancelEditButton.setOnClickListener(view -> exitEditMode(app));
-                    appBinding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
-                    appBinding.confirmEditButton.setOnClickListener(view ->
-                    {
-                        String newName = Objects.requireNonNull(appBinding.labelEdit.getText()).toString();
-                        if (newName.isEmpty())
-                            exitEditMode(app);
-                        else if (app.isCustomized() && newName.equals(app.getLabelNew()))
-                            exitEditMode(app);
-                        else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
-                            exitEditMode(app);
-                        else
-                        {
-                            exitEditMode(app);
-                            renameApp(app, newName);
-                        }
-                    });
-
-                    if (!app.isBeingEdited())
-                        setOnClickListener(app);
-                    else
-                        removeOnClickListener();
-
-
-
-
                 }
             }
 
 
-            private void enterEditMode(UserApp app)
+            private void enterEditMode(AppListItemBinding binding)
             {
-                removeOnClickListener();
+                UserApp app =  binding.getUserApp();
                 app.setBeingEdited(true);
+                removeOnClickListener();
+                binding.labelEdit.setText(app.getLabelNew());
+                binding.cancelEditButton.setOnClickListener(view -> exitEditMode(app));
+                binding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
+                binding.confirmEditButton.setOnClickListener(view ->
+                {
+                    String newName = Objects.requireNonNull(binding.labelEdit.getText()).toString();
+                    if (newName.isEmpty())
+                        exitEditMode(app);
+                    else if (app.isCustomized() && newName.equals(app.getLabelNew()))
+                        exitEditMode(app);
+                    else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
+                        exitEditMode(app);
+                    else
+                    {
+                        exitEditMode(app);
+                        renameApp(app, newName);
+                    }
+                });
                 notifyItemChanged(userApps.indexOf(app));
             }
 

@@ -26,8 +26,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:padding="2.5dp"
-                    android:gravity="center"
-                    android:src="@{userApp.icon}"/>
+                    android:gravity="center"/>
 
             <TextView
                     android:id="@+id/label"
@@ -49,8 +48,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
-                    android:textAlignment="textStart"
-                    android:text="@{userApp.labelNew}"/>
+                    android:textAlignment="textStart"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat

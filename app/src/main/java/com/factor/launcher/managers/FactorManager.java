@@ -268,7 +268,7 @@ public class FactorManager
             }
             view.setLayoutParams(layoutParams);
 
-
+            activity.registerForContextMenu(view);
             return new FactorsViewHolder(view);
         }
 
@@ -346,31 +346,26 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                size = factor.getSize();
-                //determine layout based on size
-                if (size == Factor.Size.small)
+                try
                 {
-                    ((FactorSmallBinding)binding).setFactor(factor);
-                    try
+                    size = factor.getSize();
+                    //determine layout based on size
+                    if (size == Factor.Size.small)
                     {
+                        ((FactorSmallBinding)binding).setFactor(factor);
+                        ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
                         ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
                         ((FactorSmallBinding) binding).trans
                                 .setupWith(background)
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
                                 .setBlurRadius(25F)
                                 .setHasFixedTransformationMatrix(false);
+
                     }
-                    catch (Exception e)
+                    else if (size == Factor.Size.medium)
                     {
-                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
-                        loadIcon(factor);
-                    }
-                }
-                else if (size == Factor.Size.medium)
-                {
-                    ((FactorMediumBinding)binding).setFactor(factor);
-                    try
-                    {
+                        ((FactorMediumBinding)binding).setFactor(factor);
+                        ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
                         ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
                         ((FactorMediumBinding) binding).trans
                                 .setupWith(background)
@@ -378,17 +373,10 @@ public class FactorManager
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
                     }
-                    catch (Exception e)
+                    else if (size == Factor.Size.large)
                     {
-                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
-                        loadIcon(factor);
-                    }
-                }
-                else if (size == Factor.Size.large)
-                {
-                    ((FactorLargeBinding)binding).setFactor(factor);
-                    try
-                    {
+                        ((FactorLargeBinding)binding).setFactor(factor);
+                        ((FactorLargeBinding) binding).tileLabel.setText(factor.getLabelNew());
                         ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
                         ((FactorLargeBinding) binding).trans
                                 .setupWith(background)
@@ -396,77 +384,71 @@ public class FactorManager
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
                     }
-                    catch (Exception e)
+
+                    itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                     {
-                        Log.d("icon", factor.getPackageName() + " " + e.getMessage());
-                        loadIcon(factor);
-                    }
-                }
+                        Factor selectedFactor = getFactor();
 
-
-                activity.registerForContextMenu(itemView);
-
-                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
-                {
-                    Factor selectedFactor = getFactor();
-
-                    if (!selectedFactor.getPackageName().isEmpty())
-                    {
-                        MenuInflater inflater = activity.getMenuInflater();
-                        inflater.inflate(R.menu.factor_item_menu, menu);
-
-                        //remove from home
-                        menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
-
-                        //resize
-                        SubMenu subMenu = menu.getItem(1).getSubMenu();
-                        subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
-                        subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
-                        subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
-
-                        //info
-                        menu.getItem(2).setOnMenuItemClickListener(item ->
+                        if (!selectedFactor.getPackageName().isEmpty())
                         {
-                            activity.startActivity(
-                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                            Uri.parse("package:"+factor.getPackageName())));
-                            return true;
-                        });
+                            MenuInflater inflater = activity.getMenuInflater();
+                            inflater.inflate(R.menu.factor_item_menu, menu);
 
-                        //uninstall
-                        menu.getItem(3).setOnMenuItemClickListener(item ->
-                        {
-                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
-                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
-                            return true;
-                        });
+                            //remove from home
+                            menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
 
-                        switch (factor.getSize()) {
-                            case Factor.Size.small:
-                                subMenu.getItem(0).setEnabled(false);
-                                break;
-                            case Factor.Size.medium:
-                                subMenu.getItem(1).setEnabled(false);
-                                break;
-                            case Factor.Size.large:
-                                subMenu.getItem(2).setEnabled(false);
-                                break;
+                            //resize
+                            SubMenu subMenu = menu.getItem(1).getSubMenu();
+                            subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
+                            subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
+                            subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
+
+                            //info
+                            menu.getItem(2).setOnMenuItemClickListener(item ->
+                            {
+                                activity.startActivity(
+                                        new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                                Uri.parse("package:"+factor.getPackageName())));
+                                return true;
+                            });
+
+                            //uninstall
+                            menu.getItem(3).setOnMenuItemClickListener(item ->
+                            {
+                                activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
+                                        .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                                return true;
+                            });
+
+                            switch (factor.getSize()) {
+                                case Factor.Size.small:
+                                    subMenu.getItem(0).setEnabled(false);
+                                    break;
+                                case Factor.Size.medium:
+                                    subMenu.getItem(1).setEnabled(false);
+                                    break;
+                                case Factor.Size.large:
+                                    subMenu.getItem(2).setEnabled(false);
+                                    break;
+                            }
+
                         }
 
-                    }
+                    });
 
-                });
-
-                //todo: customize activity transition animation
-                itemView.setOnClickListener(v -> {
-                    Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
-                    if (intent != null)
-                        activity.startActivity(intent,
-                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
-                });
-
+                    //todo: customize activity transition animation
+                    itemView.setOnClickListener(v -> {
+                        Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
+                        if (intent != null)
+                            activity.startActivity(intent,
+                                    ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.d("icon", "error loading factor for " + factor.getPackageName() + " " + e.getMessage());
+                }
             }
-
 
             //return the factor of this view holder
             public Factor getFactor()

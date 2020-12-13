@@ -12,7 +12,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,7 +96,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
         int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int paddingBottom200 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+        int paddingBottom300 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
         int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
@@ -164,7 +163,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom200);
+        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
         binding.blur.setupWith(binding.backgroundHost)
                 .setFrameClearDrawable(wm.getDrawable())
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
