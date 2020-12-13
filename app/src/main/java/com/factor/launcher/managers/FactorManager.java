@@ -244,10 +244,9 @@ public class FactorManager
     }
 
     //received notification
-    public void onReceivedNotification(Intent intent, UserApp app)
+    public void onReceivedNotification(Intent intent, UserApp app, Payload payload)
     {
         Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_RECEIVED);
         if (userFactors.contains(factorToUpdate))
         {
             factorToUpdate.setUserApp(app);
@@ -256,10 +255,9 @@ public class FactorManager
     }
 
     //cleared notification
-    public void onClearedNotification(Intent intent, UserApp app)
+    public void onClearedNotification(Intent intent, UserApp app, Payload payload)
     {
         Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_CLEARED);
         if (userFactors.contains(factorToUpdate))
         {
             factorToUpdate.setUserApp(app);
@@ -356,32 +354,56 @@ public class FactorManager
                         Factor factorToChange = tileBinding.getFactor();
 
                         if (factorToChange.retrieveNotificationCountInNumber() < 1)
+                        {
+                            tileBinding.tileIcon.setVisibility(View.VISIBLE);
                             tileBinding.notificationCount.setVisibility(View.GONE);
+                            tileBinding.notificationTitle.setVisibility(View.GONE);
+                            tileBinding.notificationContent.setVisibility(View.GONE);
+                            tileBinding.notificationIcon.setVisibility(View.GONE);
+                        }
                         else if (factorToChange.retrieveNotificationCountInNumber() > 0)
                         {
                             tileBinding.notificationCount.setVisibility(View.VISIBLE);
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                            tileBinding.tileIcon.setVisibility(View.GONE);
+                            tileBinding.notificationTitle.setVisibility(View.VISIBLE);
+                            tileBinding.notificationContent.setVisibility(View.VISIBLE);
+                            tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
+                            tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
+
+                            tileBinding.notificationIcon.setImageDrawable(factorToChange.getIcon());
+                            tileBinding.notificationIcon.setVisibility(View.VISIBLE);
                         }
 
 
-                        //todo
                     }
                     else if (userFactors.get(position).getSize() == Factor.Size.large)
                     {
                         FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
                         Factor factorToChange = tileBinding.getFactor();
 
-
                         if (factorToChange.retrieveNotificationCountInNumber() < 1)
+                        {
+                            tileBinding.tileIcon.setVisibility(View.VISIBLE);
                             tileBinding.notificationCount.setVisibility(View.GONE);
+                            tileBinding.notificationTitle.setVisibility(View.GONE);
+                            tileBinding.notificationContent.setVisibility(View.GONE);
+                            tileBinding.notificationIcon.setVisibility(View.GONE);
+                        }
                         else if (factorToChange.retrieveNotificationCountInNumber() > 0)
                         {
                             tileBinding.notificationCount.setVisibility(View.VISIBLE);
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                            tileBinding.tileIcon.setVisibility(View.GONE);
+                            tileBinding.notificationTitle.setVisibility(View.VISIBLE);
+                            tileBinding.notificationContent.setVisibility(View.VISIBLE);
+                            tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
+                            tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
+
+                            tileBinding.notificationIcon.setImageDrawable(factorToChange.getIcon());
+                            tileBinding.notificationIcon.setVisibility(View.VISIBLE);
                         }
 
-
-                        //todo
                     }
                 }
             }
@@ -489,23 +511,49 @@ public class FactorManager
                                 .setHasFixedTransformationMatrix(false);
 
                         ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorMediumBinding)binding).tileIcon.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorMediumBinding)binding).notificationTitle.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorMediumBinding)binding).notificationContent.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorMediumBinding)binding).notificationIcon.setVisibility(factor.visibilityNotificationCount());
+
                         if (factor.retrieveNotificationCountInNumber() > 0)
+                        {
                             ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+                            ((FactorMediumBinding)binding).tileIcon.setVisibility(View.GONE);
+                            ((FactorMediumBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
+                            ((FactorMediumBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
+                            ((FactorMediumBinding)binding).notificationIcon.setImageDrawable(factor.getIcon());
+                        }
+                        else
+                            ((FactorMediumBinding)binding).tileIcon.setVisibility(View.VISIBLE);
                     }
                     else if (size == Factor.Size.large)
                     {
                         ((FactorLargeBinding)binding).setFactor(factor);
-                        ((FactorLargeBinding) binding).tileLabel.setText(factor.getLabelNew());
+                        ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
                         ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                        ((FactorLargeBinding) binding).trans
+                        ((FactorLargeBinding)binding).trans
                                 .setupWith(background)
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
 
                         ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorLargeBinding)binding).tileIcon.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorLargeBinding)binding).notificationTitle.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorLargeBinding)binding).notificationContent.setVisibility(factor.visibilityNotificationCount());
+                        ((FactorLargeBinding)binding).notificationIcon.setVisibility(factor.visibilityNotificationCount());
+
                         if (factor.retrieveNotificationCountInNumber() > 0)
+                        {
                             ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+                            ((FactorLargeBinding)binding).tileIcon.setVisibility(View.GONE);
+                            ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
+                            ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
+                            ((FactorLargeBinding)binding).notificationIcon.setImageDrawable(factor.getIcon());
+                        }
+                        else
+                            ((FactorLargeBinding)binding).tileIcon.setVisibility(View.VISIBLE);
                     }
 
                     itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->

@@ -35,7 +35,7 @@ class UserApp
     var isBeingEdited : Boolean = false
 
     @Ignore
-    val currentNotifications : ArrayList<Int> = ArrayList()
+    val currentNotifications : ArrayList<NotificationHolder> = ArrayList()
 
     @Ignore
     lateinit var icon: Drawable
@@ -63,25 +63,56 @@ class UserApp
     fun retrieveNotificationCount() : String = currentNotifications.size.toString()
 
     //increment notification count when new notifications arrive, only increment if notification id is different
-    fun incrementNotificationCount(id : Int) : Boolean
+    fun incrementNotificationCount(notificationHolder: NotificationHolder) : Boolean
     {
-        return if (!currentNotifications.contains(id))
-        {
-            currentNotifications.add(id)
-            true
+        currentNotifications.forEach{
+            notification -> if (notification.id == notificationHolder.id)
+            {
+                return if (notification.title != notificationHolder.title || notification.text != notificationHolder.text)
+                {
+                    currentNotifications.set(currentNotifications.indexOf(notification), notificationHolder)
+                    true
+                }
+                else false
+            }
         }
-        else false
+        currentNotifications.add(notificationHolder)
+        return true
     }
+
+    fun getNotificationTitle() : String
+    {
+        return if (currentNotifications.size > 0)
+            currentNotifications.last().title
+        else
+            ""
+    }
+
+    fun getNotificationText() : String
+    {
+        return if (currentNotifications.size > 0)
+        {
+            val text = currentNotifications.last().text
+            if (text == "null" || text == "Null" || text.isEmpty())
+                "Notification from $labelNew"
+            else
+                text
+        } else
+            ""
+    }
+
 
     //decrease notification count when a notification is dismissed, only decrease if notification has record here
     fun decreaseNotificationCount(id : Int) : Boolean
     {
-        return if (currentNotifications.contains(id))
-        {
-            currentNotifications.remove(id)
-            true
+        currentNotifications.forEach{
+            if (it.id == id)
+            {
+                currentNotifications.remove(it)
+                return true
+            }
         }
-        else false
+        return false
     }
 
     //for data binding, only return VISIBLE if the app is being edited

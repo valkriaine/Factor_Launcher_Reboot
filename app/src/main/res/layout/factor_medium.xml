@@ -35,14 +35,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <com.qhutch.elevationimageview.ElevationImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tileIcon"
                     android:layout_height="70dp"
                     android:layout_width="70dp"
                     android:gravity="center"
                     android:padding="10dp"
                     android:scaleType="fitCenter"
-                    android:elevation="150dp"
+                    android:elevation="100dp"
                     android:tag="foreground"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -58,12 +58,86 @@
                     android:textColor="#000000"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:maxWidth="200dp"
+                    android:maxWidth="120dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginBottom="10dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="40dp"/>
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/notification_icon"
+                    android:layout_height="70dp"
+                    android:layout_width="70dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:elevation="150dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".5"/>
+
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.50"/>
+
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_horizontal_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.80"
+            />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/notification_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:visibility="gone"
+                        android:textColor="#000000"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:scrollHorizontally="false"
+                        app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal"
+                        app:layout_constraintStart_toEndOf="@id/notification_icon"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/notification_content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="5dp"
+                        android:visibility="gone"
+                        android:textColor="#000000"
+                        android:lines="1"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        app:layout_constraintTop_toBottomOf="@id/notification_title"
+                        app:layout_constraintStart_toEndOf="@id/notification_icon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_bottom"/>
 
 
             <androidx.appcompat.widget.AppCompatButton

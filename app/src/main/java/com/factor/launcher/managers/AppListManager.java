@@ -21,6 +21,7 @@ import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
+import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
@@ -506,15 +507,21 @@ public class AppListManager
     public void onReceivedNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_RECEIVED);
+        NotificationHolder notificationHolder =
+                new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0),
+                        intent.getStringExtra(Constants.NOTIFICATION_INTENT_TITLE_TEXT_KEY),
+                        intent.getStringExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY));
+        Payload payload = new Payload(notificationHolder, Payload.NOTIFICATION_RECEIVED);
         if (userApps.contains(app))
         {
-            Log.d("payload", app.getPackageName() + " created payload");
-            if (app.incrementNotificationCount(payload.getNotificationId()))
+            if (app.incrementNotificationCount(notificationHolder))
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
 
             if (app.isPinned())
-                factorManager.onReceivedNotification(intent, app);
+                factorManager.onReceivedNotification(intent, app, payload);
+
+
+            Log.d("payload", app.getNotificationTitle() + " created payload");
         }
     }
 
@@ -522,15 +529,17 @@ public class AppListManager
     public void onClearedNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_CLEARED);
+        NotificationHolder notificationHolder =
+                new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), "", "");
+        Payload payload = new Payload(notificationHolder, Payload.NOTIFICATION_CLEARED);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
-            if (app.decreaseNotificationCount(payload.getNotificationId()))
+            if (app.decreaseNotificationCount(payload.getNotificationHolder().getId()))
                 adapter.notifyItemChanged(userApps.indexOf(app), payload);
 
             if (app.isPinned())
-                factorManager.onClearedNotification(intent, app);
+                factorManager.onClearedNotification(intent, app, payload);
         }
     }
 
@@ -571,23 +580,15 @@ public class AppListManager
                 if (!(payloads.get(0) instanceof Payload))
                     onBindViewHolder(holder, position);
                 else {
-                    Payload receivedPayload = (Payload) payloads.get(0);
-
                     //after receiving notification, change the notification counter
-                    switch (receivedPayload.getNotificationCode())
+                    assert binding != null;
+                    UserApp appToChange = binding.getUserApp();
+                    if (appToChange.getCurrentNotifications().size() < 1 || appToChange.isBeingEdited())
+                        binding.notificationCount.setVisibility(View.GONE);
+                    else if (appToChange.getCurrentNotifications().size() > 0 || !appToChange.isBeingEdited())
                     {
-                        case Payload.NOTIFICATION_RECEIVED:
-                        case Payload.NOTIFICATION_CLEARED:
-                            assert binding != null;
-                            UserApp appToChange = binding.getUserApp();
-                            if (appToChange.getCurrentNotifications().size() < 1 || appToChange.isBeingEdited())
-                                binding.notificationCount.setVisibility(View.GONE);
-                            else if (appToChange.getCurrentNotifications().size() > 0 || !appToChange.isBeingEdited())
-                            {
-                                binding.notificationCount.setVisibility(View.VISIBLE);
-                                binding.notificationCount.setText(appToChange.retrieveNotificationCount());
-                            }
-                            break;
+                        binding.notificationCount.setVisibility(View.VISIBLE);
+                        binding.notificationCount.setText(appToChange.retrieveNotificationCount());
                     }
                 }
             }
