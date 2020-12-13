@@ -529,7 +529,6 @@ public class AppListManager
         //todo: update tiles notification count
     }
 
-
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
@@ -691,6 +690,9 @@ public class AppListManager
                         setOnClickListener(app);
                     else
                         removeOnClickListener();
+
+
+
 
                 }
             }

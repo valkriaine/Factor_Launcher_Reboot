@@ -95,12 +95,16 @@
 
 
         <!--todo: add animation to show/hide this-->
-        <androidx.appcompat.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/notification_count"
+                android:background="@drawable/round_button"
                 android:text="@{userApp.retrieveNotificationCount()}"
                 android:visibility="@{userApp.visibilityNotificationCount()}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:textAlignment="gravity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
