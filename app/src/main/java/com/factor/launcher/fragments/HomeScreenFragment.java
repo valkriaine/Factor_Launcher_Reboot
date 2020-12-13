@@ -12,6 +12,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -170,6 +171,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setBlurRadius(15f)
                 .setBlurAutoUpdate(false)
                 .setHasFixedTransformationMatrix(true);
+
+        DefaultItemAnimator animator = new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+        };
+        binding.appsList.setItemAnimator(animator);
 
         //search bar
         binding.searchBlur.setupWith(binding.rootContent)

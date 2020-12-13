@@ -27,7 +27,8 @@ class Factor
     @Ignore
     lateinit var icon: Drawable
 
-
+    @Ignore
+    var notificationCount : Int = 0
 
     object Size
     {

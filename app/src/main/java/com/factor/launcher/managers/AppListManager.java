@@ -23,6 +23,7 @@ import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.Payloads;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -501,13 +502,31 @@ public class AppListManager
     //received notifications
     public void onReceiveNotification(Intent intent)
     {
-        //todo: update notification counts/messages here
+
+        UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        if (userApps.contains(app))
+        {
+            Log.d("payload", app.getPackageName() + " created payload");
+            app.incrementNotificationCount();
+            adapter.notifyItemChanged(userApps.indexOf(app), Payloads.NOTIFICATION_RECEIVED);
+        }
+
+        //todo: update tiles notification count
+
     }
 
     //cleared notification
     public void onClearNotification(Intent intent)
     {
-        //todo: update notification counts/messages here
+        UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+        if (userApps.contains(app))
+        {
+            Log.d("payload", app.getPackageName() + " created payload");
+            app.decreaseNotificationCount();
+            adapter.notifyItemChanged(userApps.indexOf(app), Payloads.NOTIFICATION_CLEARED);
+        }
+
+        //todo: update tiles notification count
     }
 
 
@@ -535,6 +554,39 @@ public class AppListManager
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
             holder.bindApp(userApps.get(position));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AppListViewHolder holder, int position, @NonNull List<Object> payloads)
+        {
+            if (!payloads.isEmpty())
+            {
+                Log.d("payload", "received");
+                AppListItemBinding binding = (AppListItemBinding)holder.binding;
+
+                if (Payloads.NOTIFICATION_RECEIVED.equals(payloads.get(0)) || Payloads.NOTIFICATION_CLEARED.equals(payloads.get(0)))
+                {
+                    assert binding != null;
+                    UserApp appToChange = binding.getUserApp();
+                    if (appToChange.getNotificationCount() < 1)
+                    {
+                        binding.notificationCount.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        binding.notificationCount.setVisibility(View.VISIBLE);
+                        binding.notificationCount.setText(appToChange.retrieveNotificationCount());
+                    }
+                }
+                else
+                    onBindViewHolder(holder, position);
+            }
+            else
+            {
+                Log.d("payload", "empty or not received");
+                onBindViewHolder(holder, position);
+            }
+
         }
 
         @Override
@@ -613,6 +665,8 @@ public class AppListManager
                             return true;
                         });
                     });
+
+
                 }
             }
 
@@ -639,6 +693,7 @@ public class AppListManager
                     }
                 });
 
+                binding.notificationCount.setVisibility(View.GONE);
             }
 
             private void exitEditMode(AppListItemBinding binding)
@@ -647,6 +702,10 @@ public class AppListManager
                 binding.label.setVisibility(View.VISIBLE);
                 binding.labelEdit.setVisibility(View.GONE);
                 binding.editButtonGroup.setVisibility(View.GONE);
+                if (binding.getUserApp().getNotificationCount() < 1)
+                    binding.notificationCount.setVisibility(View.GONE);
+                else
+                    binding.notificationCount.setVisibility(View.VISIBLE);
             }
 
             private void resetEditMode(AppListItemBinding binding)

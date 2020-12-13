@@ -20,9 +20,6 @@ class UserApp
     @ColumnInfo(name = "labelNew")
     var labelNew: String = ""
 
-    @Ignore
-    lateinit var icon: Drawable
-
     @ColumnInfo(name = "pinned")
     var isPinned: Boolean = false
 
@@ -31,6 +28,13 @@ class UserApp
 
     @ColumnInfo(name = "hidden")
     var isHidden: Boolean = false
+
+    @Ignore
+    var notificationCount : Int = 0
+
+
+    @Ignore
+    lateinit var icon: Drawable
 
     //... other attributes
     fun changePinnedState()
@@ -41,14 +45,26 @@ class UserApp
     fun toFactor(): Factor
     {
         val factor = Factor()
-
         factor.icon = this.icon
         factor.isCustomized = this.isCustomized
         factor.packageName = this.packageName
         factor.labelNew = this.labelNew
         factor.labelOld = this.labelOld
-
+        factor.notificationCount = this.notificationCount
         return factor
+    }
+
+    fun retrieveNotificationCount() : String = notificationCount.toString()
+
+    fun incrementNotificationCount() = notificationCount++
+
+    fun decreaseNotificationCount()
+    {
+        when (notificationCount)
+        {
+            0 -> return
+            else -> notificationCount --
+        }
     }
 
     fun getSearchReference() : String
