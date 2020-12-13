@@ -1,6 +1,7 @@
 package com.factor.launcher.models
 
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -31,6 +32,9 @@ class UserApp
 
     @Ignore
     var notificationCount : Int = 0
+
+    @Ignore
+    var isBeingEdited : Boolean = false
 
 
     @Ignore
@@ -65,6 +69,24 @@ class UserApp
             0 -> return
             else -> notificationCount --
         }
+    }
+
+    fun visibilityEditing() : Int
+    {
+        return if (isBeingEdited) View.VISIBLE
+        else View.GONE
+    }
+
+    fun visibilityNotificationCount() : Int
+    {
+        return if (notificationCount > 0 && !isBeingEdited) View.VISIBLE
+        else View.GONE
+    }
+
+    fun visibilityLabel() : Int
+    {
+        return if (!isBeingEdited) View.VISIBLE
+        else View.GONE
     }
 
     fun getSearchReference() : String

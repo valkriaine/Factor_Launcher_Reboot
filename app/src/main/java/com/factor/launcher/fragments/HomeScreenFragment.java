@@ -172,13 +172,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setBlurAutoUpdate(false)
                 .setHasFixedTransformationMatrix(true);
 
-        DefaultItemAnimator animator = new DefaultItemAnimator() {
-            @Override
-            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return true;
-            }
-        };
-        binding.appsList.setItemAnimator(animator);
+        
 
         //search bar
         binding.searchBlur.setupWith(binding.rootContent)

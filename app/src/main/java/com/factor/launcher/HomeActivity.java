@@ -54,6 +54,7 @@ public class HomeActivity extends AppCompatActivity
         if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) super.onBackPressed();
     }
 
+    //check if notification service is enabled
     private boolean isNotificationServiceEnabled()
     {
         String pkgName = getPackageName();

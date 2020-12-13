@@ -568,11 +568,11 @@ public class AppListManager
                 {
                     assert binding != null;
                     UserApp appToChange = binding.getUserApp();
-                    if (appToChange.getNotificationCount() < 1)
+                    if (appToChange.getNotificationCount() < 1 || appToChange.isBeingEdited())
                     {
                         binding.notificationCount.setVisibility(View.GONE);
                     }
-                    else
+                    else if (appToChange.getNotificationCount() > 0 || !appToChange.isBeingEdited())
                     {
                         binding.notificationCount.setVisibility(View.VISIBLE);
                         binding.notificationCount.setText(appToChange.retrieveNotificationCount());
@@ -621,7 +621,7 @@ public class AppListManager
                 {
                     AppListItemBinding appBinding = (AppListItemBinding)binding;
                     appBinding.setUserApp(app);
-                    exitEditMode(appBinding);
+
                     activity.registerForContextMenu(itemView);
                     itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                     {
@@ -639,7 +639,7 @@ public class AppListManager
                         //rename
                         sub.getItem(0).setOnMenuItemClickListener(item ->
                         {
-                            enterEditMode(appBinding);
+                            enterEditMode(app);
                             return true;
                         });
                         //hide
@@ -665,66 +665,72 @@ public class AppListManager
                             return true;
                         });
                     });
+                    appBinding.labelEdit.setText(app.getLabelNew());
 
+                    appBinding.cancelEditButton.setOnClickListener(view -> exitEditMode(app));
+                    appBinding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
+                    appBinding.confirmEditButton.setOnClickListener(view ->
+                    {
+                        String newName = Objects.requireNonNull(appBinding.labelEdit.getText()).toString();
+                        if (newName.isEmpty())
+                            exitEditMode(app);
+                        else if (app.isCustomized() && newName.equals(app.getLabelNew()))
+                            exitEditMode(app);
+                        else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
+                            exitEditMode(app);
+                        else
+                        {
+                            exitEditMode(app);
+                            renameApp(app, newName);
+                        }
+                    });
+
+                    if (!app.isBeingEdited())
+                        setOnClickListener(app);
+                    else
+                        removeOnClickListener();
 
                 }
             }
 
 
-            private void enterEditMode(AppListItemBinding binding)
+            private void enterEditMode(UserApp app)
             {
-                itemView.setOnClickListener(v ->{});
-                binding.label.setVisibility(View.GONE);
-                binding.labelEdit.setVisibility(View.VISIBLE);
-                binding.labelEdit.setText(binding.getUserApp().getLabelNew());
-                binding.editButtonGroup.setVisibility(View.VISIBLE);
-
-                binding.cancelEditButton.setOnClickListener(view -> exitEditMode(binding));
-                binding.resetEditButton.setOnClickListener(view -> resetEditMode(binding));
-                binding.confirmEditButton.setOnClickListener(view ->
-                {
-                    String newName = Objects.requireNonNull(binding.labelEdit.getText()).toString();
-                    if (newName.isEmpty() || newName.equals(binding.getUserApp().getLabelOld()))
-                        exitEditMode(binding);
-                    else
-                    {
-                        exitEditMode(binding);
-                        renameApp(binding.getUserApp(), newName);
-                    }
-                });
-
-                binding.notificationCount.setVisibility(View.GONE);
+                removeOnClickListener();
+                app.setBeingEdited(true);
+                notifyItemChanged(userApps.indexOf(app));
             }
 
-            private void exitEditMode(AppListItemBinding binding)
+            private void exitEditMode(UserApp app)
             {
-                setOnClickListener(binding);
-                binding.label.setVisibility(View.VISIBLE);
-                binding.labelEdit.setVisibility(View.GONE);
-                binding.editButtonGroup.setVisibility(View.GONE);
-                if (binding.getUserApp().getNotificationCount() < 1)
-                    binding.notificationCount.setVisibility(View.GONE);
+                setOnClickListener(app);
+                app.setBeingEdited(false);
+                notifyItemChanged(userApps.indexOf(app));
+            }
+
+            private void resetEditMode(UserApp app)
+            {
+                app.setBeingEdited(false);
+                if (!app.isCustomized())
+                    exitEditMode(app);
                 else
-                    binding.notificationCount.setVisibility(View.VISIBLE);
+                    resetAppEdit(app);
             }
 
-            private void resetEditMode(AppListItemBinding binding)
-            {
-                if (!binding.getUserApp().isCustomized())
-                    exitEditMode(binding);
-                else
-                    resetAppEdit(binding.getUserApp());
-            }
-
-            private void setOnClickListener(AppListItemBinding binding)
+            private void setOnClickListener(UserApp app)
             {
                 itemView.setOnClickListener(v ->
                 {
-                    Intent intent = packageManager.getLaunchIntentForPackage(binding.getUserApp().getPackageName());
+                    Intent intent = packageManager.getLaunchIntentForPackage(app.getPackageName());
                     if (intent != null)
                         activity.startActivity(intent,
                                 ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                 });
+            }
+
+            private void removeOnClickListener()
+            {
+                itemView.setOnClickListener(v ->{});
             }
 
         }

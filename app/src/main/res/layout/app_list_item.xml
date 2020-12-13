@@ -31,6 +31,7 @@
 
             <TextView
                     android:id="@+id/label"
+                    android:visibility="@{userApp.visibilityLabel()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -40,7 +41,7 @@
                     android:text="@{userApp.labelNew}"/>
 
             <androidx.appcompat.widget.AppCompatEditText
-                    android:visibility="gone"
+                    android:visibility="@{userApp.visibilityEditing()}"
                     android:id="@+id/label_edit"
                     android:layout_width="match_parent"
                     android:layout_marginStart="10dp"
@@ -50,15 +51,13 @@
                     android:textColor="#FFFFFF"
                     android:textAlignment="textStart"
                     android:text="@{userApp.labelNew}"/>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
         <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/edit_button_group"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:visibility="gone"
+                android:visibility="@{userApp.visibilityEditing()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -68,6 +67,7 @@
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/confirm_edit_button"
                     android:src="@drawable/icon_confirm"
+                    android:visibility="@{userApp.visibilityEditing()}"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
                     android:layout_height="50dp"/>
@@ -76,6 +76,7 @@
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/reset_edit_button"
                     android:src="@drawable/icon_reset"
+                    android:visibility="@{userApp.visibilityEditing()}"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
                     android:layout_height="50dp"/>
@@ -84,6 +85,7 @@
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/cancel_edit_button"
                     android:src="@drawable/icon_cancel"
+                    android:visibility="@{userApp.visibilityEditing()}"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
                     android:layout_height="50dp"/>
@@ -92,9 +94,11 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
+        <!--todo: add animation to show/hide this-->
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/notification_count"
                 android:text="@{userApp.retrieveNotificationCount()}"
+                android:visibility="@{userApp.visibilityNotificationCount()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
