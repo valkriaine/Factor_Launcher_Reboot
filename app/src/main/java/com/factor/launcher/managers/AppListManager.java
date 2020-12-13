@@ -503,12 +503,12 @@ public class AppListManager
     public void onReceiveNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        int notificationId = intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0);
+        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_RECEIVED);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
-            app.incrementNotificationCount(notificationId);
-            adapter.notifyItemChanged(userApps.indexOf(app), new Payload(notificationId, Payload.NOTIFICATION_RECEIVED));
+            if (app.incrementNotificationCount(payload.getNotificationId()))
+                adapter.notifyItemChanged(userApps.indexOf(app), payload);
         }
 
         //todo: update tiles notification count
@@ -519,12 +519,12 @@ public class AppListManager
     public void onClearNotification(Intent intent)
     {
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        int notificationId = intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0);
+        Payload payload = new Payload(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), Payload.NOTIFICATION_CLEARED);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
-            app.decreaseNotificationCount(notificationId);
-            adapter.notifyItemChanged(userApps.indexOf(app), new Payload(notificationId, Payload.NOTIFICATION_CLEARED));
+            if (app.decreaseNotificationCount(payload.getNotificationId()))
+                adapter.notifyItemChanged(userApps.indexOf(app), payload);
         }
 
         //todo: update tiles notification count

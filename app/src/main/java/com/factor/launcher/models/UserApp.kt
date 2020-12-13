@@ -61,17 +61,25 @@ class UserApp
     fun retrieveNotificationCount() : String = currentNotifications.size.toString()
 
 
-    fun incrementNotificationCount(id : Int)
+    fun incrementNotificationCount(id : Int) : Boolean
     {
-        if (!currentNotifications.contains(id))
+        return if (!currentNotifications.contains(id))
+        {
             currentNotifications.add(id)
+            true
+        }
+        else false
     }
 
 
-    fun decreaseNotificationCount(id : Int)
+    fun decreaseNotificationCount(id : Int) : Boolean
     {
-        if (currentNotifications.contains(id))
-        currentNotifications.remove(id)
+        return if (currentNotifications.contains(id))
+        {
+            currentNotifications.remove(id)
+            true
+        }
+        else false
     }
 
     fun visibilityEditing() : Int
