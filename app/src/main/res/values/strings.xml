@@ -16,4 +16,5 @@
     <string name="hidden_apps">Hidden apps</string>
     <string name="options">Options</string>
     <string name="no_shortcuts_available_for_this_app">No shortcuts available for this app</string>
+    <string name="welcome">Welcome</string>
 </resources>

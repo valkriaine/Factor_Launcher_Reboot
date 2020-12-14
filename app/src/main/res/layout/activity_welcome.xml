@@ -7,9 +7,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             tools:context=".activities.WelcomeActivity">
 
 
@@ -21,6 +21,68 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/welcome_page"
+                    android:background="@android:color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon_welcome"
+                        android:src="@drawable/factor_icon_white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/welcome_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="30dp"
+                        android:textSize="20sp"
+                        android:text="@string/welcome"
+                        app:layout_constraintTop_toBottomOf="@id/icon_welcome"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/arrowButton"
+                        android:hapticFeedbackEnabled="true"
+                        android:src="@drawable/arrow"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="20dp"
+                        android:foregroundGravity="center"
+                        android:layout_marginTop="120dp"
+                        android:background="@drawable/circle"
+                        android:scaleType="center"
+                        android:rotation="180"
+                        android:onClick="toPageTwo"
+                        app:layout_constraintTop_toBottomOf="@id/welcome_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/details_page"
+                    android:background="@android:color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/permissions_page"
                     android:background="@android:color/black"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

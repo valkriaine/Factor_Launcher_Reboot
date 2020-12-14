@@ -2,10 +2,12 @@ package com.factor.launcher.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.databinding.DataBindingUtil;
+import androidx.viewpager.widget.ViewPager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityWelcomeBinding;
 import com.factor.launcher.util.Constants;
@@ -27,17 +29,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
 
-        binding.welcomeHomePager.addView(binding.welcomePage);
-
-        EasyPermissions.requestPermissions(
-                new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
-                        .setRationale("Factor launcher needs to access your external storage")
-                        .setPositiveButtonText("Okay")
-                        .setNegativeButtonText("Cancel")
-                        .setTheme(R.style.TransparentDialogTheme)
-                        .build());
-
-
+        initializeComponents();
 
     }
 
@@ -53,7 +45,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms)
     {
         Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-        startActivity(i);
+        //startActivity(i);
     }
 
 
@@ -73,5 +65,53 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         {
             // Do something after user returned from app settings screen, like showing a Toast.
         }
+    }
+
+
+
+
+
+    private void initializeComponents()
+    {
+        binding.welcomeHomePager.addView(binding.welcomePage, 0);
+        binding.welcomeHomePager.addView(binding.detailsPage, 1);
+        binding.welcomeHomePager.addView(binding.permissionsPage, 2);
+        binding.welcomeHomePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                float xOffset = position + positionOffset;
+                binding.arrowButton.setRotation(+180 * xOffset - 180);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    binding.arrowButton.setRotation(180);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+    }
+
+
+    private void requestPermission()
+    {
+        EasyPermissions.requestPermissions(
+                new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
+                        .setRationale("Factor launcher needs to access your external storage")
+                        .setPositiveButtonText("Okay")
+                        .setNegativeButtonText("Cancel")
+                        .setTheme(R.style.Theme_AppCompat)
+                        .build());
+
+
+    }
+
+    public void toPageTwo(View view)
+    {
+        binding.welcomeHomePager.setCurrentItem(1, true);
     }
 }
