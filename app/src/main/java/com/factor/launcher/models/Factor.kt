@@ -1,5 +1,6 @@
 package com.factor.launcher.models
 
+import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.*
@@ -42,6 +43,11 @@ class Factor
     {
         return if (userApp.currentNotifications.size > 0) View.VISIBLE
         else View.GONE
+    }
+
+    fun setShortcuts(shortcuts : List<ShortcutInfo>)
+    {
+        this.userApp.shortCuts = shortcuts
     }
 
     object Size

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <data>
         <variable name="factor"
                   type="com.factor.launcher.models.Factor"/>
@@ -12,6 +11,7 @@
             android:layout_width="320dp"
             android:layout_height="320dp">
 
+        <!--background-->
         <androidx.cardview.widget.CardView
                 android:translationZ="-20dp"
                 android:layout_margin="5dp"
@@ -25,30 +25,17 @@
                     app:blurOverlayColor="#99FFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-
         </androidx.cardview.widget.CardView>
 
-
+        <!--base-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/base"
                 android:translationZ="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <com.qhutch.elevationimageview.ElevationImageView
-                    android:id="@+id/tileIcon"
-                    android:layout_height="70dp"
-                    android:layout_width="70dp"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:elevation="150dp"
-                    android:tag="foreground"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!--app label-->
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tileLabel"
                     android:layout_width="wrap_content"
@@ -67,10 +54,9 @@
 
 
 
-
-
+            <!--app icon-->
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/notification_icon"
+                    android:id="@+id/tileIcon"
                     android:layout_height="70dp"
                     android:layout_width="70dp"
                     android:gravity="center"
@@ -84,83 +70,239 @@
 
 
 
-            <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent=".5"/>
-
-
-            <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.50"/>
-
-
-            <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_horizontal_bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.80"
-            />
-
-
+            <!--notification title-->
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/notification_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="10dp"
+                    android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="20dp"
-                    android:visibility="gone"
                     android:textColor="#000000"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:maxWidth="120dp"
-                    app:layout_constraintBottom_toTopOf="@id/guideline_horizontal"
+                    android:scrollHorizontally="false"
+                    app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_quarter"
+                    app:layout_constraintStart_toEndOf="@id/tileIcon"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
 
+            <!--notification content-->
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/notification_content"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginBottom="5dp"
-                    android:visibility="gone"
                     android:textColor="#000000"
-                    android:textAlignment="viewEnd"
-                    android:lines="5"
-                    android:maxLines="5"
+                    android:lines="1"
+                    android:maxLines="2"
                     android:ellipsize="end"
-                    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/notification_title"
+                    app:layout_constraintStart_toEndOf="@id/tileIcon"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_bottom"/>
 
 
+            <!--divider-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginHorizontal="30dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@android:color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
 
-
-
-
-
-
-
-
-
+            <!--notification counter-->
             <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/notification_count"
                     android:background="@drawable/round_button"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:textSize="12sp"
                     android:textAlignment="gravity"
                     android:layout_marginVertical="10dp"
                     android:layout_marginEnd="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
+
+
+            <!--guidelines-->
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".5"/>
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_vertical_33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.333"/>
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_vertical_66"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.666"/>
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.50"/>
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_horizontal_quarter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.25"/>
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_horizontal_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.40"/>
+
+
+
+            <!--shortcuts-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/shortcut_1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_vertical_33"
+                    android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginVertical="5dp"
+                        android:padding="5dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:gravity="center"
+                        app:cardCornerRadius="20dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/shortcut_1_icon"
+                            android:scaleType="centerInside"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"/>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/shortcut_1_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:maxLines="2"
+                        android:textColor="@android:color/black"
+                        android:ellipsize="end"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/shortcut_2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/guideline_vertical_33"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_vertical_66"
+                    android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginVertical="5dp"
+                        android:padding="5dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:gravity="center"
+                        app:cardCornerRadius="20dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/shortcut_2_icon"
+                            android:scaleType="centerInside"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"/>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/shortcut_2_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:maxLines="2"
+                        android:textColor="@android:color/black"
+                        android:ellipsize="end"/>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/shortcut_3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/guideline_vertical_66"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginVertical="5dp"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        app:cardCornerRadius="20dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/shortcut_3_icon"
+                            android:scaleType="centerInside"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"/>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/shortcut_3_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:maxLines="2"
+                        android:textColor="@android:color/black"
+                        android:ellipsize="end"/>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <!--if no shortcuts are available, display this-->
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/shortcut_availability"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginVertical="20dp"
+                    android:text="@string/no_shortcuts_available_for_this_app"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.factor.launcher.ui.BouncyConstraintLayout>
 </layout>

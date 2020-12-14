@@ -5,10 +5,9 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.pm.*;
 import android.net.Uri;
+import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -50,6 +49,10 @@ public class AppListManager
 
     private final PackageManager packageManager;
 
+    private final LauncherApps launcherApps;
+
+    private final LauncherApps.ShortcutQuery shortcutQuery = new LauncherApps.ShortcutQuery();
+
     private SharedPreferences.Editor editor;
 
     private FactorManager factorManager;
@@ -61,6 +64,7 @@ public class AppListManager
     {
         this.activity = activity;
         packageManager = activity.getPackageManager();
+        launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
         initialize(background);
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
@@ -71,7 +75,7 @@ public class AppListManager
     public void initialize(ViewGroup background)
     {
         this.adapter = new AppListAdapter();
-        this.factorManager = new FactorManager(activity, background, packageManager);
+        this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery);
     }
 
     //compare app label (new)
@@ -121,6 +125,7 @@ public class AppListManager
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
+                                app.setShortCuts(getShortcutsFromApp(app));
                                 app.icon = r.activityInfo.loadIcon(packageManager);
                                 userApps.add(app);
                                 appListDatabase.appListDao().insert(app);
@@ -130,6 +135,7 @@ public class AppListManager
                                 if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
                                     app.icon = r.activityInfo.loadIcon(packageManager);
+                                    app.setShortCuts(getShortcutsFromApp(app));
                                     userApps.add(app);
                                     app.setPinned(factorManager.isAppPinned(app));
                                     userApps.sort(first_letter);
@@ -167,6 +173,7 @@ public class AppListManager
                             app.setLabelOld((String) r.loadLabel(packageManager));
                             app.setLabelNew(app.getLabelOld());
                             app.setPackageName(r.activityInfo.packageName);
+                            app.setShortCuts(getShortcutsFromApp(app));
                             app.icon = r.activityInfo.loadIcon(packageManager);
                             userApps.add(app);
                         }
@@ -292,6 +299,7 @@ public class AppListManager
                     ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
                     app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
                     app.setLabelOld((String) packageManager.getApplicationLabel(info));
+                    app.setShortCuts(getShortcutsFromApp(app));
                     app.setLabelNew(app.getLabelOld());
                     appListDatabase.appListDao().insert(app);
                     userApps.add(app);
@@ -335,6 +343,7 @@ public class AppListManager
                             ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
                             userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
+                            userApps.get(position).setShortCuts(getShortcutsFromApp(app));
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
@@ -389,6 +398,7 @@ public class AppListManager
                             ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
                             userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
+                            userApps.get(position).setShortCuts(getShortcutsFromApp(app));
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
@@ -495,6 +505,31 @@ public class AppListManager
         this.displayHidden = displayHidden;
         this.adapter = new AppListAdapter();
         return adapter;
+    }
+
+    //retrieve list of app shortcuts
+    public List<ShortcutInfo> getShortcutsFromApp(UserApp app)
+    {
+
+        if (launcherApps == null || !launcherApps.hasShortcutHostPermission())
+            return new ArrayList<>(0);
+
+
+        shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
+                LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
+                LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
+
+        shortcutQuery.setPackage(app.getPackageName());
+        List<ShortcutInfo> shortcuts = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+        if (shortcuts == null || shortcuts.isEmpty())
+            return new ArrayList<>(0);
+        else
+            return shortcuts;
+    }
+
+    private void startShortCut(ShortcutInfo shortcutInfo)
+    {
+        launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
     //get display mode

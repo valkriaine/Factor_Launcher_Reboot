@@ -7,11 +7,11 @@
                   type="com.factor.launcher.models.Factor"/>
     </data>
 
-
     <com.factor.launcher.ui.BouncyConstraintLayout
             android:layout_width="160dp"
             android:layout_height="160dp">
 
+        <!--background-->
         <androidx.cardview.widget.CardView
                 android:translationZ="-20dp"
                 android:layout_margin="5dp"
@@ -27,12 +27,14 @@
         </androidx.cardview.widget.CardView>
 
 
+        <!--base-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/base"
                 android:translationZ="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+            <!--app icon-->
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tileIcon"
                     android:layout_height="70dp"
@@ -47,6 +49,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!--app label-->
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tileLabel"
                     android:layout_width="wrap_content"
@@ -64,7 +67,7 @@
                     android:layout_marginEnd="40dp"/>
 
 
-
+            <!--notification count-->
             <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/notification_count"
                     android:background="@drawable/round_button"

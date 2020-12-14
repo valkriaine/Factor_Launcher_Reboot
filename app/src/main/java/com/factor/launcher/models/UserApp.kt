@@ -1,5 +1,6 @@
 package com.factor.launcher.models
 
+import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.ColumnInfo
@@ -33,6 +34,9 @@ class UserApp
 
     @Ignore
     var isBeingEdited : Boolean = false
+
+    @Ignore
+    var shortCuts : List<ShortcutInfo> = ArrayList()
 
     @Ignore
     val currentNotifications : ArrayList<NotificationHolder> = ArrayList()
@@ -85,7 +89,7 @@ class UserApp
         return if (currentNotifications.size > 0)
             currentNotifications.last().title
         else
-            ""
+            "You are all caught up"
     }
 
     fun getNotificationText() : String
@@ -98,7 +102,7 @@ class UserApp
             else
                 text
         } else
-            ""
+            "No notification"
     }
 
 
@@ -141,6 +145,8 @@ class UserApp
     {
         return (packageName + labelNew + labelOld).trim('.', '_', ' ','-').toLowerCase(Locale.ROOT)
     }
+
+    fun hasShortcuts() : Boolean = shortCuts.isNotEmpty()
 
     //equal if package names are the same
     override fun equals(other: Any?): Boolean

@@ -3,8 +3,12 @@ package com.factor.launcher.managers;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -34,6 +38,8 @@ public class FactorManager
 
     private final FactorsDatabase factorsDatabase;
 
+    private final LauncherApps.ShortcutQuery shortcutQuery;
+
     private final PackageManager packageManager;
 
     public final FactorsAdapter adapter;
@@ -42,12 +48,16 @@ public class FactorManager
 
     private final ViewGroup background;
 
+    private final LauncherApps launcherApps;
+
     //constructor
-    public FactorManager(Activity activity, ViewGroup background, PackageManager pm)
+    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery)
     {
         this.activity = activity;
         this.background = background;
-        packageManager = pm;
+        this.packageManager = pm;
+        this.shortcutQuery = shortcutQuery;
+        this.launcherApps = launcherApps;
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -66,6 +76,7 @@ public class FactorManager
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
                         f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
+                        f.setShortcuts(getShortcutsFromFactor(f));
                     }
 
                 }
@@ -84,10 +95,13 @@ public class FactorManager
     {
         Factor factor = app.toFactor();
         userFactors.add(factor);
+        factor.setShortcuts(getShortcutsFromFactor(factor));
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
             Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
+            Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
+            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts().toString());
             factorsDatabase.factorsDao().insert(factor);
             activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
         }).start();
@@ -134,6 +148,7 @@ public class FactorManager
         {
             int position = userFactors.indexOf(factor);
             factor.setOrder(position);
+            factor.setShortcuts(getShortcutsFromFactor(factor));
             new Thread(()->
             {
                 factorsDatabase.factorsDao().updateFactorInfo(factor);
@@ -153,6 +168,7 @@ public class FactorManager
             loadIcon(f);
             f.setLabelOld(app.getLabelOld());
             f.setLabelNew(app.getLabelNew());
+            f.setUserApp(app);
             new Thread(()->
             {
                 factorsDatabase.factorsDao().updateFactorInfo(f);
@@ -265,6 +281,33 @@ public class FactorManager
         }
     }
 
+    //find shortcuts related to a factor
+    public List<ShortcutInfo> getShortcutsFromFactor(Factor factor)
+    {
+
+        if (launcherApps == null || !launcherApps.hasShortcutHostPermission())
+            return new ArrayList<>(0);
+
+        shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
+                LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
+                LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
+
+        shortcutQuery.setPackage(factor.getPackageName());
+        List<ShortcutInfo> shortcuts = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+        if (shortcuts == null || shortcuts.isEmpty())
+            return new ArrayList<>(0);
+        else
+            return shortcuts;
+    }
+
+    //launch shortcut
+    private void startShortCut(ShortcutInfo shortcutInfo)
+    {
+        launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
+    }
+
+
+
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
         @NonNull
@@ -353,27 +396,13 @@ public class FactorManager
                         FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
                         Factor factorToChange = tileBinding.getFactor();
 
-                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
-                        {
-                            tileBinding.tileIcon.setVisibility(View.VISIBLE);
-                            tileBinding.notificationCount.setVisibility(View.GONE);
-                            tileBinding.notificationTitle.setVisibility(View.GONE);
-                            tileBinding.notificationContent.setVisibility(View.GONE);
-                            tileBinding.notificationIcon.setVisibility(View.GONE);
-                        }
-                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        {
-                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
-                            tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-                            tileBinding.tileIcon.setVisibility(View.GONE);
-                            tileBinding.notificationTitle.setVisibility(View.VISIBLE);
-                            tileBinding.notificationContent.setVisibility(View.VISIBLE);
-                            tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
-                            tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
-
-                            tileBinding.notificationIcon.setImageDrawable(factorToChange.getIcon());
-                            tileBinding.notificationIcon.setVisibility(View.VISIBLE);
-                        }
+                      if (factorToChange.retrieveNotificationCountInNumber() > 0)
+                      {
+                          tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                          tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
+                          tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
+                          tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
+                      }
 
 
                     }
@@ -382,28 +411,12 @@ public class FactorManager
                         FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
                         Factor factorToChange = tileBinding.getFactor();
 
-                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
-                        {
-                            tileBinding.tileIcon.setVisibility(View.VISIBLE);
-                            tileBinding.notificationCount.setVisibility(View.GONE);
-                            tileBinding.notificationTitle.setVisibility(View.GONE);
-                            tileBinding.notificationContent.setVisibility(View.GONE);
-                            tileBinding.notificationIcon.setVisibility(View.GONE);
-                        }
-                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        {
-                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                        if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-                            tileBinding.tileIcon.setVisibility(View.GONE);
-                            tileBinding.notificationTitle.setVisibility(View.VISIBLE);
-                            tileBinding.notificationContent.setVisibility(View.VISIBLE);
-                            tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
-                            tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
 
-                            tileBinding.notificationIcon.setImageDrawable(factorToChange.getIcon());
-                            tileBinding.notificationIcon.setVisibility(View.VISIBLE);
-                        }
-
+                        tileBinding.notificationCount.setVisibility(factorToChange.getUserApp().visibilityNotificationCount());
+                        tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
+                        tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
                     }
                 }
             }
@@ -480,145 +493,182 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                try
+                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                 {
-                    size = factor.getSize();
-                    //determine layout based on size
-                    if (size == Factor.Size.small)
-                    {
-                        ((FactorSmallBinding)binding).setFactor(factor);
-                        ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
-                        ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                        ((FactorSmallBinding) binding).trans
-                                .setupWith(background)
-                                .setBlurAlgorithm(new RenderScriptBlur(activity))
-                                .setBlurRadius(25F)
-                                .setHasFixedTransformationMatrix(false);
+                    Factor selectedFactor = getFactor();
 
-                        ((FactorSmallBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
-                        if (factor.retrieveNotificationCountInNumber() > 0)
-                            ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
-                    }
-                    else if (size == Factor.Size.medium)
+                    if (!selectedFactor.getPackageName().isEmpty())
                     {
-                        ((FactorMediumBinding)binding).setFactor(factor);
-                        ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
-                        ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                        ((FactorMediumBinding) binding).trans
+                        MenuInflater inflater = activity.getMenuInflater();
+                        inflater.inflate(R.menu.factor_item_menu, menu);
+
+                        //remove from home
+                        menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
+
+                        //resize
+                        SubMenu subMenu = menu.getItem(1).getSubMenu();
+                        subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
+                        subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
+                        subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
+
+                        //info
+                        menu.getItem(2).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(
+                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.parse("package:"+factor.getPackageName())));
+                            return true;
+                        });
+
+                        //uninstall
+                        menu.getItem(3).setOnMenuItemClickListener(item ->
+                        {
+                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
+                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                            return true;
+                        });
+
+                        switch (factor.getSize()) {
+                            case Factor.Size.small:
+                                subMenu.getItem(0).setEnabled(false);
+                                break;
+                            case Factor.Size.medium:
+                                subMenu.getItem(1).setEnabled(false);
+                                break;
+                            case Factor.Size.large:
+                                subMenu.getItem(2).setEnabled(false);
+                                break;
+                        }
+
+                    }
+
+                });
+
+
+
+
+                //determine layout based on size
+                size = factor.getSize();
+                if (size == Factor.Size.small)
+                {
+                    ((FactorSmallBinding)binding).setFactor(factor);
+                    ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
+                    ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    ((FactorSmallBinding) binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(25F)
+                            .setHasFixedTransformationMatrix(false);
+
+                    ((FactorSmallBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                    if (factor.retrieveNotificationCountInNumber() > 0)
+                        ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+                }
+                else if (size == Factor.Size.medium)
+                {
+                    ((FactorMediumBinding)binding).setFactor(factor);
+                    ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
+                    ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    ((FactorMediumBinding) binding).trans
                                 .setupWith(background)
                                 .setBlurAlgorithm(new RenderScriptBlur(activity))
                                 .setBlurRadius(18F)
                                 .setHasFixedTransformationMatrix(false);
 
-                        ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorMediumBinding)binding).tileIcon.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorMediumBinding)binding).notificationTitle.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorMediumBinding)binding).notificationContent.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorMediumBinding)binding).notificationIcon.setVisibility(factor.visibilityNotificationCount());
+                    ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+                    ((FactorMediumBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
+                    ((FactorMediumBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
 
-                        if (factor.retrieveNotificationCountInNumber() > 0)
-                        {
-                            ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
-                            ((FactorMediumBinding)binding).tileIcon.setVisibility(View.GONE);
-                            ((FactorMediumBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
-                            ((FactorMediumBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
-                            ((FactorMediumBinding)binding).notificationIcon.setImageDrawable(factor.getIcon());
-                        }
-                        else
-                            ((FactorMediumBinding)binding).tileIcon.setVisibility(View.VISIBLE);
+                    if (factor.retrieveNotificationCountInNumber() > 0)
+                        ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+
                     }
-                    else if (size == Factor.Size.large)
-                    {
-                        ((FactorLargeBinding)binding).setFactor(factor);
-                        ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
-                        ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                        ((FactorLargeBinding)binding).trans
-                                .setupWith(background)
-                                .setBlurAlgorithm(new RenderScriptBlur(activity))
-                                .setBlurRadius(18F)
-                                .setHasFixedTransformationMatrix(false);
-
-                        ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorLargeBinding)binding).tileIcon.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorLargeBinding)binding).notificationTitle.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorLargeBinding)binding).notificationContent.setVisibility(factor.visibilityNotificationCount());
-                        ((FactorLargeBinding)binding).notificationIcon.setVisibility(factor.visibilityNotificationCount());
-
-                        if (factor.retrieveNotificationCountInNumber() > 0)
-                        {
-                            ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
-                            ((FactorLargeBinding)binding).tileIcon.setVisibility(View.GONE);
-                            ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
-                            ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
-                            ((FactorLargeBinding)binding).notificationIcon.setImageDrawable(factor.getIcon());
-                        }
-                        else
-                            ((FactorLargeBinding)binding).tileIcon.setVisibility(View.VISIBLE);
-                    }
-
-                    itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
-                    {
-                        Factor selectedFactor = getFactor();
-
-                        if (!selectedFactor.getPackageName().isEmpty())
-                        {
-                            MenuInflater inflater = activity.getMenuInflater();
-                            inflater.inflate(R.menu.factor_item_menu, menu);
-
-                            //remove from home
-                            menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
-
-                            //resize
-                            SubMenu subMenu = menu.getItem(1).getSubMenu();
-                            subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
-                            subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
-                            subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
-
-                            //info
-                            menu.getItem(2).setOnMenuItemClickListener(item ->
-                            {
-                                activity.startActivity(
-                                        new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                                Uri.parse("package:"+factor.getPackageName())));
-                                return true;
-                            });
-
-                            //uninstall
-                            menu.getItem(3).setOnMenuItemClickListener(item ->
-                            {
-                                activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
-                                        .putExtra(Intent.EXTRA_RETURN_RESULT, true));
-                                return true;
-                            });
-
-                            switch (factor.getSize()) {
-                                case Factor.Size.small:
-                                    subMenu.getItem(0).setEnabled(false);
-                                    break;
-                                case Factor.Size.medium:
-                                    subMenu.getItem(1).setEnabled(false);
-                                    break;
-                                case Factor.Size.large:
-                                    subMenu.getItem(2).setEnabled(false);
-                                    break;
-                            }
-
-                        }
-
-                    });
-
-                    //todo: customize activity transition animation
-                    itemView.setOnClickListener(v -> {
-                        Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
-                        if (intent != null)
-                            activity.startActivity(intent,
-                                    ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
-                    });
-                }
-                catch (Exception e)
+                else if (size == Factor.Size.large)
                 {
-                    Log.d("icon", "error loading factor for " + factor.getPackageName() + " " + e.getMessage());
+                    ((FactorLargeBinding)binding).setFactor(factor);
+                    ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
+                    ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    ((FactorLargeBinding)binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setHasFixedTransformationMatrix(false);
+
+                    ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.getUserApp().visibilityNotificationCount());
+                    ((FactorLargeBinding)binding).tileIcon.setVisibility(View.VISIBLE);
+                    ((FactorLargeBinding)binding).notificationTitle.setVisibility(View.VISIBLE);
+                    ((FactorLargeBinding)binding).notificationContent.setVisibility(View.VISIBLE);
+                    ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+                    ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
+                    ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
+
+                    if (factor.getUserApp().hasShortcuts())
+                    {
+                        ((FactorLargeBinding)binding).shortcutAvailability.setVisibility(View.GONE);
+                        List<ShortcutInfo> shortcuts = getShortcutsFromFactor(factor);
+                        if (shortcuts.get(0) != null)
+                        {
+                            ShortcutInfo shortcut1 = shortcuts.get(0);
+                            ((FactorLargeBinding)binding).shortcut1.setVisibility(View.VISIBLE);
+
+                            Drawable icon1 = launcherApps.getShortcutIconDrawable(shortcut1, activity.getResources().getDisplayMetrics().densityDpi);
+                            ((FactorLargeBinding)binding).shortcut1Icon.setImageDrawable(icon1);
+                            ((FactorLargeBinding)binding).shortcut1Label.setText(shortcut1.getShortLabel());
+
+                            ((FactorLargeBinding)binding).shortcut1.setOnClickListener(view -> startShortCut(shortcut1));
+
+
+                        }
+                        else
+                            ((FactorLargeBinding)binding).shortcut1.setVisibility(View.INVISIBLE);
+
+
+                        if (shortcuts.size() > 1 && shortcuts.get(1) != null)
+                        {
+                            ShortcutInfo shortcut2 = shortcuts.get(1);
+                            ((FactorLargeBinding)binding).shortcut2.setVisibility(View.VISIBLE);
+
+                            Drawable icon2 = launcherApps.getShortcutIconDrawable(shortcut2, activity.getResources().getDisplayMetrics().densityDpi);
+                            ((FactorLargeBinding)binding).shortcut2Icon.setImageDrawable(icon2);
+                            ((FactorLargeBinding)binding).shortcut2Label.setText(shortcut2.getShortLabel());
+
+                            ((FactorLargeBinding)binding).shortcut2.setOnClickListener(view -> startShortCut(shortcut2));
+                        }
+                        else
+                            ((FactorLargeBinding)binding).shortcut2.setVisibility(View.INVISIBLE);
+
+                        if (shortcuts.size() > 2 && shortcuts.get(2) != null)
+                        {
+                            ShortcutInfo shortcut3 = shortcuts.get(2);
+                            ((FactorLargeBinding)binding).shortcut3.setVisibility(View.VISIBLE);
+
+                            Drawable icon3 = launcherApps.getShortcutIconDrawable(shortcut3, activity.getResources().getDisplayMetrics().densityDpi);
+                            ((FactorLargeBinding)binding).shortcut3Icon.setImageDrawable(icon3);
+                            ((FactorLargeBinding)binding).shortcut3Label.setText(shortcut3.getShortLabel());
+
+                            ((FactorLargeBinding)binding).shortcut3.setOnClickListener(view -> startShortCut(shortcut3));
+                        }
+                        else
+                            ((FactorLargeBinding)binding).shortcut3.setVisibility(View.INVISIBLE);
+                    }
+                    else
+                    {
+                        ((FactorLargeBinding)binding).shortcut1.setVisibility(View.INVISIBLE);
+                        ((FactorLargeBinding)binding).shortcut2.setVisibility(View.INVISIBLE);
+                        ((FactorLargeBinding)binding).shortcut3.setVisibility(View.INVISIBLE);
+                        ((FactorLargeBinding)binding).shortcutAvailability.setVisibility(View.VISIBLE);
+                    }
+
                 }
+
+                //todo: customize activity transition animation
+                itemView.setOnClickListener(v -> {
+                    Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
+                    if (intent != null)
+                        activity.startActivity(intent,
+                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                });
+
             }
 
             //return the factor of this view holder
