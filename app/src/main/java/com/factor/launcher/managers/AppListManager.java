@@ -126,7 +126,9 @@ public class AppListManager
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
                                 app.setShortCuts(getShortcutsFromApp(app));
+
                                 app.icon = r.activityInfo.loadIcon(packageManager);
+
                                 userApps.add(app);
                                 appListDatabase.appListDao().insert(app);
                             }

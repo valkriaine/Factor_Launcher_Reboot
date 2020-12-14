@@ -337,6 +337,8 @@ public class FactorManager
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             int scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
 
+
+
             switch (viewType)
             {
                 case Factor.Size.small:
@@ -353,6 +355,33 @@ public class FactorManager
                     break;
             }
             view.setLayoutParams(layoutParams);
+
+
+            ViewDataBinding binding = DataBindingUtil.bind(view);
+
+
+            if (binding instanceof FactorSmallBinding)
+                ((FactorSmallBinding) binding).trans
+                        .setupWith(background)
+                        .setBlurAlgorithm(new RenderScriptBlur(activity))
+                        .setBlurRadius(25F)
+                        .setHasFixedTransformationMatrix(false);
+
+            if (binding instanceof FactorMediumBinding)
+                ((FactorMediumBinding) binding).trans
+                        .setupWith(background)
+                        .setBlurAlgorithm(new RenderScriptBlur(activity))
+                        .setBlurRadius(18F)
+                        .setHasFixedTransformationMatrix(false);
+
+            if (binding instanceof FactorLargeBinding)
+                ((FactorLargeBinding)binding).trans
+                        .setupWith(background)
+                        .setBlurAlgorithm(new RenderScriptBlur(activity))
+                        .setBlurRadius(18F)
+                        .setHasFixedTransformationMatrix(false);
+
+
 
             activity.registerForContextMenu(view);
             return new FactorsViewHolder(view);
@@ -544,9 +573,6 @@ public class FactorManager
 
                 });
 
-
-
-
                 //determine layout based on size
                 size = factor.getSize();
                 if (size == Factor.Size.small)
@@ -554,13 +580,8 @@ public class FactorManager
                     ((FactorSmallBinding)binding).setFactor(factor);
                     ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
                     ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                    ((FactorSmallBinding) binding).trans
-                            .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(25F)
-                            .setHasFixedTransformationMatrix(false);
-
                     ((FactorSmallBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
+
                     if (factor.retrieveNotificationCountInNumber() > 0)
                         ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                 }
@@ -569,15 +590,10 @@ public class FactorManager
                     ((FactorMediumBinding)binding).setFactor(factor);
                     ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
                     ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                    ((FactorMediumBinding) binding).trans
-                                .setupWith(background)
-                                .setBlurAlgorithm(new RenderScriptBlur(activity))
-                                .setBlurRadius(18F)
-                                .setHasFixedTransformationMatrix(false);
-
-                    ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
                     ((FactorMediumBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
                     ((FactorMediumBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
+
+                    ((FactorMediumBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
 
                     if (factor.retrieveNotificationCountInNumber() > 0)
                         ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
@@ -588,36 +604,25 @@ public class FactorManager
                     ((FactorLargeBinding)binding).setFactor(factor);
                     ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
                     ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                    ((FactorLargeBinding)binding).trans
-                            .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(18F)
-                            .setHasFixedTransformationMatrix(false);
-
-                    ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.getUserApp().visibilityNotificationCount());
-                    ((FactorLargeBinding)binding).tileIcon.setVisibility(View.VISIBLE);
-                    ((FactorLargeBinding)binding).notificationTitle.setVisibility(View.VISIBLE);
-                    ((FactorLargeBinding)binding).notificationContent.setVisibility(View.VISIBLE);
                     ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
                     ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
 
+                    ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.getUserApp().visibilityNotificationCount());
+
                     if (factor.getUserApp().hasShortcuts())
                     {
-                        ((FactorLargeBinding)binding).shortcutAvailability.setVisibility(View.GONE);
+                        ((FactorLargeBinding)binding).shortcutAvailability.setVisibility(View.INVISIBLE);
                         List<ShortcutInfo> shortcuts = getShortcutsFromFactor(factor);
                         if (shortcuts.get(0) != null)
                         {
                             ShortcutInfo shortcut1 = shortcuts.get(0);
                             ((FactorLargeBinding)binding).shortcut1.setVisibility(View.VISIBLE);
-
                             Drawable icon1 = launcherApps.getShortcutIconDrawable(shortcut1, activity.getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut1Icon.setImageDrawable(icon1);
                             ((FactorLargeBinding)binding).shortcut1Label.setText(shortcut1.getShortLabel());
 
                             ((FactorLargeBinding)binding).shortcut1.setOnClickListener(view -> startShortCut(shortcut1));
-
-
                         }
                         else
                             ((FactorLargeBinding)binding).shortcut1.setVisibility(View.INVISIBLE);
@@ -627,7 +632,6 @@ public class FactorManager
                         {
                             ShortcutInfo shortcut2 = shortcuts.get(1);
                             ((FactorLargeBinding)binding).shortcut2.setVisibility(View.VISIBLE);
-
                             Drawable icon2 = launcherApps.getShortcutIconDrawable(shortcut2, activity.getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut2Icon.setImageDrawable(icon2);
                             ((FactorLargeBinding)binding).shortcut2Label.setText(shortcut2.getShortLabel());
@@ -641,7 +645,6 @@ public class FactorManager
                         {
                             ShortcutInfo shortcut3 = shortcuts.get(2);
                             ((FactorLargeBinding)binding).shortcut3.setVisibility(View.VISIBLE);
-
                             Drawable icon3 = launcherApps.getShortcutIconDrawable(shortcut3, activity.getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut3Icon.setImageDrawable(icon3);
                             ((FactorLargeBinding)binding).shortcut3Label.setText(shortcut3.getShortLabel());

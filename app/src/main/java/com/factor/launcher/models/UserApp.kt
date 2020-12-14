@@ -44,6 +44,7 @@ class UserApp
     @Ignore
     lateinit var icon: Drawable
 
+
     //... other attributes
     fun changePinnedState()
     {

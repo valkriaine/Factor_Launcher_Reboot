@@ -71,10 +71,11 @@ dependencies {
 
     implementation 'com.github.Valkriaine:Factor:1.7'
 
-
+    //other libraries
     implementation 'com.eightbitlab:blurview:1.6.5'
     implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
     implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }

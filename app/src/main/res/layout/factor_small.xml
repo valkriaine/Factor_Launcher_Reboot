@@ -35,15 +35,15 @@
                 android:layout_height="match_parent">
 
             <!--app icon-->
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.qhutch.elevationimageview.ElevationImageView
                     android:id="@+id/tileIcon"
+                    android:background="@android:color/transparent"
                     android:layout_height="70dp"
                     android:layout_width="70dp"
                     android:gravity="center"
                     android:padding="10dp"
+                    android:elevation="50dp"
                     android:scaleType="fitCenter"
-                    android:elevation="150dp"
-                    android:tag="foreground"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
