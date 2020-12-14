@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.factor.launcher">
+
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
@@ -11,8 +12,19 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+
+        <activity android:name=".activities.WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME"/>
+            </intent-filter>
+        </activity>
+
+
         <activity
-                android:name=".HomeActivity"
+                android:name=".activities.HomeActivity"
                 android:clearTaskOnLaunch="true"
                 android:enabled="true"
                 android:launchMode="singleTask"
@@ -20,19 +32,19 @@
                 android:stateNotNeeded="true"
                 android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME"/>
             </intent-filter>
         </activity>
 
-        <service android:name=".services.NotificationListener"
-                 android:label="notification_service"
-                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+        <service
+                android:name=".services.NotificationListener"
+                android:label="notification_service"
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
+                <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
     </application>
+
 </manifest>

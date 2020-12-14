@@ -1,4 +1,4 @@
-package com.factor.launcher;
+package com.factor.launcher.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import com.factor.launcher.R;
 import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.util.OnBackPressedCallBack;
 
@@ -27,6 +28,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
