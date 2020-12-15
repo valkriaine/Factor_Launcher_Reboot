@@ -19,7 +19,9 @@ public class HomeActivity extends AppCompatActivity
 {
 
     private Drawable wallpaper = null;
+
     private WallpaperManager wm;
+
     private boolean isWallpaperChanged = false;
 
     @Override
@@ -28,21 +30,24 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_home);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
 
+        //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-            if (wm.getWallpaperInfo() == null)
-                wallpaper = wm.getFastDrawable();
+            if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
+
 
         if (savedInstanceState == null)
-        {
-            getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
                     .add(R.id.home_fragment_container, HomeScreenFragment.class, null)
                     .addToBackStack(null)
                     .commit();
-        }
+
 
     }
 
@@ -53,7 +58,7 @@ public class HomeActivity extends AppCompatActivity
         if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) super.onBackPressed();
     }
 
-
+    //if wallpaper is changed, reload fragment
     @Override
     protected void onResume()
     {
@@ -70,10 +75,13 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-
+    //detect if wallpaper has changed
     private void detectWallpaperChanges()
     {
-        wm = WallpaperManager.getInstance(this);
+
+        if (wm == null)
+            wm = WallpaperManager.getInstance(this);
+
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         {
             //live wallpaper

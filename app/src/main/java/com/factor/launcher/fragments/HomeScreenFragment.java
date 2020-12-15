@@ -2,10 +2,8 @@ package com.factor.launcher.fragments;
 
 import android.Manifest;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -32,7 +30,6 @@ import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import java.util.Objects;
-import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
@@ -42,6 +39,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private WallpaperManager wm;
 
     private AppListManager appListManager;
+
+    private boolean isLiveWallpaper = false;
 
     public HomeScreenFragment()
     {
@@ -111,12 +110,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //get system wallpaper
         checkLiveWallpaper();
 
-
-
-
-
         //initialize data manager
-        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost, isLiveWallpaper);
 
         //register broadcast receivers
         new AppActionReceiver(appListManager);
@@ -233,8 +228,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //setup wallpaper
     private void checkLiveWallpaper()
     {
-        SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
 
         //static wallpaper
         if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
@@ -242,8 +235,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         {
 
             binding.image.setImageDrawable(wm.getDrawable());
-            editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", false);
-            editor.apply();
+            isLiveWallpaper = false;
 
             binding.image.setVisibility(View.VISIBLE);
             binding.blur.setVisibility(View.VISIBLE);
@@ -270,8 +262,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.searchBase.setCardBackgroundColor(Color.BLACK);
             binding.searchBlur.setOverlayColor(Color.TRANSPARENT);
             binding.searchBlur.setBlurEnabled(false);
-            editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
-            editor.apply();
+
+            isLiveWallpaper = true;
         }
     }
 

@@ -35,4 +35,5 @@
     <string name="blur_effect_live_wallpaper_warning">Currently blur effect does not work with live wallpapers.</string>
     <string name="notification_service_description">show notification message and count</string>
     <string name="you_are_all_set">You are all set</string>
+    <string name="enabled">Enabled</string>
 </resources>

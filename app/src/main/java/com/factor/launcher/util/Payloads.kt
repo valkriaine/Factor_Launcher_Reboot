@@ -4,6 +4,7 @@ import com.factor.launcher.models.NotificationHolder
 
 
 //payload class for updating notification count/message
+@Suppress("unused")
 class Payload (val notificationHolder: NotificationHolder, val code : String)
 {
     companion object

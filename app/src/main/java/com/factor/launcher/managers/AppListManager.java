@@ -55,27 +55,21 @@ public class AppListManager
 
     private SharedPreferences.Editor editor;
 
-    private FactorManager factorManager;
+    private final FactorManager factorManager;
 
     public AppListAdapter adapter;
 
     //constructor
-    public AppListManager(Activity activity, ViewGroup background)
+    public AppListManager(Activity activity, ViewGroup background, Boolean isLiveWallpaper)
     {
         this.activity = activity;
         packageManager = activity.getPackageManager();
         launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-        initialize(background);
+        this.adapter = new AppListAdapter();
+        this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
         appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
         factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
         loadApps(factorSharedPreferences.getBoolean("saved", false));
-    }
-
-    //initialize adapter and background view for blur
-    public void initialize(ViewGroup background)
-    {
-        this.adapter = new AppListAdapter();
-        this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery);
     }
 
     //compare app label (new)
@@ -529,6 +523,7 @@ public class AppListManager
             return shortcuts;
     }
 
+    //start app shortcut
     private void startShortCut(ShortcutInfo shortcutInfo)
     {
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
@@ -578,12 +573,6 @@ public class AppListManager
             if (app.isPinned())
                 factorManager.onClearedNotification(intent, app, payload);
         }
-    }
-
-    public FactorManager resetWallpaper(ViewGroup view)
-    {
-        this.factorManager = new FactorManager(activity, view, packageManager, launcherApps, shortcutQuery);
-        return this.factorManager;
     }
 
     //adapter for app drawer

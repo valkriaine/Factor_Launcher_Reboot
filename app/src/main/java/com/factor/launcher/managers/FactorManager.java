@@ -2,9 +2,7 @@ package com.factor.launcher.managers;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
@@ -35,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 public class FactorManager
 {
@@ -55,20 +52,17 @@ public class FactorManager
 
     private final LauncherApps launcherApps;
 
-    private boolean isLiveWallpaper = false;
+    private final boolean isLiveWallpaper;
 
     //constructor
-    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery)
+    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery, Boolean isLiveWallpaper)
     {
         this.activity = activity;
         this.background = background;
         this.packageManager = pm;
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
-
-        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-        isLiveWallpaper = preferences.getBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
-
+        this.isLiveWallpaper = isLiveWallpaper;
 
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
@@ -317,13 +311,6 @@ public class FactorManager
     {
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
-
-
-    public void notifyDataSetChanged()
-    {
-        this.adapter.notifyDataSetChanged();
-    }
-
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
