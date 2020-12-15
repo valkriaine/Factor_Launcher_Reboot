@@ -95,16 +95,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
+    //todo: detect if wallpaper is changed
     @Override
     public void onResume()
     {
         super.onResume();
-        //todo: blur may be off-scaled
-        checkLiveWallpaper();
-        if (appListManager != null)
-            binding.tilesList.setAdapter(appListManager.getFactorManager().resetWallpaper());
-        else
-            appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+
+        //todo: blur may be wrongly-scaled
+        //todo: tileList adapter fails to reset
 
     }
 
@@ -118,6 +116,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
+        binding.image.setImageDrawable(wm.getDrawable());
         //get system wallpaper
         checkLiveWallpaper();
 
@@ -240,7 +239,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
-
+    //setup wallpaper
     private void checkLiveWallpaper()
     {
         SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
@@ -255,7 +254,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.blur.setVisibility(View.VISIBLE);
             binding.searchBase.setCardBackgroundColor(Color.TRANSPARENT);
             binding.searchBlur.setOverlayColor(Color.parseColor("#4DFFFFFF"));
-            binding.image.setImageDrawable(wm.getDrawable());
             binding.searchBlur.setBlurEnabled(true);
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
@@ -280,7 +278,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
             editor.apply();
         }
-
     }
 
 }

@@ -580,6 +580,12 @@ public class AppListManager
         }
     }
 
+    public FactorManager resetWallpaper(ViewGroup view)
+    {
+        this.factorManager = new FactorManager(activity, view, packageManager, launcherApps, shortcutQuery);
+        return this.factorManager;
+    }
+
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {

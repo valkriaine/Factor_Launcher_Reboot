@@ -55,7 +55,7 @@ public class FactorManager
 
     private final LauncherApps launcherApps;
 
-    private boolean isLiveWallpaper;
+    private boolean isLiveWallpaper = false;
 
     //constructor
     public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery)
@@ -318,15 +318,11 @@ public class FactorManager
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
-    //todo: call this method to reload home screen, set tileList's adapter to the returned value when wallpaper changes
-    public FactorsAdapter resetWallpaper()
-    {
-        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-        isLiveWallpaper = preferences.getBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
-        this.adapter = new FactorsAdapter();
-        return adapter;
-    }
 
+    public void notifyDataSetChanged()
+    {
+        this.adapter.notifyDataSetChanged();
+    }
 
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
@@ -375,8 +371,9 @@ public class FactorManager
                     layoutParams.height = scale;
                     break;
             }
-            view.setLayoutParams(layoutParams);
 
+            view.setLayoutParams(layoutParams);
+            activity.registerForContextMenu(view);
 
             ViewDataBinding binding = DataBindingUtil.bind(view);
 
@@ -408,27 +405,24 @@ public class FactorManager
             {
                 if (binding instanceof FactorSmallBinding)
                 {
-                    ((FactorSmallBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
                     ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.WHITE);
                 }
 
 
                 if (binding instanceof FactorMediumBinding)
                 {
-                    ((FactorMediumBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
                     ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.WHITE);
                 }
 
                 if (binding instanceof FactorLargeBinding)
                 {
-                    ((FactorLargeBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
                     ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.WHITE);
                 }
             }
 
-
-
-            activity.registerForContextMenu(view);
             return new FactorsViewHolder(view);
         }
 
