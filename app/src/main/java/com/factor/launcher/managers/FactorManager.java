@@ -2,10 +2,13 @@ package com.factor.launcher.managers;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Process;
@@ -32,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.factor.launcher.util.Constants.PACKAGE_NAME;
+
 public class FactorManager
 {
     private final ArrayList<Factor> userFactors = new ArrayList<>();
@@ -42,13 +47,15 @@ public class FactorManager
 
     private final PackageManager packageManager;
 
-    public final FactorsAdapter adapter;
+    public FactorsAdapter adapter;
 
     private final Activity activity;
 
     private final ViewGroup background;
 
     private final LauncherApps launcherApps;
+
+    private boolean isLiveWallpaper;
 
     //constructor
     public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery)
@@ -58,6 +65,11 @@ public class FactorManager
         this.packageManager = pm;
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
+
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        isLiveWallpaper = preferences.getBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
+
+
         adapter = new FactorsAdapter();
         factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
@@ -306,6 +318,15 @@ public class FactorManager
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
+    //todo: call this method to reload home screen, set tileList's adapter to the returned value when wallpaper changes
+    public FactorsAdapter resetWallpaper()
+    {
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        isLiveWallpaper = preferences.getBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
+        this.adapter = new FactorsAdapter();
+        return adapter;
+    }
+
 
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
@@ -360,26 +381,50 @@ public class FactorManager
             ViewDataBinding binding = DataBindingUtil.bind(view);
 
 
-            if (binding instanceof FactorSmallBinding)
-                ((FactorSmallBinding) binding).trans
-                        .setupWith(background)
-                        .setBlurAlgorithm(new RenderScriptBlur(activity))
-                        .setBlurRadius(25F)
-                        .setHasFixedTransformationMatrix(false);
+            if (!isLiveWallpaper)
+            {
+                if (binding instanceof FactorSmallBinding)
+                    ((FactorSmallBinding) binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(25F)
+                            .setHasFixedTransformationMatrix(false);
 
-            if (binding instanceof FactorMediumBinding)
-                ((FactorMediumBinding) binding).trans
-                        .setupWith(background)
-                        .setBlurAlgorithm(new RenderScriptBlur(activity))
-                        .setBlurRadius(18F)
-                        .setHasFixedTransformationMatrix(false);
+                if (binding instanceof FactorMediumBinding)
+                    ((FactorMediumBinding) binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setHasFixedTransformationMatrix(false);
 
-            if (binding instanceof FactorLargeBinding)
-                ((FactorLargeBinding)binding).trans
-                        .setupWith(background)
-                        .setBlurAlgorithm(new RenderScriptBlur(activity))
-                        .setBlurRadius(18F)
-                        .setHasFixedTransformationMatrix(false);
+                if (binding instanceof FactorLargeBinding)
+                    ((FactorLargeBinding)binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setHasFixedTransformationMatrix(false);
+            }
+           else
+            {
+                if (binding instanceof FactorSmallBinding)
+                {
+                    ((FactorSmallBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                }
+
+
+                if (binding instanceof FactorMediumBinding)
+                {
+                    ((FactorMediumBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                }
+
+                if (binding instanceof FactorLargeBinding)
+                {
+                    ((FactorLargeBinding) binding).trans.setVisibility(View.GONE);
+                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                }
+            }
 
 
 

@@ -22,5 +22,7 @@
     </style>
 
 
-    <style name="WelcomeTheme" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="WelcomeTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowActivityTransitions">true</item>
+    </style>
 </resources>

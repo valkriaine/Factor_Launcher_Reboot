@@ -13,6 +13,7 @@
 
         <!--background-->
         <androidx.cardview.widget.CardView
+                android:id="@+id/card"
                 android:translationZ="-20dp"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"

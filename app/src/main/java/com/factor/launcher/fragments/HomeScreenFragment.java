@@ -1,9 +1,12 @@
 package com.factor.launcher.fragments;
 
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.*;
@@ -26,8 +29,8 @@ import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import eightbitlab.com.blurview.RenderScriptBlur;
-
 import java.util.Objects;
+import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
@@ -91,6 +94,20 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             return true;
     }
 
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        //todo: blur may be off-scaled
+        checkLiveWallpaper();
+        if (appListManager != null)
+            binding.tilesList.setAdapter(appListManager.getFactorManager().resetWallpaper());
+        else
+            appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
+
+    }
+
     //initialize views and listeners
     private void initializeComponents()
     {
@@ -102,8 +119,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
         //get system wallpaper
-        //todo: request permission, handle live wallpaper
-        binding.image.setImageDrawable(wm.getDrawable());
+        checkLiveWallpaper();
+
+
+
+
 
         //initialize data manager
         appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost);
@@ -164,21 +184,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
-        binding.blur.setupWith(binding.backgroundHost)
-                .setFrameClearDrawable(wm.getDrawable())
-                .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                .setBlurRadius(15f)
-                .setBlurAutoUpdate(false)
-                .setHasFixedTransformationMatrix(true);
 
-        
 
         //search bar
-        binding.searchBlur.setupWith(binding.rootContent)
-                .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                .setBlurRadius(20f)
-                .setBlurAutoUpdate(true)
-                .setHasFixedTransformationMatrix(false);
         binding.searchBase.setTranslationY(-500f);
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -230,4 +238,49 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             popup.show();
         });
     }
+
+
+
+    private void checkLiveWallpaper()
+    {
+        SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        if (wm.getWallpaperInfo() == null)
+        {
+
+            editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", false);
+            editor.apply();
+
+            binding.image.setVisibility(View.VISIBLE);
+            binding.blur.setVisibility(View.VISIBLE);
+            binding.searchBase.setCardBackgroundColor(Color.TRANSPARENT);
+            binding.searchBlur.setOverlayColor(Color.parseColor("#4DFFFFFF"));
+            binding.image.setImageDrawable(wm.getDrawable());
+            binding.searchBlur.setBlurEnabled(true);
+            binding.blur.setupWith(binding.backgroundHost)
+                    .setFrameClearDrawable(wm.getDrawable())
+                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                    .setBlurRadius(15f)
+                    .setBlurAutoUpdate(false)
+                    .setHasFixedTransformationMatrix(true);
+
+            binding.searchBlur.setupWith(binding.rootContent)
+                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                    .setBlurRadius(20f)
+                    .setBlurAutoUpdate(true)
+                    .setHasFixedTransformationMatrix(false);
+        }
+        else
+        {
+            binding.image.setVisibility(View.GONE);
+            binding.blur.setVisibility(View.GONE);
+            binding.searchBase.setCardBackgroundColor(Color.BLACK);
+            binding.searchBlur.setOverlayColor(Color.TRANSPARENT);
+            binding.searchBlur.setBlurEnabled(false);
+            editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", true);
+            editor.apply();
+        }
+
+    }
+
 }

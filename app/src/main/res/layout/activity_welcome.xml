@@ -13,22 +13,37 @@
             android:background="@android:color/black"
             tools:context=".activities.WelcomeActivity">
 
-        <HorizontalScrollView
-                android:id="@+id/scroller"
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dim_background"
+                android:background="#80000000"
+                android:alpha=".1"
+                android:translationZ="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/city_wallpaper"
-                    android:src="@drawable/city_welcome_background"
-                    android:scaleType="centerCrop"
-                    android:translationY="150dp"
-                    android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/scroller_base"
+                android:translationZ="-5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <HorizontalScrollView
+                    android:id="@+id/scroller"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:adjustViewBounds="true"/>
-        </HorizontalScrollView>
-
-
+                    android:scrollbars="none">
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/city_wallpaper"
+                        android:src="@drawable/city_welcome_background"
+                        android:scaleType="centerCrop"
+                        android:translationY="150dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"/>
+            </HorizontalScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
@@ -37,6 +52,7 @@
 
         <com.valkriaine.factor.HomePager
                 android:id="@+id/welcome_home_pager"
+                android:translationZ="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -54,8 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:scaleType="fitCenter"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/welcome_text"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -66,9 +81,10 @@
                         android:layout_marginVertical="30dp"
                         android:textSize="20sp"
                         android:text="@string/welcome"
-                        app:layout_constraintTop_toBottomOf="@id/icon_welcome"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
                 <androidx.appcompat.widget.AppCompatImageButton
@@ -83,7 +99,7 @@
                         android:background="@drawable/circle"
                         android:scaleType="center"
                         android:rotation="180"
-                        android:onClick="toPageTwo"
+                        android:onClick="skip"
                         app:layout_constraintTop_toBottomOf="@id/welcome_text"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -95,21 +111,355 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/details_page"
+                    android:id="@+id/blur_page"
                     android:background="@android:color/transparent"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="30dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:cardCornerRadius="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+
+                    <eightbitlab.com.blurview.BlurView
+                            android:id="@+id/blur_dialog"
+                            app:blurOverlayColor="#80FFFFFF"
+                            android:padding="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                                android:orientation="vertical"
+                                android:layout_marginHorizontal="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/blur_effect"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="20sp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/would_you_like_to_turn_on_blur_effect"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="15sp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/blur_effect_performance_warning"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="15sp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/blur_effect_live_wallpaper_warning"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="15sp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </eightbitlab.com.blurview.BlurView>
+                </androidx.cardview.widget.CardView>
+
+
+
+                <androidx.constraintlayout.widget.Guideline
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/guideline_vertical_mid"
+                        app:layout_constraintGuide_percent="0.5"/>
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/turn_on_blur_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/welcome_button"
+                        android:textColor="@android:color/black"
+                        android:text="@string/turn_on_blur"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="30dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_mid"
+                        android:onClick="requestPermission"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/skip_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/welcome_button"
+                        android:textColor="@android:color/black"
+                        android:text="@string/skip"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="30dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guideline_vertical_mid"
+                        android:onClick="skip"/>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/permissions_page"
+                    android:id="@+id/notification_page"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:textSize="20sp"
+                            android:text="@string/notification_service"
+                            android:textColor="@android:color/white"
+                            android:layout_marginHorizontal="30dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/notification_service_request_text"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/notification_service_request_text"
+                            android:textSize="15sp"
+                            android:textColor="@android:color/white"
+                            android:text="@string/notification_service_rationale"
+                            android:layout_marginHorizontal="30dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/tile_demo"/>
+
+                <!--demo medium tile-->
+                <com.factor.launcher.ui.BouncyConstraintLayout
+                        android:id="@+id/tile_demo"
+                        android:layout_width="320dp"
+                        android:layout_height="160dp"
+                        android:layout_marginVertical="50dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                    <!--background-->
+                    <androidx.cardview.widget.CardView
+                            android:translationZ="-20dp"
+                            android:layout_margin="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:tag="background"
+                            app:cardCornerRadius="5dp">
+                        <eightbitlab.com.blurview.BlurView
+                                android:id="@+id/trans"
+                                app:blurOverlayColor="#99FFFFFF"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <!--base-->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:translationZ="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        <!--app label-->
+                        <androidx.appcompat.widget.AppCompatTextView
+                                android:text="@string/app_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                android:textAlignment="center"
+                                android:textColor="#000000"
+                                android:singleLine="true"
+                                android:ellipsize="end"
+                                android:maxWidth="120dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                android:layout_marginBottom="10dp"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginEnd="40dp"/>
+
+                        <!--app icon-->
+                        <com.qhutch.elevationimageview.ElevationImageView
+                                android:id="@+id/tileIcon"
+                                android:src="@mipmap/factor_icon_round"
+                                android:layout_height="70dp"
+                                android:layout_width="70dp"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:elevation="50dp"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                        <!--guidelines-->
+                        <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline_vertical"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                app:layout_constraintGuide_percent=".5"/>
+                        <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline_horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                app:layout_constraintGuide_percent="0.50"/>
+                        <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline_horizontal_bottom"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                app:layout_constraintGuide_percent="0.80"/>
+
+
+                        <!--notification title-->
+                        <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/notification_title"
+                                android:text= "@string/demo_notification_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="2dp"
+                                android:layout_marginHorizontal="20dp"
+                                android:textColor="#000000"
+                                android:singleLine="true"
+                                android:ellipsize="end"
+                                android:scrollHorizontally="false"
+                                app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal"
+                                app:layout_constraintStart_toEndOf="@id/tileIcon"
+                                app:layout_constraintEnd_toEndOf="parent"/>
+
+                        <!--notification content-->
+                        <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/notification_content"
+                                android:layout_width="0dp"
+                                android:text="@string/demo_notification_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginBottom="5dp"
+                                android:textColor="#000000"
+                                android:lines="1"
+                                android:maxLines="2"
+                                android:ellipsize="end"
+                                app:layout_constraintTop_toBottomOf="@id/notification_title"
+                                app:layout_constraintStart_toEndOf="@id/tileIcon"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_bottom"/>
+
+
+                        <!--notification count-->
+                        <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/notification_count"
+                                android:background="@drawable/round_button"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:gravity="center"
+                                android:textSize="12sp"
+                                android:text="@string/demo_notification_counter"
+                                android:textAlignment="gravity"
+                                android:layout_marginVertical="10dp"
+                                android:layout_marginEnd="10dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.factor.launcher.ui.BouncyConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.Guideline
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/guideline_vertical_mid_notification"
+                        app:layout_constraintGuide_percent="0.5"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/turn_on_notification_service_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/welcome_button"
+                        android:textColor="@android:color/black"
+                        android:text="@string/enable"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="30dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_mid_notification"
+                        android:onClick="enableNotificationAccess"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/skip_notification_service_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/welcome_button"
+                        android:textColor="@android:color/black"
+                        android:text="@string/skip"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="30dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guideline_vertical_mid_notification"
+                        android:onClick="skip"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/finish_page"
                     android:background="@android:color/black"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/all_set_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="30dp"
+                        android:textSize="20sp"
+                        android:text="@string/you_are_all_set"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/arrow_to_home"
+                        android:hapticFeedbackEnabled="true"
+                        android:src="@drawable/arrow"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="20dp"
+                        android:foregroundGravity="center"
+                        android:layout_marginTop="120dp"
+                        android:background="@drawable/circle"
+                        android:scaleType="center"
+                        android:rotation="180"
+                        android:onClick="allSet"
+                        android:transitionName="arrow_transition"
+                        app:layout_constraintTop_toBottomOf="@id/all_set_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </com.valkriaine.factor.HomePager>
 

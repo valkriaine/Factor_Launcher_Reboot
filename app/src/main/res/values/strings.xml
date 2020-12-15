@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Factor Launcher</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_to_home">Add to home</string>
     <string name="edit">Edit</string>
     <string name="info">Info</string>
@@ -17,4 +15,24 @@
     <string name="options">Options</string>
     <string name="no_shortcuts_available_for_this_app">No shortcuts available for this app</string>
     <string name="welcome">Welcome</string>
+    <string name="blur_effect">Blur effect</string>
+    <string name="blur_effect_performance_warning">
+        Note that blur effect may cause some devices to lag. If your device is having performance issues, you can always turn this off in the settings.
+    </string>
+    <string name="would_you_like_to_turn_on_blur_effect">Would you like to turn on blur effect?</string>
+    <string name="turn_on_blur">Turn on blur</string>
+    <string name="skip">Skip</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="next">Next</string>
+    <string name="demo_notification_title">New notification</string>
+    <string name="demo_notification_content">Notification from Factor Launcher</string>
+    <string name="demo_notification_counter">1</string>
+    <string name="notification_service">Notification Service</string>
+    <string name="notification_service_rationale">To display
+        notification count and message, you need to enable Factor notification service.
+    </string>
+    <string name="enable">Enable</string>
+    <string name="blur_effect_live_wallpaper_warning">Currently blur effect does not work with live wallpapers.</string>
+    <string name="notification_service_description">show notification message and count</string>
+    <string name="you_are_all_set">You are all set</string>
 </resources>

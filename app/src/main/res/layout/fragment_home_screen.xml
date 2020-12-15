@@ -35,6 +35,8 @@
                     <androidx.appcompat.widget.SearchView
                             android:id="@+id/search_view"
                             android:layout_width="match_parent"
+                            android:background="@android:color/transparent"
+                            app:queryBackground="@android:color/transparent"
                             android:layout_height="match_parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -118,6 +120,7 @@
                             android:background="@drawable/circle"
                             android:scaleType="center"
                             android:rotation="180"
+                            android:transitionName="arrow_transition"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/guideline"/>
