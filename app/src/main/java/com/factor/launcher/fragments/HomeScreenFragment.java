@@ -1,10 +1,12 @@
 package com.factor.launcher.fragments;
 
+import android.Manifest;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -95,17 +97,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
-    //todo: detect if wallpaper is changed
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-
-        //todo: blur may be wrongly-scaled
-        //todo: tileList adapter fails to reset
-
-    }
-
     //initialize views and listeners
     private void initializeComponents()
     {
@@ -116,7 +107,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
-        binding.image.setImageDrawable(wm.getDrawable());
+
         //get system wallpaper
         checkLiveWallpaper();
 
@@ -244,9 +235,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        if (wm.getWallpaperInfo() == null)
+
+        //static wallpaper
+        if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                wm.getWallpaperInfo() == null)
         {
 
+            binding.image.setImageDrawable(wm.getDrawable());
             editor.putBoolean(PACKAGE_NAME + "_LiveWallpaper", false);
             editor.apply();
 
@@ -268,7 +263,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(false);
         }
-        else
+        else //live wallpaper
         {
             binding.image.setVisibility(View.GONE);
             binding.blur.setVisibility(View.GONE);
