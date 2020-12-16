@@ -692,6 +692,11 @@ public class AppListManager
                     appBinding.labelEdit.setText(app.getLabelNew());
                     appBinding.icon.setImageDrawable(app.getIcon());
 
+                    appBinding.label.setVisibility(app.visibilityLabel());
+                    appBinding.labelEdit.setVisibility(app.visibilityEditing());
+                    appBinding.editButtonGroup.setVisibility(app.visibilityEditing());
+                    appBinding.notificationCount.setVisibility(app.visibilityNotificationCount());
+
                     if (!app.isBeingEdited())
                     {
                         setOnClickListener(app);

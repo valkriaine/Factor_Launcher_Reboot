@@ -14,6 +14,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/widget_background"
+                android:background="#80000000"
+                android:translationZ="100dp"
+                android:alpha="0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/widget_blur"
+                    app:blurOverlayColor="#80000000"
+                    android:translationZ="100dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/widget_fragment_container"
+                    android:fitsSystemWindows="true"
+                    android:translationZ="110dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <!--search bar holder-->
         <androidx.cardview.widget.CardView
                 android:id="@+id/search_base"

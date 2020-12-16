@@ -17,7 +17,8 @@
     <string name="welcome">Welcome</string>
     <string name="blur_effect">Blur effect</string>
     <string name="blur_effect_performance_warning">
-        Note that blur effect may cause some devices to lag. If your device is having performance issues, you can always turn this off in the settings.
+        Note that blur effect may cause some devices to lag. If your device is having performance issues, you can always
+        turn this off in the settings.
     </string>
     <string name="would_you_like_to_turn_on_blur_effect">Would you like to turn on blur effect?</string>
     <string name="turn_on_blur">Turn on blur</string>

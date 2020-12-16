@@ -69,7 +69,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.github.Valkriaine:Factor:1.7'
+    //my library
+    implementation 'com.github.Valkriaine:Factor:1.9'
 
     //other libraries
 
