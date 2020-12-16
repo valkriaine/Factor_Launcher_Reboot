@@ -88,7 +88,13 @@ class UserApp
     fun getNotificationTitle() : String
     {
         return if (currentNotifications.size > 0)
-            currentNotifications.last().title
+        {
+            val text = currentNotifications.last().title
+            if (text == "null" || text == "Null" || text.isEmpty())
+                labelNew
+            else
+                text
+        }
         else
             "You are all caught up"
     }
