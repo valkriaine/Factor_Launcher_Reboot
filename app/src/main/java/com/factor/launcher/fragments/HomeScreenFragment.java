@@ -23,11 +23,13 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
+import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
+import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import java.util.Objects;
 
@@ -156,6 +158,17 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrollStateChanged(int state) {
             }
         });
+        binding.scrollBar.setupWithRecyclerView(
+                binding.appsList,
+                (position) -> {
+                    UserApp item = appListManager.getUserApp(position); // Get your model object
+                    // or fetch the section at [position] from your database
+                    return new FastScrollItemIndicator.Text(
+                            item.getLabelNew().substring(0, 1).toUpperCase() // Grab the first letter and capitalize it
+                    ); // Return a text indicator
+                }
+        );
+        binding.thumb.setupWithFastScroller(binding.scrollBar);
 
         //tile list
         ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())

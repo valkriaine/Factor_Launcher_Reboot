@@ -25,6 +25,7 @@ import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 
+
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,6 +41,8 @@ public class AppListManager
     private boolean displayHidden = false;
 
     private final ArrayList<UserApp> userApps = new ArrayList<>();
+
+    private final ArrayList<UserApp> queryApps = new ArrayList<>();
 
     private final Activity activity;
 
@@ -575,6 +578,34 @@ public class AppListManager
         }
     }
 
+    public UserApp getUserApp(int position)
+    {
+        UserApp appToFind = userApps.get(position);
+        int newPosition = 0;
+        queryApps.clear();
+        if (!displayHidden)
+        {
+            for (UserApp app : userApps)
+            {
+                if (!app.isHidden())
+                    queryApps.add(app);
+            }
+            if (!appToFind.isHidden())
+                newPosition = queryApps.indexOf(appToFind);
+        }
+        else
+        {
+            for (UserApp app : userApps)
+            {
+                if (app.isHidden())
+                    queryApps.add(app);
+            }
+            if (appToFind.isHidden())
+                newPosition = queryApps.indexOf(appToFind);
+        }
+        return queryApps.get(newPosition);
+    }
+
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
@@ -642,8 +673,6 @@ public class AppListManager
             else
                 return 1; //show
         }
-
-
 
         class AppListViewHolder extends RecyclerView.ViewHolder
         {

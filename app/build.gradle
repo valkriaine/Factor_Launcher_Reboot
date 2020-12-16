@@ -48,7 +48,6 @@ android {
 
 dependencies {
     def dynamicanimation_version = '1.0.0'
-    def fragment_version = "1.2.5"
     def room_version = "2.2.5"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -57,9 +56,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
+    implementation 'pub.devrel:easypermissions:3.0.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation "androidx.fragment:fragment:$fragment_version"
+    implementation "androidx.fragment:fragment:1.3.0-beta02"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.core:core-ktx:1.3.2"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -72,11 +72,20 @@ dependencies {
     implementation 'com.github.Valkriaine:Factor:1.7'
 
     //other libraries
-    implementation 'com.eightbitlab:blurview:1.6.5'
-    implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
-    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
-    implementation 'pub.devrel:easypermissions:3.0.0'
 
+    //blur
+    implementation 'com.eightbitlab:blurview:1.6.5'
+
+    //ImageView drop shadow
+    implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
+
+    //tile list layout manager
+    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
+
+    //app list fast scroller
+    implementation 'com.reddit:indicator-fast-scroll:1.3.0'
+
+    //sqlite browser debug
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }
 repositories {
