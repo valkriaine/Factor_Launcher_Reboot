@@ -37,4 +37,5 @@
     <string name="notification_service_description">show notification message and count</string>
     <string name="you_are_all_set">You are all set</string>
     <string name="enabled">Enabled</string>
+    <string name="change_wallpaper">Change wallpaper</string>
 </resources>

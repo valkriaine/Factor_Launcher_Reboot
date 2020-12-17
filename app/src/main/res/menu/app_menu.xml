@@ -4,4 +4,6 @@
           android:title="@string/hidden_apps" />
     <item android:id="@+id/open_settings"
           android:title="@string/options" />
+    <item android:id="@+id/change_wallpaper"
+          android:title="@string/change_wallpaper" />
 </menu>

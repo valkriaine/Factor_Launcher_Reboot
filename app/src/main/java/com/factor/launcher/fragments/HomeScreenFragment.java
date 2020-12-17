@@ -73,6 +73,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         return binding.getRoot();
     }
 
+    //handle back button press
     @Override
     public boolean onBackPressed()
     {
@@ -122,10 +123,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //initialize views and listeners
     private void initializeComponents()
     {
+        //initialize resources
+        //***************************************************************************************************************************************************
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        //initialize widget fragment
-        widgetFragment = new WidgetFragment();
-
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
         int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
         int paddingBottom300 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
@@ -134,13 +134,29 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
 
+
+        //initialize widget fragment
+        //***************************************************************************************************************************************************
+        widgetFragment = new WidgetFragment();
+
+
+
         //get system wallpaper
+        //***************************************************************************************************************************************************
         checkLiveWallpaper();
 
+
+
+
         //initialize data manager
+        //***************************************************************************************************************************************************
         appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost, isLiveWallpaper);
 
+
+
+
         //register broadcast receivers
+        //***************************************************************************************************************************************************
         new AppActionReceiver(appListManager, binding);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
@@ -154,11 +170,19 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         notificationFilter.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
         requireActivity().registerReceiver(new NotificationBroadcastReceiver(appListManager), notificationFilter);
 
+
+
+
         //home pager
+        //***************************************************************************************************************************************************
         binding.homePager.addView(binding.tilesPage, 0);
         binding.homePager.addView(binding.drawerPage, 1);
 
+
+
+
         //app drawer
+        //***************************************************************************************************************************************************
         binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.appsList.setAdapter(appListManager.adapter);
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -207,7 +231,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         );
         binding.thumb.setupWithFastScroller(binding.scrollBar);
 
+
+
+
         //tile list
+        //***************************************************************************************************************************************************
         ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())
                 .setOrientation(ChipsLayoutManager.HORIZONTAL)
                 .setChildGravity(Gravity.CENTER)
@@ -221,7 +249,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
 
 
+
         //search bar
+        //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
         binding.searchView.setOnCloseListener(() -> {
             binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
@@ -244,7 +274,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150));
 
 
+
+
         //menu button
+        //***************************************************************************************************************************************************
         binding.menuButton.setOnClickListener(view ->
         {
             boolean isDisplayingHidden = appListManager.isDisplayingHidden();
@@ -254,7 +287,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             MenuItem displayMode = popup.getMenu().getItem(0);
             MenuItem options = popup.getMenu().getItem(1);
+            MenuItem wallpaperOption = popup.getMenu().getItem(2);
 
+            //show hidden apps
             displayMode.setTitle(isDisplayingHidden ? "My apps" : "Hidden apps");
             displayMode.setOnMenuItemClickListener(item ->
             {
@@ -263,15 +298,27 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             });
 
+            //launch settings
             options.setOnMenuItemClickListener(item ->
             {
                 //todo: launch settings fragment
                 return true;
             });
             popup.show();
+
+            //change system wallpaper
+            wallpaperOption.setOnMenuItemClickListener(item ->
+            {
+                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
+                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                return true;
+            });
         });
 
 
+
+        //handle tile list over-pull to open widget screen
+        //***************************************************************************************************************************************************
         binding.tilesList.addOnOverPulledListener(new OnOverPullListener()
         {
             @Override
@@ -318,6 +365,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //setup wallpaper
     private void checkLiveWallpaper()
     {
+        //todo: handle blur preferences
 
         //static wallpaper
         if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
