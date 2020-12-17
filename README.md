@@ -2,5 +2,27 @@
 
 This is the new repository for https://github.com/Valkriaine/Factor_Launcher
 
+All commits will be pushed to this repository instead. The last repo is obsolete (my code was too messy :D)
+
+A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
+
+# Features V0.4
+What's been done:
+1. basic functionality of the app drawer and home screen, app pinning and removing, and resizing tiles
+2. app searching
+3. app renaming
+4. app hiding/unhiding
+5. listen for notifications
+6. app drawer indexing (fast scroller)
+7. option to change the system wallpaper
+8. a simple welcome page
+
+What's missing:
+1. hosing app widgets
+2. app settings
+
+What might change:
+1. tiles design
+2. search feature
 
 
