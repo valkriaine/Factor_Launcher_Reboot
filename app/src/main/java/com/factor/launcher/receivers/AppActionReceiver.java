@@ -15,9 +15,9 @@ import java.util.Objects;
 //handle tile pinning/unpinning and app renaming
 public class AppActionReceiver extends BroadcastReceiver
 {
-    static final String SYSTEM_DIALOG_REASON_KEY = "reason";
+    private static final String SYSTEM_DIALOG_REASON_KEY = "reason";
 
-    static final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+    private static final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
 
     private final AppListManager appListManager;
 
