@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import androidx.recyclerview.widget.RecyclerView;
+import com.factor.launcher.activities.HomeActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
 import com.factor.launcher.util.Constants;
@@ -66,7 +67,7 @@ public class AppActionReceiver extends BroadcastReceiver
 
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (reason != null) {
-                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY))
+                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY) && ((HomeActivity)appListManager.getActivity()).isVisible())
                     {
                         // home button short press
                         binding.homePager.setCurrentItem(0, true);

@@ -24,6 +24,8 @@ public class HomeActivity extends AppCompatActivity
 
     private boolean isWallpaperChanged = false;
 
+    private boolean isVisible = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -63,6 +65,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
+        isVisible = true;
         detectWallpaperChanges();
 
         if(isWallpaperChanged)
@@ -73,6 +76,20 @@ public class HomeActivity extends AppCompatActivity
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    //set isVisible to false when activity is no longer visible
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        isVisible = false;
+    }
+
+    //perform home button action if activity is visible
+    public boolean isVisible()
+    {
+        return isVisible;
     }
 
     //detect if wallpaper has changed
