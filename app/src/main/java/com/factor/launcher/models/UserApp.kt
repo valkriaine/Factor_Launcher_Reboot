@@ -55,7 +55,6 @@ class UserApp
     fun toFactor(): Factor
     {
         val factor = Factor()
-        factor.icon = this.icon
         factor.isCustomized = this.isCustomized
         factor.packageName = this.packageName
         factor.labelNew = this.labelNew
@@ -75,7 +74,7 @@ class UserApp
             {
                 return if (notification.title != notificationHolder.title || notification.text != notificationHolder.text)
                 {
-                    currentNotifications.set(currentNotifications.indexOf(notification), notificationHolder)
+                    currentNotifications[currentNotifications.indexOf(notification)] = notificationHolder
                     true
                 }
                 else false

@@ -27,9 +27,6 @@ class Factor
     var size: Int = Size.small
 
     @Ignore
-    lateinit var icon: Drawable
-
-    @Ignore
     var userApp : UserApp = UserApp()
 
     //get notification count
@@ -48,6 +45,13 @@ class Factor
     fun setShortcuts(shortcuts : List<ShortcutInfo>)
     {
         this.userApp.shortCuts = shortcuts
+    }
+
+    fun getIcon() : Drawable = this.userApp.icon
+
+    fun setIcon(icon : Drawable)
+    {
+        this.userApp.icon = icon
     }
 
     object Size
