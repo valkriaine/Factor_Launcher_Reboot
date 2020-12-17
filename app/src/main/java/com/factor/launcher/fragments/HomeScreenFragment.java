@@ -250,6 +250,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+
         //search bar
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
@@ -384,21 +385,23 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(15f)
-                    .setBlurAutoUpdate(false)
-                    .setHasFixedTransformationMatrix(true);
+                    .setBlurAutoUpdate(true)
+                    .setHasFixedTransformationMatrix(true)
+                    .setBlurEnabled(true);
 
             binding.searchBlur.setupWith(binding.rootContent)
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(20f)
                     .setBlurAutoUpdate(true)
-                    .setHasFixedTransformationMatrix(false);
+                    .setHasFixedTransformationMatrix(false)
+                    .setBlurEnabled(true);
 
             binding.widgetBlur.setupWith(binding.backgroundHost)
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(20f)
                     .setBlurAutoUpdate(true)
-                    .setHasFixedTransformationMatrix(false)
-                    .setBlurEnabled(false);
+                    .setHasFixedTransformationMatrix(true)
+                    .setBlurEnabled(true);
         }
         else //live wallpaper
         {
@@ -413,5 +416,4 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             isLiveWallpaper = true;
         }
     }
-
 }

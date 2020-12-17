@@ -15,7 +15,7 @@
             android:layout_height="match_parent">
 
 
-
+        <!--widget fragment container-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/widget_background"
                 android:background="#80000000"
