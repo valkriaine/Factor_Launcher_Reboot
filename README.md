@@ -6,6 +6,9 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
+# Version v0.4.2 
+added permission to query all packages due to Android 11's limitation on package visibility
+
 # Version V0.4.1 hot fix
 fixed an issue that causes the app to crash when loading tiles on the home screen
 
