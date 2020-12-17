@@ -13,6 +13,7 @@
             android:theme="@style/AppTheme">
 
         <activity android:name=".activities.WelcomeActivity"
+                  android:windowSoftInputMode="adjustPan"
                   android:theme="@style/WelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -31,7 +32,7 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:stateNotNeeded="true"
-                android:windowSoftInputMode="adjustNothing">
+                android:windowSoftInputMode="adjustPan">
         </activity>
 
         <service

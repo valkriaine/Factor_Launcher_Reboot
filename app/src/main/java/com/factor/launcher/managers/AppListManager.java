@@ -638,16 +638,35 @@ public class AppListManager
                 id = viewType == 1 ? R.layout.app_list_item : R.layout.hidden_app;
 
 
-
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
             activity.registerForContextMenu(view);
-            return new AppListViewHolder(view);
+
+            AppListViewHolder holder =  new AppListViewHolder(view);
+            assert holder.binding != null;
+            if (holder.binding instanceof AppListItemBinding)
+                ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus)
+                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                else
+                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            });
+
+
+            return holder;
         }
 
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position)
         {
             holder.bindApp(userApps.get(position));
+        }
+
+
+        @Override
+        public void onViewRecycled(@NonNull AppListViewHolder holder)
+        {
+            super.onViewRecycled(holder);
+            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         }
 
         @Override
@@ -790,6 +809,7 @@ public class AppListManager
 
             private void enterEditMode(AppListItemBinding binding)
             {
+                activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                 UserApp app =  binding.getUserApp();
                 app.setBeingEdited(true);
                 removeOnClickListener();
@@ -816,6 +836,7 @@ public class AppListManager
 
             private void exitEditMode(UserApp app)
             {
+                activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
                 setOnClickListener(app);
                 ((AppListItemBinding)binding).labelEdit.clearFocus();
                 app.setBeingEdited(false);

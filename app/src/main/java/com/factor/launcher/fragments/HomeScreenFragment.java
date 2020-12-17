@@ -122,7 +122,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //initialize views and listeners
     private void initializeComponents()
     {
-
+        requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         //initialize widget fragment
         widgetFragment = new WidgetFragment();
 
@@ -187,12 +187,22 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         });
         binding.scrollBar.setupWithRecyclerView(
                 binding.appsList,
-                (position) -> {
-                    UserApp item = appListManager.getUserApp(position); // Get your model object
-                    // or fetch the section at [position] from your database
-                    return new FastScrollItemIndicator.Text(
-                            item.getLabelNew().substring(0, 1).toUpperCase() // Grab the first letter and capitalize it
-                    ); // Return a text indicator
+                (position) ->
+                {
+                    UserApp item = appListManager.getUserApp(position);
+                    char cap =  item.getLabelNew().toUpperCase().charAt(0);
+                    String capString = item.getLabelNew().toUpperCase().substring(0, 1);
+                    try
+                    {
+                        Integer.parseInt(String.valueOf(cap));
+                        capString = "#";
+                    }
+                    catch (NumberFormatException ignored)
+                    {
+                        //todo: convert chinese to pinyin
+                    }
+
+                    return new FastScrollItemIndicator.Text(capString);
                 }
         );
         binding.thumb.setupWithFastScroller(binding.scrollBar);
