@@ -1,7 +1,6 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -13,6 +12,7 @@ import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
@@ -701,7 +701,7 @@ public class FactorManager
                     Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
                     if (intent != null)
                         activity.startActivity(intent,
-                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                                ActivityOptionsCompat.makeScaleUpAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
                 });
 
             }
