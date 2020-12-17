@@ -214,6 +214,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 (position) ->
                 {
                     UserApp item = appListManager.getUserApp(position);
+                    if (item.getPackageName().isEmpty())
+                        return new FastScrollItemIndicator.Text("");
                     char cap =  item.getLabelNew().toUpperCase().charAt(0);
                     String capString = item.getLabelNew().toUpperCase().substring(0, 1);
                     try
@@ -224,6 +226,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     catch (NumberFormatException ignored)
                     {
                         //todo: convert chinese to pinyin
+                        //return new FastScrollItemIndicator.Icon("some drawable");
                     }
 
                     return new FastScrollItemIndicator.Text(capString);

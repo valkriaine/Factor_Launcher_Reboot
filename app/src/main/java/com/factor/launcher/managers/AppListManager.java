@@ -620,7 +620,10 @@ public class AppListManager
             if (appToFind.isHidden())
                 newPosition = queryApps.indexOf(appToFind);
         }
-        return queryApps.get(newPosition);
+        if (queryApps.size() > 0)
+            return queryApps.get(newPosition);
+        else
+            return new UserApp();
     }
 
 
