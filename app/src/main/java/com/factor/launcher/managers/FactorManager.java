@@ -131,14 +131,10 @@ public class FactorManager
     //check if the app is added to home
     public boolean isAppPinned(UserApp app)
     {
-        boolean isPinned = false;
         for (Factor f : userFactors)
-        {
-            if (f.getPackageName().equals(app.getPackageName()))
-                isPinned = true;
-        }
+            if (f.getPackageName().equals(app.getPackageName())) return true;
 
-        return isPinned;
+        return false;
     }
 
     //resize a factor
@@ -151,6 +147,9 @@ public class FactorManager
     //update factor info after editing
     private boolean updateFactor(Factor factor)
     {
+        if (!userFactors.contains(factor))
+            return false;
+
         if (userFactors.contains(factor))
         {
             int position = userFactors.indexOf(factor);
@@ -162,7 +161,7 @@ public class FactorManager
                 activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
             }).start();
         }
-        return userFactors.contains(factor);
+        return true;
     }
 
     //update factor info after its app has changed
@@ -206,10 +205,7 @@ public class FactorManager
             ArrayList<Factor> factorsToRemove = getFactorsByPackage(app);
             for (Factor f : factorsToRemove)
             {
-                if (userFactors.contains(f))
-                {
-                    removeFromHome(f);
-                }
+                if (userFactors.contains(f)) removeFromHome(f);
             }
         }).start();
 

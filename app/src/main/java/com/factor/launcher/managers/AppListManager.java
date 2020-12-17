@@ -103,7 +103,7 @@ public class AppListManager
     //load app drawer list
     private void loadApps(Boolean isSaved)
     {
-        if (isSaved)
+        if (isSaved) //if the app drawer has been loaded before, load from db instead
         {
             new Thread(() ->
             {
@@ -156,7 +156,7 @@ public class AppListManager
                 }
             }).start();
         }
-        else
+        else //if the app drawer is loading for the first time, load all apps with default configuration
         {
             editor = factorSharedPreferences.edit();
             new Thread(() ->
@@ -214,61 +214,53 @@ public class AppListManager
     //set app to hidden
     private boolean hideApp(UserApp userApp)
     {
+        if (!userApps.contains(userApp)) return false;
+
         userApp.setHidden(true);
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
-
-        return userApps.contains(userApp);
+        return true;
     }
 
     //set app to not hidden
     private boolean showApp(UserApp userApp)
     {
+        if (!userApps.contains(userApp)) return false;
+
         userApp.setHidden(false);
         new Thread(() ->
         {
             appListDatabase.appListDao().updateAppInfo(userApp);
             activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
-
-        return userApps.contains(userApp);
+        return true;
     }
 
     //check if package exists
     private boolean doesPackageExist(UserApp a)
     {
-        boolean result = false;
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
         for (ResolveInfo r : availableApps)
         {
-            if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
-            {
-                if (r.activityInfo.packageName.equals(a.getPackageName()))
-                {
-                    result = true;
-                    break;
-                }
-            }
+            if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME)
+                    && r.activityInfo.packageName.equals(a.getPackageName()))
+                return true;
         }
-        return result;
+        return false;
     }
 
     //find app object given package name
     private UserApp findAppByPackage(String packageName)
     {
-        UserApp app = new UserApp();
         for (UserApp a : userApps)
-        {
-            if (a.getPackageName().equals(packageName))
-                app = a;
-        }
+            if (a.getPackageName().equals(packageName)) return a;
 
-        return app;
+        return new UserApp();
     }
 
     //remove app from the list only if package no longer exists
@@ -381,7 +373,7 @@ public class AppListManager
         }
     }
 
-    //same as updateAppNoReorder, but notifyDatasetChanged because the app name has changed
+    //same as updateAppNoReorder, but reorder the app list since the label has changed
     private void updateAppReorder(UserApp app)
     {
         UserApp appToUpdate;
@@ -402,7 +394,6 @@ public class AppListManager
                             userApps.get(position).setShortCuts(getShortcutsFromApp(app));
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
-
                             int newPosition = userApps.indexOf(app);
                             activity.runOnUiThread(() ->
                             {
@@ -488,8 +479,7 @@ public class AppListManager
     //edit app dialog
     public void renameApp(UserApp app, String newLabel)
     {
-        if (!userApps.contains(app))
-            return;
+        if (!userApps.contains(app)) return;
 
         app.setCustomized(true);
         app.setLabelNew(newLabel);
@@ -501,6 +491,7 @@ public class AppListManager
     public void resetAppEdit(UserApp app)
     {
         if (!userApps.contains(app)) return;
+
         app.setCustomized(false);
         app.setLabelNew(app.getLabelOld());
         updateAppReorder(app);
