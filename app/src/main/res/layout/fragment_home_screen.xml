@@ -86,6 +86,8 @@
         <!--main content-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/rootContent"
+                android:focusableInTouchMode="true"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <!--blurred wallpaper-->
@@ -205,7 +207,6 @@
                                 app:overscroll_bounce_animation_size=".5"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             </com.valkriaine.factor.HomePager>
         </androidx.constraintlayout.widget.ConstraintLayout>

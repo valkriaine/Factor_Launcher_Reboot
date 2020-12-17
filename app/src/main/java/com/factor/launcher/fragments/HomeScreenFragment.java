@@ -93,8 +93,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
                 binding.widgetBlur.setBlurEnabled(false);
                 binding.widgetBackground.animate().alpha(0).start();
-                binding.tilesList.animate().alpha(1).start();
-
+                binding.tilesList.setAlpha(1);
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .remove(widgetFragment)
@@ -142,7 +141,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost, isLiveWallpaper);
 
         //register broadcast receivers
-        new AppActionReceiver(appListManager);
+        new AppActionReceiver(appListManager, binding);
         PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
@@ -170,6 +169,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
                 binding.blur.setAlpha(xOffset / 0.5f);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
+                binding.searchView.clearFocus();
+                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
             }
 
             @Override
@@ -212,6 +213,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //search bar
         binding.searchBase.setTranslationY(-500f);
+        binding.searchView.setOnCloseListener(() -> {
+            binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
+            return false;
+        });
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -226,13 +231,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             }
         });
-        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) ->
-        {
-            if (hasFocus) {
-                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
-            } else
-                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
-        });
+        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150));
 
 
         //menu button
@@ -275,7 +274,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 if (binding.widgetBackground.getAlpha() >= WIDGET_SCREEN_THRESHOLD)
                 {
                     binding.widgetBackground.animate().alpha(1).start();
-                    binding.tilesList.animate().alpha(0).start();
+                    binding.tilesList.animate().alpha(0).setDuration(100).start();
                     isWidgetMode = true;
 
                     requireActivity().getSupportFragmentManager()

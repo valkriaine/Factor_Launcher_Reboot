@@ -31,11 +31,7 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:stateNotNeeded="true"
-                android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.HOME"/>
-            </intent-filter>
+                android:windowSoftInputMode="adjustNothing">
         </activity>
 
         <service

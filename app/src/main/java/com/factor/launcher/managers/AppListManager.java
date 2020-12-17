@@ -40,6 +40,8 @@ public class AppListManager
 
     private boolean displayHidden = false;
 
+    private boolean isAfterRename = false;
+
     private final ArrayList<UserApp> userApps = new ArrayList<>();
 
     private final ArrayList<UserApp> queryApps = new ArrayList<>();
@@ -406,6 +408,11 @@ public class AppListManager
                             {
                                 adapter.notifyItemRemoved(position);
                                 adapter.notifyItemInserted(newPosition);
+
+                                if (isAfterRename)
+                                    renameBroadCast(newPosition);
+
+                                isAfterRename = false;
                             });
                         }
                         catch (PackageManager.NameNotFoundException e)
@@ -487,6 +494,7 @@ public class AppListManager
         app.setCustomized(true);
         app.setLabelNew(newLabel);
         updateAppReorder(app);
+        isAfterRename = true;
     }
 
     //reset app's name back to original label
@@ -496,6 +504,7 @@ public class AppListManager
         app.setCustomized(false);
         app.setLabelNew(app.getLabelOld());
         updateAppReorder(app);
+        isAfterRename = true;
     }
 
     //change display mode, return a new adapter
@@ -530,6 +539,14 @@ public class AppListManager
     private void startShortCut(ShortcutInfo shortcutInfo)
     {
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
+    }
+
+    private void renameBroadCast(int position)
+    {
+        Intent intent = new Intent();
+        intent.setAction(Constants.BROADCAST_ACTION_RENAME);
+        intent.putExtra(Constants.RENAME_KEY, position);
+        activity.sendBroadcast(intent);
     }
 
     //get display mode
@@ -605,6 +622,7 @@ public class AppListManager
         }
         return queryApps.get(newPosition);
     }
+
 
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
@@ -799,6 +817,7 @@ public class AppListManager
             private void exitEditMode(UserApp app)
             {
                 setOnClickListener(app);
+                ((AppListItemBinding)binding).labelEdit.clearFocus();
                 app.setBeingEdited(false);
                 notifyItemChanged(userApps.indexOf(app));
             }

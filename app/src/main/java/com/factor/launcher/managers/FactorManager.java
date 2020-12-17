@@ -109,6 +109,7 @@ public class FactorManager
             Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
             Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts().toString());
             factorsDatabase.factorsDao().insert(factor);
+            addFactorBroadcast(userFactors.indexOf(factor));
             activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
         }).start();
         updateOrders();
@@ -263,6 +264,15 @@ public class FactorManager
         activity.sendBroadcast(intent);
         removeFromHome(factor);
         return true;
+    }
+
+    //send a broadcast when a factor has been added to home screen
+    private void addFactorBroadcast(int position)
+    {
+        Intent intent = new Intent();
+        intent.setAction(Constants.BROADCAST_ACTION_ADD);
+        intent.putExtra(Constants.ADD_KEY, position);
+        activity.sendBroadcast(intent);
     }
 
     //received notification
