@@ -14,6 +14,10 @@ import java.util.Objects;
 //handle tile pinning/unpinning and app renaming
 public class AppActionReceiver extends BroadcastReceiver
 {
+    static final String SYSTEM_DIALOG_REASON_KEY = "reason";
+
+    static final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+
     private final AppListManager appListManager;
 
     private final FragmentHomeScreenBinding binding;
@@ -24,6 +28,9 @@ public class AppActionReceiver extends BroadcastReceiver
         filter.addAction(Constants.BROADCAST_ACTION_REMOVE);
         filter.addAction(Constants.BROADCAST_ACTION_ADD);
         filter.addAction(Constants.BROADCAST_ACTION_RENAME);
+
+        //home button press
+        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
 
         this.appListManager = appListManager;
         this.binding = binding;
@@ -54,6 +61,20 @@ public class AppActionReceiver extends BroadcastReceiver
             case Constants.BROADCAST_ACTION_RENAME:
                 Objects.requireNonNull(binding.appsList.getLayoutManager())
                         .smoothScrollToPosition(binding.appsList, new RecyclerView.State(), intent.getIntExtra(Constants.RENAME_KEY, 0));
+                break;
+            case Intent.ACTION_CLOSE_SYSTEM_DIALOGS:
+
+                String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
+                if (reason != null) {
+                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY))
+                    {
+                        // home button short press
+                        binding.homePager.setCurrentItem(0, true);
+                        Objects.requireNonNull(binding.appsList.getLayoutManager()).scrollToPosition(0);
+                        Objects.requireNonNull(binding.tilesList.getLayoutManager())
+                                .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+                    }
+                }
                 break;
         }
     }
