@@ -442,29 +442,22 @@ public class FactorManager
                         FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
                         Factor factorToChange = tileBinding.getFactor();
 
-                        if (factorToChange.retrieveNotificationCountInNumber() < 1)
-                            tileBinding.notificationCount.setVisibility(View.GONE);
-                        else if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        {
-                            tileBinding.notificationCount.setVisibility(View.VISIBLE);
+                        if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-                        }
 
-                        //todo
+                        tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
                     }
                     else if (userFactors.get(position).getSize() == Factor.Size.medium)
                     {
                         FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
                         Factor factorToChange = tileBinding.getFactor();
 
-                      if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                      {
-                          tileBinding.notificationCount.setVisibility(View.VISIBLE);
-                          tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-                          tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
-                          tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
-                      }
+                        if (factorToChange.retrieveNotificationCountInNumber() > 0)
+                            tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
 
+                        tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
+                        tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
+                        tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
 
                     }
                     else if (userFactors.get(position).getSize() == Factor.Size.large)
@@ -475,7 +468,7 @@ public class FactorManager
                         if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
 
-                        tileBinding.notificationCount.setVisibility(factorToChange.getUserApp().visibilityNotificationCount());
+                        tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
                         tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
                         tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
                     }
