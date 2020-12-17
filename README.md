@@ -6,7 +6,13 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
-# Features V0.4
+# Version v0.4.2 
+added permission to query all packages due to Android 11's limitation on package visibility
+
+# Version V0.4.1 hot fix
+fixed an issue that causes the app to crash when loading tiles on the home screen
+
+# Version V0.4
 What's been done:
 1. basic functionality of the app drawer and home screen, app pinning and removing, and resizing tiles
 2. app searching
