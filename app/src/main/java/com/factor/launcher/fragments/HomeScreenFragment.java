@@ -389,7 +389,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                    .setBlurRadius(15f)
+                    .setBlurRadius(25f)
                     .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(true)
                     .setBlurEnabled(true);
@@ -399,14 +399,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(25f)
-                    .setBlurAutoUpdate(true)
+                    .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(false)
                     .setBlurEnabled(true);
 
             binding.widgetBlur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                    .setBlurRadius(20f)
+                    .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(true)
                     .setBlurEnabled(true);

@@ -468,7 +468,8 @@ public class FactorManager
                         return true;
                     });
 
-                    switch (selectedFactor.getSize()) {
+                    switch (selectedFactor.getSize())
+                    {
                         case Factor.Size.small:
                             subMenu.getItem(0).setEnabled(false);
                             break;
@@ -479,7 +480,6 @@ public class FactorManager
                             subMenu.getItem(2).setEnabled(false);
                             break;
                     }
-
                 }
 
             });
@@ -494,6 +494,47 @@ public class FactorManager
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
         }
+
+        @Override
+        public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder)
+        {
+            super.onViewDetachedFromWindow(holder);
+
+            if (((FactorsViewHolder)holder).binding instanceof FactorSmallBinding)
+            {
+                ((FactorSmallBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
+            }
+            else if (((FactorsViewHolder)holder).binding instanceof FactorMediumBinding)
+            {
+                ((FactorMediumBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
+            }
+            else if (((FactorsViewHolder)holder).binding instanceof FactorLargeBinding)
+            {
+                ((FactorLargeBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
+            }
+        }
+
+        @Override
+        public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder)
+        {
+            super.onViewAttachedToWindow(holder);
+
+            if (((FactorsViewHolder)holder).binding instanceof FactorSmallBinding && holder.itemView.isShown())
+            {
+                ((FactorSmallBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
+            }
+            else if (((FactorsViewHolder)holder).binding instanceof FactorMediumBinding && holder.itemView.isShown())
+            {
+                ((FactorMediumBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
+            }
+            else if (((FactorsViewHolder)holder).binding instanceof FactorLargeBinding && holder.itemView.isShown())
+            {
+                ((FactorLargeBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
+            }
+        }
+
+
+
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads)
@@ -734,6 +775,7 @@ public class FactorManager
                 else
                     return new Factor();
             }
+
         }
     }
 
