@@ -377,7 +377,7 @@ public class FactorManager
                     ((FactorSmallBinding) binding).trans
                             .setupWith(background)
                             .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
-                            .setBlurRadius(25F)
+                            .setBlurRadius(18F)
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
 

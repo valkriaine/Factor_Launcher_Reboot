@@ -394,10 +394,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setHasFixedTransformationMatrix(true)
                     .setBlurEnabled(true);
 
-            //disabled search bar blur to test performance
-            binding.searchBase.setCardBackgroundColor(Color.BLACK);
-            binding.searchBlur.setOverlayColor(Color.TRANSPARENT);
-            binding.searchBlur.setBlurEnabled(false);
+            binding.searchBlur.setupWith(binding.rootContent)
+                    .setFrameClearDrawable(wm.getDrawable())
+                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                    .setBlurRadius(25f)
+                    .setBlurAutoUpdate(true)
+                    .setHasFixedTransformationMatrix(false)
+                    .setBlurEnabled(true);
+
 
             binding.widgetBlur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
