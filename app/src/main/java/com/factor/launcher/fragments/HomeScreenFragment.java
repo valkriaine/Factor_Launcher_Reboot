@@ -16,7 +16,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -185,7 +184,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //app drawer
         //***************************************************************************************************************************************************
-        binding.appsList.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.appsList.setAdapter(appListManager.adapter);
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
