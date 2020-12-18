@@ -16,6 +16,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -184,7 +185,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //app drawer
         //***************************************************************************************************************************************************
-        binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.appsList.setLayoutManager(new GridLayoutManager(requireContext(), 1));
         binding.appsList.setAdapter(appListManager.adapter);
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -372,35 +373,39 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         //todo: handle blur preferences
 
+
         //static wallpaper
         if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 wm.getWallpaperInfo() == null)
         {
 
-            binding.image.setImageDrawable(wm.getDrawable());
             isLiveWallpaper = false;
 
-            binding.image.setVisibility(View.VISIBLE);
+            binding.backgroundHost.setBackground(wm.getDrawable());
+
             binding.blur.setVisibility(View.VISIBLE);
             binding.searchBase.setCardBackgroundColor(Color.TRANSPARENT);
             binding.searchBlur.setOverlayColor(Color.parseColor("#4DFFFFFF"));
-            binding.searchBlur.setBlurEnabled(true);
+
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(15f)
-                    .setBlurAutoUpdate(true)
+                    .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(true)
                     .setBlurEnabled(true);
 
+
             binding.searchBlur.setupWith(binding.rootContent)
+                    .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                    .setBlurRadius(20f)
+                    .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(false)
                     .setBlurEnabled(true);
 
             binding.widgetBlur.setupWith(binding.backgroundHost)
+                    .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(20f)
                     .setBlurAutoUpdate(true)
@@ -409,7 +414,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
         else //live wallpaper
         {
-            binding.image.setVisibility(View.GONE);
             binding.blur.setVisibility(View.GONE);
             binding.searchBase.setCardBackgroundColor(Color.BLACK);
             binding.searchBlur.setOverlayColor(Color.TRANSPARENT);

@@ -376,22 +376,25 @@ public class FactorManager
                 if (binding instanceof FactorSmallBinding)
                     ((FactorSmallBinding) binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
                             .setBlurRadius(25F)
+                            .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
 
                 if (binding instanceof FactorMediumBinding)
                     ((FactorMediumBinding) binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
                             .setBlurRadius(18F)
+                            .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
 
                 if (binding instanceof FactorLargeBinding)
                     ((FactorLargeBinding)binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
                             .setBlurRadius(18F)
+                            .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
             }
            else
@@ -415,6 +418,72 @@ public class FactorManager
                     ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.WHITE);
                 }
             }
+
+
+
+
+
+
+
+            view.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+            {
+                Factor selectedFactor;
+                if (binding instanceof FactorLargeBinding)
+                    selectedFactor = ((FactorLargeBinding) binding).getFactor();
+                else if (binding instanceof FactorMediumBinding)
+                    selectedFactor = ((FactorMediumBinding) binding).getFactor();
+                else {
+                    assert binding instanceof FactorSmallBinding;
+                    selectedFactor = ((FactorSmallBinding) binding).getFactor();
+                }
+
+                if (!selectedFactor.getPackageName().isEmpty())
+                {
+                    MenuInflater inflater = activity.getMenuInflater();
+                    inflater.inflate(R.menu.factor_item_menu, menu);
+
+                    //remove from home
+                    menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(selectedFactor));
+
+                    //resize
+                    SubMenu subMenu = menu.getItem(1).getSubMenu();
+                    subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.small));
+                    subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.medium));
+                    subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.large));
+
+                    //info
+                    menu.getItem(2).setOnMenuItemClickListener(item ->
+                    {
+                        view.getContext().startActivity(
+                                new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package:"+selectedFactor.getPackageName())));
+                        return true;
+                    });
+
+                    //uninstall
+                    menu.getItem(3).setOnMenuItemClickListener(item ->
+                    {
+                        view.getContext().startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+selectedFactor.getPackageName()))
+                                .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                        return true;
+                    });
+
+                    switch (selectedFactor.getSize()) {
+                        case Factor.Size.small:
+                            subMenu.getItem(0).setEnabled(false);
+                            break;
+                        case Factor.Size.medium:
+                            subMenu.getItem(1).setEnabled(false);
+                            break;
+                        case Factor.Size.large:
+                            subMenu.getItem(2).setEnabled(false);
+                            break;
+                    }
+
+                }
+
+            });
+
 
             return new FactorsViewHolder(view);
         }
@@ -518,7 +587,6 @@ public class FactorManager
             assert viewHolder != null;
             viewHolder.itemView.setScaleX(1.1f);
             viewHolder.itemView.setScaleY(1.1f);
-
             viewHolder.itemView.setAlpha(0.9f);
         }
 
@@ -547,57 +615,6 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
-                {
-                    Factor selectedFactor = getFactor();
-
-                    if (!selectedFactor.getPackageName().isEmpty())
-                    {
-                        MenuInflater inflater = activity.getMenuInflater();
-                        inflater.inflate(R.menu.factor_item_menu, menu);
-
-                        //remove from home
-                        menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(factor));
-
-                        //resize
-                        SubMenu subMenu = menu.getItem(1).getSubMenu();
-                        subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.small));
-                        subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.medium));
-                        subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(factor, Factor.Size.large));
-
-                        //info
-                        menu.getItem(2).setOnMenuItemClickListener(item ->
-                        {
-                            activity.startActivity(
-                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                            Uri.parse("package:"+factor.getPackageName())));
-                            return true;
-                        });
-
-                        //uninstall
-                        menu.getItem(3).setOnMenuItemClickListener(item ->
-                        {
-                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+factor.getPackageName()))
-                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
-                            return true;
-                        });
-
-                        switch (factor.getSize()) {
-                            case Factor.Size.small:
-                                subMenu.getItem(0).setEnabled(false);
-                                break;
-                            case Factor.Size.medium:
-                                subMenu.getItem(1).setEnabled(false);
-                                break;
-                            case Factor.Size.large:
-                                subMenu.getItem(2).setEnabled(false);
-                                break;
-                        }
-
-                    }
-
-                });
-
                 //determine layout based on size
                 size = factor.getSize();
                 if (size == Factor.Size.small)
@@ -643,7 +660,7 @@ public class FactorManager
                         {
                             ShortcutInfo shortcut1 = shortcuts.get(0);
                             ((FactorLargeBinding)binding).shortcut1.setVisibility(View.VISIBLE);
-                            Drawable icon1 = launcherApps.getShortcutIconDrawable(shortcut1, activity.getResources().getDisplayMetrics().densityDpi);
+                            Drawable icon1 = launcherApps.getShortcutIconDrawable(shortcut1, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut1Icon.setImageDrawable(icon1);
                             ((FactorLargeBinding)binding).shortcut1Label.setText(shortcut1.getShortLabel());
 
@@ -657,7 +674,7 @@ public class FactorManager
                         {
                             ShortcutInfo shortcut2 = shortcuts.get(1);
                             ((FactorLargeBinding)binding).shortcut2.setVisibility(View.VISIBLE);
-                            Drawable icon2 = launcherApps.getShortcutIconDrawable(shortcut2, activity.getResources().getDisplayMetrics().densityDpi);
+                            Drawable icon2 = launcherApps.getShortcutIconDrawable(shortcut2, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut2Icon.setImageDrawable(icon2);
                             ((FactorLargeBinding)binding).shortcut2Label.setText(shortcut2.getShortLabel());
 
@@ -670,7 +687,7 @@ public class FactorManager
                         {
                             ShortcutInfo shortcut3 = shortcuts.get(2);
                             ((FactorLargeBinding)binding).shortcut3.setVisibility(View.VISIBLE);
-                            Drawable icon3 = launcherApps.getShortcutIconDrawable(shortcut3, activity.getResources().getDisplayMetrics().densityDpi);
+                            Drawable icon3 = launcherApps.getShortcutIconDrawable(shortcut3, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
                             ((FactorLargeBinding)binding).shortcut3Icon.setImageDrawable(icon3);
                             ((FactorLargeBinding)binding).shortcut3Label.setText(shortcut3.getShortLabel());
 
@@ -693,7 +710,7 @@ public class FactorManager
                 itemView.setOnClickListener(v -> {
                     Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
                     if (intent != null)
-                        activity.startActivity(intent,
+                        itemView.getContext().startActivity(intent,
                                 ActivityOptionsCompat.makeScaleUpAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
                 });
 

@@ -633,18 +633,65 @@ public class AppListManager
 
 
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
+
             activity.registerForContextMenu(view);
 
             AppListViewHolder holder =  new AppListViewHolder(view);
+
             assert holder.binding != null;
             if (holder.binding instanceof AppListItemBinding)
+            {
                 ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) -> {
-                if (hasFocus)
-                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                else
-                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-            });
+                    if (hasFocus)
+                        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                    else
+                        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+                });
 
+                view.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+                {
+                    MenuInflater inflater = activity.getMenuInflater();
+                    inflater.inflate(R.menu.app_list_item_menu, menu);
+                    if (((AppListItemBinding)holder.binding).getUserApp().isPinned())
+                        menu.getItem(0).setEnabled(false);
+
+                    //add to home & remove from home
+                    menu.getItem(0).setOnMenuItemClickListener(item -> changePin(((AppListItemBinding)holder.binding).getUserApp()));
+
+                    //edit
+                    SubMenu sub = menu.getItem(1).getSubMenu();
+
+                    //rename
+                    sub.getItem(0).setOnMenuItemClickListener(item ->
+                    {
+                        holder.enterEditMode(((AppListItemBinding)holder.binding));
+                        return true;
+                    });
+                    //hide
+                    MenuItem hide = sub.getItem(1);
+                    if (((AppListItemBinding)holder.binding).getUserApp().isHidden())
+                        hide.setTitle("Show");
+                    else hide.setTitle("Hide");
+                    hide.setOnMenuItemClickListener(item -> !((AppListItemBinding)holder.binding).getUserApp().isHidden() ?
+                            hideApp(((AppListItemBinding)holder.binding).getUserApp()) : showApp(((AppListItemBinding)holder.binding).getUserApp()));
+                    //info
+                    menu.getItem(2).setOnMenuItemClickListener(item ->
+                    {
+                        view.getContext().startActivity(
+                                new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package:"+((AppListItemBinding)holder.binding).getUserApp().getPackageName())));
+                        return true;
+                    });
+
+                    //uninstall
+                    menu.getItem(3).setOnMenuItemClickListener(item ->
+                    {
+                        view.getContext().startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+((AppListItemBinding)holder.binding).getUserApp().getPackageName()))
+                                .putExtra(Intent.EXTRA_RETURN_RESULT, true));
+                        return true;
+                    });
+                });
+            }
 
             return holder;
         }
@@ -755,53 +802,11 @@ public class AppListManager
                         });
                     }
 
-                    itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
-                    {
-                        MenuInflater inflater = activity.getMenuInflater();
-                        inflater.inflate(R.menu.app_list_item_menu, menu);
-                        if (app.isPinned())
-                            menu.getItem(0).setEnabled(false);
-
-                        //add to home & remove from home
-                        menu.getItem(0).setOnMenuItemClickListener(item -> changePin(app));
-
-                        //edit
-                        SubMenu sub = menu.getItem(1).getSubMenu();
-
-                        //rename
-                        sub.getItem(0).setOnMenuItemClickListener(item ->
-                        {
-                            enterEditMode(appBinding);
-                            return true;
-                        });
-                        //hide
-                        MenuItem hide = sub.getItem(1);
-                        if (app.isHidden())
-                            hide.setTitle("Show");
-                        else hide.setTitle("Hide");
-                        hide.setOnMenuItemClickListener(item -> !app.isHidden() ? hideApp(app) : showApp(app));
-                        //info
-                        menu.getItem(2).setOnMenuItemClickListener(item ->
-                        {
-                            activity.startActivity(
-                                    new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                            Uri.parse("package:"+app.getPackageName())));
-                            return true;
-                        });
-
-                        //uninstall
-                        menu.getItem(3).setOnMenuItemClickListener(item ->
-                        {
-                            activity.startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+app.getPackageName()))
-                                    .putExtra(Intent.EXTRA_RETURN_RESULT, true));
-                            return true;
-                        });
-                    });
                 }
             }
 
 
-            private void enterEditMode(AppListItemBinding binding)
+            public void enterEditMode(AppListItemBinding binding)
             {
                 activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                 UserApp app =  binding.getUserApp();
@@ -852,7 +857,7 @@ public class AppListManager
                 {
                     Intent intent = packageManager.getLaunchIntentForPackage(app.getPackageName());
                     if (intent != null)
-                        activity.startActivity(intent,
+                        itemView.getContext().startActivity(intent,
                                 ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                 });
             }

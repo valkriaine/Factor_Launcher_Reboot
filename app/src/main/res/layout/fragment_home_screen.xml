@@ -98,24 +98,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             <!--wallpaper-->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <FrameLayout
                     android:id="@+id/background_host"
                     android:translationZ="-20dp"
+                    android:visibility="invisible"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        tools:ignore="PrivateResource"/>
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <FrameLayout
                         android:id="@+id/dim"
                         android:background="#80000000"
                         android:alpha="0"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
             <!--home page-->
             <com.valkriaine.factor.HomePager
                     android:id="@+id/home_pager"
