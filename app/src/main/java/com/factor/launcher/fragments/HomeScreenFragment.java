@@ -186,6 +186,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //***************************************************************************************************************************************************
         binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.appsList.setAdapter(appListManager.adapter);
+        binding.appsList.setHasFixedSize(true);
+        binding.appsList.setItemViewCacheSize(100);
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -249,6 +251,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .build();
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
+        binding.tilesList.setItemViewCacheSize(20);
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
 
