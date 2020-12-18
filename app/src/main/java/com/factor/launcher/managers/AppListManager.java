@@ -778,6 +778,8 @@ public class AppListManager
                     if (!app.isBeingEdited())
                     {
                         setOnClickListener(app);
+                        if (app.getCurrentNotifications().size() > 0)
+                            appBinding.notificationCount.setText(app.retrieveNotificationCount());
                     }
                     else
                     {
