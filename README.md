@@ -20,7 +20,7 @@ added permission to query all packages due to Android 11's limitation on package
 fixed an issue that causes the app to crash when loading tiles on the home screen
 
 # Version V0.4
-What's been done:
+What's implemented:
 1. basic functionality of the app drawer and home screen, app pinning and removing, and resizing tiles
 2. app searching
 3. app renaming
