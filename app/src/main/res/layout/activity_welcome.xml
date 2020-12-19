@@ -240,7 +240,7 @@
                             app:layout_constraintBottom_toTopOf="@id/tile_demo"/>
 
                 <!--demo medium tile-->
-                <com.factor.launcher.ui.BouncyConstraintLayout
+                <com.factor.launcher.ui.AnimatedConstraintLayout
                         android:id="@+id/tile_demo"
                         android:layout_width="320dp"
                         android:layout_height="160dp"
@@ -375,7 +375,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.factor.launcher.ui.BouncyConstraintLayout>
+                </com.factor.launcher.ui.AnimatedConstraintLayout>
 
 
                 <androidx.constraintlayout.widget.Guideline

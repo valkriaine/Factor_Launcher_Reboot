@@ -24,6 +24,7 @@ import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
+import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 import com.valkriaine.factor.BouncyRecyclerView;
@@ -546,8 +547,7 @@ public class FactorManager
         {
             updateOrders();
             assert viewHolder != null;
-            viewHolder.itemView.setScaleX(1);
-            viewHolder.itemView.setScaleY(1);
+            ((AnimatedConstraintLayout)(viewHolder.itemView)).animateToNormalState();
             viewHolder.itemView.setAlpha(1f);
         }
 
@@ -555,8 +555,7 @@ public class FactorManager
         public void onItemSelected(@Nullable RecyclerView.ViewHolder viewHolder)
         {
             assert viewHolder != null;
-            viewHolder.itemView.setScaleX(1.1f);
-            viewHolder.itemView.setScaleY(1.1f);
+            ((AnimatedConstraintLayout)(viewHolder.itemView)).animateToSelectedState();
             viewHolder.itemView.setAlpha(0.9f);
         }
 

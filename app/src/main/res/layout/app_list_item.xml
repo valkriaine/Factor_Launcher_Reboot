@@ -7,10 +7,17 @@
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.factor.launcher.ui.AnimatedConstraintLayout
+            android:id="@+id/item_host"
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
+        <RelativeLayout
+                android:id="@+id/item_background"
+                android:alpha="0"
+                android:background="#80000000"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon"
@@ -117,7 +124,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.factor.launcher.ui.AnimatedConstraintLayout>
 </layout>
 
 

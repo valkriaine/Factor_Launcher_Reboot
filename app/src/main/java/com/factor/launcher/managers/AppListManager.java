@@ -1,5 +1,6 @@
 package com.factor.launcher.managers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -621,6 +622,7 @@ public class AppListManager
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
+        @SuppressLint("ClickableViewAccessibility")
         @NonNull
         @Override
         public AppListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -857,6 +859,7 @@ public class AppListManager
             {
                 itemView.setOnClickListener(v ->
                 {
+
                     Intent intent = packageManager.getLaunchIntentForPackage(app.getPackageName());
                     if (intent != null)
                         itemView.getContext().startActivity(intent,

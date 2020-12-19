@@ -20,8 +20,6 @@ public class WidgetFragment extends Fragment
 
     private AppWidgetHost appWidgetHost;
 
-    private FragmentWidgetBinding binding;
-
     public WidgetFragment()
     {
         // Required empty public constructor

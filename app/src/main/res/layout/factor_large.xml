@@ -7,7 +7,7 @@
     </data>
 
 
-    <com.factor.launcher.ui.BouncyConstraintLayout
+    <com.factor.launcher.ui.AnimatedConstraintLayout
             android:layout_width="320dp"
             android:layout_height="320dp">
 
@@ -318,5 +318,5 @@
                     app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.factor.launcher.ui.BouncyConstraintLayout>
+    </com.factor.launcher.ui.AnimatedConstraintLayout>
 </layout>

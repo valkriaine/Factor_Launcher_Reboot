@@ -7,7 +7,7 @@
                   type="com.factor.launcher.models.Factor"/>
     </data>
 
-    <com.factor.launcher.ui.BouncyConstraintLayout
+    <com.factor.launcher.ui.AnimatedConstraintLayout
             android:layout_width="160dp"
             android:layout_height="160dp">
 
@@ -82,5 +82,5 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.factor.launcher.ui.BouncyConstraintLayout>
+    </com.factor.launcher.ui.AnimatedConstraintLayout>
 </layout>
