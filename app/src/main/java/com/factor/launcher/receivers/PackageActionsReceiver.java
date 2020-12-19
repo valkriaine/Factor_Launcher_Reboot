@@ -18,12 +18,6 @@ public class PackageActionsReceiver extends BroadcastReceiver
     public PackageActionsReceiver(AppListManager a)
     {
         appListManager = a;
-
-        IntentFilter sdFilter = new IntentFilter();
-        sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
-        sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
-
-        a.getActivity().registerReceiver(this, sdFilter);
     }
 
     @Override

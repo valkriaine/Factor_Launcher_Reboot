@@ -371,33 +371,7 @@ public class FactorManager
             ViewDataBinding binding = DataBindingUtil.bind(view);
 
 
-            if (!isLiveWallpaper)
-            {
-                if (binding instanceof FactorSmallBinding)
-                    ((FactorSmallBinding) binding).trans
-                            .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
-                            .setBlurRadius(18F)
-                            .setBlurAutoUpdate(false)
-                            .setHasFixedTransformationMatrix(false);
-
-                if (binding instanceof FactorMediumBinding)
-                    ((FactorMediumBinding) binding).trans
-                            .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
-                            .setBlurRadius(18F)
-                            .setBlurAutoUpdate(false)
-                            .setHasFixedTransformationMatrix(false);
-
-                if (binding instanceof FactorLargeBinding)
-                    ((FactorLargeBinding)binding).trans
-                            .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(parent.getContext()))
-                            .setBlurRadius(18F)
-                            .setBlurAutoUpdate(false)
-                            .setHasFixedTransformationMatrix(false);
-            }
-           else
+            if (isLiveWallpaper)
             {
                 if (binding instanceof FactorSmallBinding)
                 {
@@ -418,10 +392,6 @@ public class FactorManager
                     ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.WHITE);
                 }
             }
-
-
-
-
 
 
 
@@ -494,47 +464,6 @@ public class FactorManager
             FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
             factorsViewHolder.bindFactor(userFactors.get(position));
         }
-
-        @Override
-        public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder)
-        {
-            super.onViewDetachedFromWindow(holder);
-
-            if (((FactorsViewHolder)holder).binding instanceof FactorSmallBinding)
-            {
-                ((FactorSmallBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
-            }
-            else if (((FactorsViewHolder)holder).binding instanceof FactorMediumBinding)
-            {
-                ((FactorMediumBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
-            }
-            else if (((FactorsViewHolder)holder).binding instanceof FactorLargeBinding)
-            {
-                ((FactorLargeBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(false);
-            }
-        }
-
-        @Override
-        public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder)
-        {
-            super.onViewAttachedToWindow(holder);
-
-            if (((FactorsViewHolder)holder).binding instanceof FactorSmallBinding && holder.itemView.isShown())
-            {
-                ((FactorSmallBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
-            }
-            else if (((FactorsViewHolder)holder).binding instanceof FactorMediumBinding && holder.itemView.isShown())
-            {
-                ((FactorMediumBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
-            }
-            else if (((FactorsViewHolder)holder).binding instanceof FactorLargeBinding && holder.itemView.isShown())
-            {
-                ((FactorLargeBinding) ((FactorsViewHolder)holder).binding).trans.setBlurEnabled(true);
-            }
-        }
-
-
-
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads)
@@ -658,6 +587,7 @@ public class FactorManager
             {
                 //determine layout based on size
                 size = factor.getSize();
+
                 if (size == Factor.Size.small)
                 {
                     ((FactorSmallBinding)binding).setFactor(factor);
@@ -667,6 +597,14 @@ public class FactorManager
 
                     if (factor.retrieveNotificationCountInNumber() > 0)
                         ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
+
+                    if (!isLiveWallpaper)
+                        ((FactorSmallBinding) binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setBlurAutoUpdate(false)
+                            .setHasFixedTransformationMatrix(false);
                 }
                 else if (size == Factor.Size.medium)
                 {
@@ -681,7 +619,14 @@ public class FactorManager
                     if (factor.retrieveNotificationCountInNumber() > 0)
                         ((FactorMediumBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
 
-                    }
+                    if (!isLiveWallpaper)
+                        ((FactorMediumBinding) binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setBlurAutoUpdate(false)
+                            .setHasFixedTransformationMatrix(false);
+                }
                 else if (size == Factor.Size.large)
                 {
                     ((FactorLargeBinding)binding).setFactor(factor);
@@ -745,6 +690,14 @@ public class FactorManager
                         ((FactorLargeBinding)binding).shortcutAvailability.setVisibility(View.VISIBLE);
                     }
 
+
+                    if (!isLiveWallpaper)
+                        ((FactorLargeBinding)binding).trans
+                            .setupWith(background)
+                            .setBlurAlgorithm(new RenderScriptBlur(activity))
+                            .setBlurRadius(18F)
+                            .setBlurAutoUpdate(false)
+                            .setHasFixedTransformationMatrix(false);
                 }
 
                 //todo: customize activity transition animation
@@ -754,7 +707,6 @@ public class FactorManager
                         itemView.getContext().startActivity(intent,
                                 ActivityOptionsCompat.makeScaleUpAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
                 });
-
             }
 
             //return the factor of this view holder

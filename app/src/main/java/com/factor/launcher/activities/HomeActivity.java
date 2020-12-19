@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.WallpaperManager;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,6 +98,7 @@ public class HomeActivity extends AppCompatActivity
         if (wm == null)
             wm = WallpaperManager.getInstance(this);
 
+        //if storage permission is not granted, fall back to live wallpaper
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         {
             //live wallpaper
@@ -107,11 +107,10 @@ public class HomeActivity extends AppCompatActivity
                 isWallpaperChanged = wallpaper != null;
                 wallpaper = null;
             }
-            else
+            else //static wallpaper
             {
                 isWallpaperChanged = wallpaper == null || !DrawableComparison.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
                 wallpaper = wm.getFastDrawable();
-                Log.d("resume", "is wallpaper changed: " + isWallpaperChanged);
             }
         }
     }

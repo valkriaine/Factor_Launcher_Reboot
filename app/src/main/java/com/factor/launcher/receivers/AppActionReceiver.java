@@ -25,17 +25,8 @@ public class AppActionReceiver extends BroadcastReceiver
 
     public AppActionReceiver(AppListManager appListManager, FragmentHomeScreenBinding binding)
     {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constants.BROADCAST_ACTION_REMOVE);
-        filter.addAction(Constants.BROADCAST_ACTION_ADD);
-        filter.addAction(Constants.BROADCAST_ACTION_RENAME);
-
-        //home button press
-        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-
         this.appListManager = appListManager;
         this.binding = binding;
-        this.appListManager.getActivity().registerReceiver(this, filter);
     }
 
 

@@ -2,13 +2,13 @@ package com.factor.launcher.fragments;
 
 import android.Manifest;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -53,6 +53,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private WidgetFragment widgetFragment;
 
+    private Context context;
+
+    private AppActionReceiver appActionReceiver;
+
+    private PackageActionsReceiver packageActionsReceiver;
+
+    private NotificationBroadcastReceiver notificationBroadcastReceiver;
+
+
+
     public HomeScreenFragment()
     {
         // Required empty public constructor
@@ -65,6 +75,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         wm = WallpaperManager.getInstance(requireContext());
     }
 
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -121,6 +137,22 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     }
 
 
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        if (context != null)
+        {
+            if (appActionReceiver != null)
+                context.unregisterReceiver(appActionReceiver);
+            if (notificationBroadcastReceiver != null)
+                context.unregisterReceiver(notificationBroadcastReceiver);
+            if (packageActionsReceiver != null)
+                context.unregisterReceiver(packageActionsReceiver);
+        }
+    }
+
+
     //initialize views and listeners
     private void initializeComponents()
     {
@@ -147,31 +179,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         checkLiveWallpaper();
 
 
-
-
         //initialize data manager
         //***************************************************************************************************************************************************
         appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost, isLiveWallpaper);
 
 
-
-
         //register broadcast receivers
         //***************************************************************************************************************************************************
-        new AppActionReceiver(appListManager, binding);
-        PackageActionsReceiver packageActionsReceiver = new PackageActionsReceiver(appListManager);
-        IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
-        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-        filter.addDataScheme("package");
-        requireActivity().registerReceiver(packageActionsReceiver, filter);
-
-        IntentFilter notificationFilter = new IntentFilter();
-        notificationFilter.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
-        notificationFilter.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
-        requireActivity().registerReceiver(new NotificationBroadcastReceiver(appListManager), notificationFilter);
-
-
+        registerBroadcastReceivers(appListManager, binding);
 
 
         //home pager
@@ -188,9 +203,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.appsList.setAdapter(appListManager.adapter);
         binding.appsList.setHasFixedSize(true);
         binding.appsList.setItemViewCacheSize(100);
-        binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+            {
                 float xOffset = position + positionOffset;
                 binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
@@ -201,7 +218,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             }
 
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(int position)
+            {
                 if (position == 0) {
                     binding.arrowButton.setRotation(180);
                     binding.blur.setAlpha(0f);
@@ -209,8 +227,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-            }
+            public void onPageScrollStateChanged(int state) {}
+
         });
         binding.scrollBar.setupWithRecyclerView(
                 binding.appsList,
@@ -335,7 +353,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
                 binding.widgetBlur.setBlurEnabled(true);
                 binding.widgetBackground.setAlpha(binding.widgetBackground.getAlpha() + v);
-                Log.d("widget", "alpha: " + binding.widgetBackground.getAlpha());
                 if (binding.widgetBackground.getAlpha() >= WIDGET_SCREEN_THRESHOLD)
                 {
                     binding.widgetBackground.animate().alpha(1).start();
@@ -426,4 +443,33 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             isLiveWallpaper = true;
         }
     }
+
+
+    private void registerBroadcastReceivers(AppListManager appListManager, FragmentHomeScreenBinding binding)
+    {
+        appActionReceiver = new AppActionReceiver(appListManager, binding);
+        IntentFilter filterAppAction = new IntentFilter();
+        filterAppAction.addAction(Constants.BROADCAST_ACTION_REMOVE);
+        filterAppAction.addAction(Constants.BROADCAST_ACTION_ADD);
+        filterAppAction.addAction(Constants.BROADCAST_ACTION_RENAME);
+        filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        requireActivity().registerReceiver(appActionReceiver, filterAppAction);
+
+        packageActionsReceiver = new PackageActionsReceiver(appListManager);
+        IntentFilter filterPackageAction = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+        filterPackageAction.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filterPackageAction.addAction(Intent.ACTION_PACKAGE_CHANGED);
+        filterPackageAction.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
+        filterPackageAction.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
+        filterPackageAction.addDataScheme("package");
+        requireActivity().registerReceiver(packageActionsReceiver, filterPackageAction);
+
+
+        notificationBroadcastReceiver = new NotificationBroadcastReceiver(appListManager);
+        IntentFilter filterNotification = new IntentFilter();
+        filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
+        filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
+        requireActivity().registerReceiver(notificationBroadcastReceiver, filterNotification);
+    }
+
 }
