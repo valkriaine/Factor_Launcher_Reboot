@@ -170,7 +170,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //initialize widget fragment
         //***************************************************************************************************************************************************
-        widgetFragment = new WidgetFragment();
+        widgetFragment = WidgetFragment.newInstance();
 
 
 
