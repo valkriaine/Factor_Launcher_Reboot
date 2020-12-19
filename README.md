@@ -1,19 +1,26 @@
-# Factor Launcher (New)
+# Factor Launcher
 
-This is the new repository for https://github.com/Valkriaine/Factor_Launcher
+This is a reboot of https://github.com/Valkriaine/Factor_Launcher
 
-All commits will be pushed to this repository instead. The last repo is obsolete (my code was too messy :D)
+All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
+
+# Version v0.4.4
+unregister broadcast receivers in fragments onDestroyView.
+better usage of memory
+
+# Version v0.4.3
+test changed recyclerview cache size to increase performance
 
 # Version v0.4.2 
 added permission to query all packages due to Android 11's limitation on package visibility
 
-# Version V0.4.1 hot fix
+# Version V0.4.1
 fixed an issue that causes the app to crash when loading tiles on the home screen
 
 # Version V0.4
-What's been done:
+What's implemented:
 1. basic functionality of the app drawer and home screen, app pinning and removing, and resizing tiles
 2. app searching
 3. app renaming
