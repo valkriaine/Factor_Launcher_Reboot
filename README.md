@@ -6,6 +6,11 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
+# Version v0.4.5
+added animations on tiles/app touched
+retrieve currently displayed notifications at launcher start
+optimized app drawer scroll
+
 # Version v0.4.4
 unregister broadcast receivers in fragments onDestroyView.
 better usage of memory
