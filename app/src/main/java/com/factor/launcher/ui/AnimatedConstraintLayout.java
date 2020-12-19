@@ -15,6 +15,8 @@ public class AnimatedConstraintLayout extends ConstraintLayout
 
     private boolean isInDragAndDrop = false;
 
+    private final AccelerateDecelerateInterpolator accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
+
     @SuppressLint("ClickableViewAccessibility")
     public AnimatedConstraintLayout(@NonNull Context context, @Nullable @org.jetbrains.annotations.Nullable AttributeSet attrs)
     {
@@ -41,8 +43,8 @@ public class AnimatedConstraintLayout extends ConstraintLayout
     {
         if (!isInDragAndDrop)
         {
-            animate().scaleX(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-            animate().scaleY(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+            animate().scaleX(0.95f).setInterpolator(accelerateDecelerateInterpolator).setDuration(50);
+            animate().scaleY(0.95f).setInterpolator(accelerateDecelerateInterpolator).setDuration(50);
         }
     }
 
@@ -50,8 +52,8 @@ public class AnimatedConstraintLayout extends ConstraintLayout
     {
         if (!isInDragAndDrop)
         {
-            animate().scaleX(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-            animate().scaleY(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+            animate().scaleX(1f).setInterpolator(accelerateDecelerateInterpolator).setDuration(50);
+            animate().scaleY(1f).setInterpolator(accelerateDecelerateInterpolator).setDuration(50);
         }
     }
 
@@ -61,10 +63,10 @@ public class AnimatedConstraintLayout extends ConstraintLayout
     {
         isInDragAndDrop = true;
         animate().scaleX(1.1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setInterpolator(accelerateDecelerateInterpolator)
                 .setDuration(200).start();
         animate().scaleY(1.1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setInterpolator(accelerateDecelerateInterpolator)
                 .setDuration(200).start();
     }
 
@@ -74,18 +76,11 @@ public class AnimatedConstraintLayout extends ConstraintLayout
     {
         isInDragAndDrop = false;
         animate().scaleX(1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setInterpolator(accelerateDecelerateInterpolator)
                 .setDuration(200).start();
         animate().scaleY(1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setInterpolator(accelerateDecelerateInterpolator)
                 .setDuration(200).start();
-    }
-
-
-    @Override
-    public boolean performClick()
-    {
-        return super.performClick();
     }
 }
 

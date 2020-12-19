@@ -1,13 +1,40 @@
 package com.factor.launcher.services;
 
 import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import com.factor.launcher.util.Constants;
 
+
 public class NotificationListener extends NotificationListenerService
 {
+    private ComponentsSetupReceiver componentsSetupReceiver;
+
+    private StatusBarNotification[] currentNotifications;
+
+    //register components setup receiver when notification listener is created
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        componentsSetupReceiver = new ComponentsSetupReceiver();
+        registerReceiver(componentsSetupReceiver, new IntentFilter(Constants.NOTIFICATION_INTENT_ACTION_SETUP));
+    }
+
+    //unregister components setup receiver on destroy
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if (componentsSetupReceiver != null)
+            unregisterReceiver(componentsSetupReceiver);
+    }
+
+    //send a broadcast to NotificationBroadcastReceiver when a new notification has arrived
     @Override
     public void onNotificationPosted(StatusBarNotification sbn)
     {
@@ -24,6 +51,7 @@ public class NotificationListener extends NotificationListenerService
         sendBroadcast(intent);
     }
 
+    //send a broadcast to NotificationBroadcastReceiver when a notification has been cleared
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn)
     {
@@ -35,4 +63,37 @@ public class NotificationListener extends NotificationListenerService
         intent.putExtra(Constants.NOTIFICATION_INTENT_ID_KEY, id);
         sendBroadcast(intent);
     }
+
+
+    //get an array of active notifications when listener is connected
+    @Override
+    public void onListenerConnected()
+    {
+        super.onListenerConnected();
+        currentNotifications = getActiveNotifications();
+    }
+
+
+    //retrieve current notifications
+    private void getCurrentNotifications()
+    {
+        if (currentNotifications.length > 0)
+            for (StatusBarNotification notification : currentNotifications)
+                onNotificationPosted(notification);
+    }
+
+
+    //receive broadcast when app has successfully registered all other receivers
+    private class ComponentsSetupReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            if (intent.getAction().equals(Constants.NOTIFICATION_INTENT_ACTION_SETUP))
+            {
+                getCurrentNotifications();
+            }
+        }
+    }
+
 }

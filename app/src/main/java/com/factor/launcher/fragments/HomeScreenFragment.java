@@ -28,6 +28,7 @@ import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
+import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
@@ -470,6 +471,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
         requireActivity().registerReceiver(notificationBroadcastReceiver, filterNotification);
+
+
+        Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
+        requireActivity().sendBroadcast(intent);
     }
 
 }
