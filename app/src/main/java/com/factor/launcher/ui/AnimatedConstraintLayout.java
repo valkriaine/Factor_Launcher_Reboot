@@ -25,24 +25,37 @@ public class AnimatedConstraintLayout extends ConstraintLayout
             switch(event.getAction())
             {
                 case MotionEvent.ACTION_DOWN:
-                    if (!isInDragAndDrop)
-                    {
-                        animate().scaleX(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-                        animate().scaleY(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-                    }
-                    return false; // if you want to handle the touch event
+                    animateToClickedState();
+                    return false;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    if (!isInDragAndDrop)
-                    {
-                        animate().scaleX(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-                        animate().scaleY(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
-                    }
-                    return false; // if you want to handle the touch event
+                    animateBackFromClickedState();
+                    return false;
             }
             return false;
         });
     }
+
+
+    public void animateToClickedState()
+    {
+        if (!isInDragAndDrop)
+        {
+            animate().scaleX(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+            animate().scaleY(0.95f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+        }
+    }
+
+    public void animateBackFromClickedState()
+    {
+        if (!isInDragAndDrop)
+        {
+            animate().scaleX(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+            animate().scaleY(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(50);
+        }
+    }
+
+
 
     public void animateToSelectedState()
     {
@@ -54,6 +67,8 @@ public class AnimatedConstraintLayout extends ConstraintLayout
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setDuration(200).start();
     }
+
+
 
     public void animateToNormalState()
     {

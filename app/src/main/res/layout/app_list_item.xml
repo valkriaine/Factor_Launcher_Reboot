@@ -12,10 +12,13 @@
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
-        <RelativeLayout
+        <androidx.cardview.widget.CardView
                 android:id="@+id/item_background"
+                app:cardBackgroundColor="#66000000"
+                app:cardCornerRadius="5dp"
                 android:alpha="0"
-                android:background="#80000000"
+                android:translationZ="-100dp"
+                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -25,6 +28,7 @@
                 android:layout_height="50dp"
                 android:padding="2.5dp"
                 android:gravity="center"
+                android:layout_marginStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
@@ -50,7 +54,7 @@
         <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/label_edit"
                 android:layout_width="match_parent"
-                android:layout_marginStart="60dp"
+                android:layout_marginStart="80dp"
                 android:layout_marginEnd="180dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +79,7 @@
                 android:id="@+id/edit_button_group"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -104,12 +108,9 @@
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
                     android:layout_height="50dp"/>
-
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-        <!--todo: add animation to show/hide this-->
         <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/notification_count"
                 android:background="@drawable/round_button"
@@ -120,7 +121,7 @@
                 android:textAlignment="gravity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="40dp"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 

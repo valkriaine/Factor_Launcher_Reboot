@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Process;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -693,7 +694,27 @@ public class AppListManager
                         return true;
                     });
                 });
+
+
+                view.setOnTouchListener((v, event) ->
+                {
+                    switch(event.getAction())
+                    {
+                        case MotionEvent.ACTION_DOWN:
+                            ((AppListItemBinding)holder.binding).itemHost.animateToClickedState();
+                            ((AppListItemBinding)holder.binding).itemBackground.animate().alpha(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(150);
+                            return false;
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+                            ((AppListItemBinding)holder.binding).itemHost.animateBackFromClickedState();
+                            ((AppListItemBinding)holder.binding).itemBackground.animate().alpha(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(150);
+                            return false;
+                    }
+                    return false;
+                });
+
             }
+
 
             return holder;
         }

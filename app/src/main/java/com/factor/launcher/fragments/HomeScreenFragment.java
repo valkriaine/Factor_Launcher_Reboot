@@ -214,7 +214,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.blur.setAlpha(xOffset / 0.5f);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
-                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
+                binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
             }
 
             @Override
@@ -280,7 +280,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
         binding.searchView.setOnCloseListener(() -> {
-            binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150);
+            binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
             return false;
         });
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -291,13 +291,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottomOnSearch);
+                binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottomOnSearch);
                 String queryText = newText.toLowerCase().trim();
                 appListManager.findPosition(binding.appsList, queryText);
                 return true;
             }
         });
-        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> binding.appsList.setPadding(paddingHorizontal, appListPaddingTop100, paddingHorizontal, paddingBottom150));
+        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150));
 
 
 
