@@ -16,7 +16,7 @@ test changed recyclerview cache size to increase performance
 # Version v0.4.2 
 added permission to query all packages due to Android 11's limitation on package visibility
 
-# Version V0.4.1 hot fix
+# Version V0.4.1
 fixed an issue that causes the app to crash when loading tiles on the home screen
 
 # Version V0.4
