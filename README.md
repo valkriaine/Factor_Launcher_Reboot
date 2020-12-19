@@ -1,8 +1,8 @@
-# Factor Launcher (New)
+# Factor Launcher
 
-This is the new repository for https://github.com/Valkriaine/Factor_Launcher
+This is a reboot of https://github.com/Valkriaine/Factor_Launcher
 
-All commits will be pushed to this repository instead. The last repo is obsolete (my code was too messy :D)
+All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
