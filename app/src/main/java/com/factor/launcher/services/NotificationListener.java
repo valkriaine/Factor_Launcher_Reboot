@@ -14,7 +14,7 @@ public class NotificationListener extends NotificationListenerService
 {
     private ComponentsSetupReceiver componentsSetupReceiver;
 
-    private StatusBarNotification[] currentNotifications;
+    private StatusBarNotification[] currentNotifications = {};
 
     //register components setup receiver when notification listener is created
     @Override
