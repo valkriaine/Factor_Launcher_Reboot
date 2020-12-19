@@ -6,6 +6,13 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
+# Version v0.4.4
+unregister broadcast receivers in fragments onDestroyView.
+better usage of memory
+
+# Version v0.4.3
+test changed recyclerview cache size to increase performance
+
 # Version v0.4.2 
 added permission to query all packages due to Android 11's limitation on package visibility
 
