@@ -591,7 +591,15 @@ public class FactorManager
                 {
                     ((FactorSmallBinding)binding).setFactor(factor);
                     ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
-                    ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    try
+                    {
+                        ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
+                        loadIcon(factor);
+                        ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+
                     ((FactorSmallBinding)binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
 
                     if (factor.retrieveNotificationCountInNumber() > 0)
@@ -609,7 +617,17 @@ public class FactorManager
                 {
                     ((FactorMediumBinding)binding).setFactor(factor);
                     ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
-                    ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+
+                    try
+                    {
+                        ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
+                        loadIcon(factor);
+                        ((FactorMediumBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+
                     ((FactorMediumBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
                     ((FactorMediumBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
 
@@ -630,7 +648,17 @@ public class FactorManager
                 {
                     ((FactorLargeBinding)binding).setFactor(factor);
                     ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
-                    ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+
+                    try
+                    {
+                        ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
+                        loadIcon(factor);
+                        ((FactorLargeBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
+                    }
+
                     ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
                     ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
