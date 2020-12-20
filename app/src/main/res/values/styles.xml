@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -9,16 +9,13 @@
 
         <!--show system wallpaper and hide navigation bar-->
         <item name="android:windowShowWallpaper">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:navigationBarDividerColor">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:colorPrimaryDark">@android:color/transparent</item>
 
-
-        <!--todo: restyle context menu-->
-        <item name="android:itemBackground">@android:color/holo_blue_dark</item>
-
-
+        <!--transition animation-->
         <item name="android:windowActivityTransitions">true</item>
     </style>
 

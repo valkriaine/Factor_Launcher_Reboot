@@ -205,6 +205,9 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //request notification access
     public void enableNotificationAccess(View view)
     {
+        if (isNotificationServiceEnabled())
+            return;
+
         AlertDialog enableNotificationListenerAlertDialog = buildNotificationServiceAlertDialog();
         enableNotificationListenerAlertDialog.show();
     }

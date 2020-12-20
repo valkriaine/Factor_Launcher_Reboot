@@ -5,14 +5,12 @@ import android.app.WallpaperManager;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
-import android.view.WindowManager;
+import android.view.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import com.factor.launcher.R;
+import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.util.DrawableComparison;
 import com.factor.launcher.util.OnBackPressedCallBack;
@@ -33,15 +31,18 @@ public class HomeActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        setContentView(R.layout.activity_home);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
-        //todo: transparent background for insets on Android 11
+        ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
+
+        //todo: transparent navigation bar on Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
-            //getWindow().getInsetsController().setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            getWindow().setDecorFitsSystemWindows(false);
         }
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        setContentView(binding.getRoot());
+
 
 
         //initialize variables to detect wallpaper changes

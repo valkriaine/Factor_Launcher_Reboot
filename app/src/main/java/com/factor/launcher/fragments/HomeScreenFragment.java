@@ -85,7 +85,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home_screen, container, false);
+        binding = FragmentHomeScreenBinding.inflate(getLayoutInflater());
         initializeComponents();
         return binding.getRoot();
     }
