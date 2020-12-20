@@ -620,6 +620,21 @@ public class AppListManager
     }
 
 
+    private void loadIcon(UserApp app)
+    {
+        try
+        {
+            if (packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+                app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            new Thread(() -> appListDatabase.appListDao().delete(app)).start();
+        }
+    }
+
+
     //adapter for app drawer
     public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
     {
@@ -791,7 +806,16 @@ public class AppListManager
                     AppListItemBinding appBinding = (AppListItemBinding)binding;
                     appBinding.setUserApp(app);
                     appBinding.labelEdit.setText(app.getLabelNew());
-                    appBinding.icon.setImageDrawable(app.getIcon());
+                    try
+                    {
+                        appBinding.icon.setImageDrawable(app.getIcon());
+                    }
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
+                        loadIcon(app);
+                        appBinding.icon.setImageDrawable(app.getIcon());
+                    }
+
 
                     appBinding.label.setVisibility(app.visibilityLabel());
                     appBinding.labelEdit.setVisibility(app.visibilityEditing());

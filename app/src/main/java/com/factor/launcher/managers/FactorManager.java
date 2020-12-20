@@ -594,7 +594,8 @@ public class FactorManager
                     try
                     {
                         ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
-                    }catch (kotlin.UninitializedPropertyAccessException ex)
+                    }
+                    catch (kotlin.UninitializedPropertyAccessException ex)
                     {
                         loadIcon(factor);
                         ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
