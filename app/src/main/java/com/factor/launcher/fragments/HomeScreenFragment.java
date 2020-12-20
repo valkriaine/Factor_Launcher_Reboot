@@ -154,9 +154,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         checkLiveWallpaper();
 
 
+
         //initialize data manager
         //***************************************************************************************************************************************************
-        appListManager = new AppListManager(this.requireActivity(), binding.backgroundHost, isLiveWallpaper);
+        appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
 
 
         //register broadcast receivers
@@ -315,6 +316,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             });
         });
+
+
+        //test button to launch pick widget screen
+        //todo: add this in a drop down menu or in the app drawer
+        binding.addWidgetButton.setOnClickListener(view -> appListManager.launchPickWidgetIntent());
+
     }
 
 

@@ -733,7 +733,7 @@ public class FactorManager
                     Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
                     if (intent != null)
                         itemView.getContext().startActivity(intent,
-                                ActivityOptionsCompat.makeScaleUpAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
+                                ActivityOptionsCompat.makeClipRevealAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
                 });
             }
 

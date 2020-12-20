@@ -3,6 +3,8 @@ package com.factor.launcher.managers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +14,7 @@ import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -22,10 +25,12 @@ import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
+import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
+import com.factor.launcher.util.WidgetActivityResultContract;
 
 
 import java.text.Collator;
@@ -66,17 +71,35 @@ public class AppListManager
 
     public AppListAdapter adapter;
 
+    private final AppWidgetManager appWidgetManager;
+
+    private final AppWidgetHost appWidgetHost;
+
+    private final WidgetActivityResultContract widgetActivityResultContract;
+
+    private final ActivityResultLauncher<Intent> widgetResultLauncher;
+
     //constructor
-    public AppListManager(Activity activity, ViewGroup background, Boolean isLiveWallpaper)
+    public AppListManager(HomeScreenFragment fragment, ViewGroup background, Boolean isLiveWallpaper)
     {
-        this.activity = activity;
-        packageManager = activity.getPackageManager();
-        launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        this.activity = fragment.requireActivity();
+
+        this.appWidgetManager = AppWidgetManager.getInstance(activity);
+        this.appWidgetHost = new AppWidgetHost(activity, Constants.WIDGET_HOST_ID);
+
+        this.packageManager = activity.getPackageManager();
+        this.launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter();
         this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
-        appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
-        factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
+
+        this.appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
+
+        this.factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
+
         loadApps(factorSharedPreferences.getBoolean("saved", false));
+
+        widgetActivityResultContract = new WidgetActivityResultContract();
+        widgetResultLauncher = fragment.registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
     }
 
     //compare app label (new)
@@ -588,6 +611,7 @@ public class AppListManager
         }
     }
 
+    //return the app at a given position (not the array position)
     public UserApp getUserApp(int position)
     {
         UserApp appToFind = userApps.get(position);
@@ -619,7 +643,7 @@ public class AppListManager
             return new UserApp();
     }
 
-
+    //load icon for the app
     private void loadIcon(UserApp app)
     {
         try
@@ -633,6 +657,39 @@ public class AppListManager
             new Thread(() -> appListDatabase.appListDao().delete(app)).start();
         }
     }
+
+
+    //launch pick widget intent
+    public void launchPickWidgetIntent()
+    {
+        int appWidgetId = appWidgetHost.allocateAppWidgetId();
+        Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+        pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
+        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity, pickIntent));
+    }
+
+
+    //receive activity result from widget intent
+    private void handleWidgetResult(Intent intent)
+    {
+        if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_OK)
+        {
+            Log.d("widget", "result: ok");
+            //todo: handle create & configure widget
+        }
+        else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
+        {
+            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+            if (appWidgetId != -1)
+            {
+                appWidgetHost.deleteAppWidgetId(appWidgetId);
+            }
+            Log.d("widget", "result: not ok");
+        }
+    }
+
+
 
 
     //adapter for app drawer
