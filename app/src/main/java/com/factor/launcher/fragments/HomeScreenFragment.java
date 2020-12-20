@@ -14,7 +14,6 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
-import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -31,7 +30,6 @@ import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
-import com.valkriaine.factor.bouncyRecyclerViewUtil.OnOverPullListener;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.Objects;
@@ -39,19 +37,13 @@ import java.util.Objects;
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
 {
+    private boolean isLiveWallpaper = false;
+
     private FragmentHomeScreenBinding binding;
 
     private WallpaperManager wm;
 
     private AppListManager appListManager;
-
-    private boolean isLiveWallpaper = false;
-
-    private final float WIDGET_SCREEN_THRESHOLD = 0.3f;
-
-    private boolean isWidgetMode = false;
-
-    private WidgetFragment widgetFragment;
 
     private Context context;
 
@@ -107,19 +99,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
         else if (binding.homePager.getCurrentItem() == 0)
         {
-            if (isWidgetMode)
-            {
-                binding.widgetBlur.setBlurEnabled(false);
-                binding.widgetBackground.animate().alpha(0).start();
-                binding.tilesList.setAlpha(1);
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .remove(widgetFragment)
-                        .commit();
-
-                isWidgetMode = false;
-                return true;
-            }
             RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
             {
                 @Override protected int getVerticalSnapPreference()
@@ -167,12 +146,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
         int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
-
-
-
-        //initialize widget fragment
-        //***************************************************************************************************************************************************
-        widgetFragment = WidgetFragment.newInstance();
 
 
 
@@ -342,50 +315,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             });
         });
-
-
-
-        //handle tile list over-pull to open widget screen
-        //***************************************************************************************************************************************************
-        binding.tilesList.addOnOverPulledListener(new OnOverPullListener()
-        {
-            @Override
-            public void onOverPulledTop(float v)
-            {
-
-                binding.widgetBlur.setBlurEnabled(true);
-                binding.widgetBackground.setAlpha(binding.widgetBackground.getAlpha() + v);
-                if (binding.widgetBackground.getAlpha() >= WIDGET_SCREEN_THRESHOLD)
-                {
-                    binding.widgetBackground.animate().alpha(1).start();
-                    binding.tilesList.animate().alpha(0).setDuration(100).start();
-                    isWidgetMode = true;
-
-                    requireActivity().getSupportFragmentManager()
-                                .beginTransaction()
-                                .setReorderingAllowed(true)
-                                .replace(R.id.widget_fragment_container, widgetFragment)
-                                .addToBackStack(null)
-                                .commit();
-                }
-            }
-
-            @Override
-            public void onOverPulledBottom(float v)
-            {
-
-            }
-
-            @Override
-            public void onRelease()
-            {
-                if (!isWidgetMode)
-                {
-                    binding.widgetBlur.setBlurEnabled(false);
-                    binding.widgetBackground.animate().alpha(0).start();
-                }
-            }
-        });
     }
 
 
@@ -423,15 +352,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(false)
                     .setBlurEnabled(true);
-
-
-            binding.widgetBlur.setupWith(binding.backgroundHost)
-                    .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                    .setBlurRadius(15f)
-                    .setBlurAutoUpdate(true)
-                    .setHasFixedTransformationMatrix(true)
-                    .setBlurEnabled(true);
         }
         else //live wallpaper
         {
@@ -440,8 +360,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.searchBlur.setOverlayColor(Color.TRANSPARENT);
             binding.searchBlur.setBlurEnabled(false);
             binding.blur.setBlurEnabled(false);
-            binding.widgetBlur.setBlurEnabled(false);
-
             isLiveWallpaper = true;
         }
     }
