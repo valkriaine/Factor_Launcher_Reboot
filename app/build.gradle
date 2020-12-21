@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.factor.launcher"
-        minSdkVersion 26
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -72,7 +72,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //my library
-    implementation 'com.github.Valkriaine:Factor:1.9'
+    implementation 'com.github.Valkriaine:Factor:1.9.2'
 
     //other libraries
 

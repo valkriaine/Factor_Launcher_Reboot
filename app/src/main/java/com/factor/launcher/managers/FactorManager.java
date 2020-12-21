@@ -9,10 +9,12 @@ import android.content.pm.ShortcutInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -84,7 +86,8 @@ public class FactorManager
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
                         f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
-                        f.setShortcuts(getShortcutsFromFactor(f));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                            f.setShortcuts(getShortcutsFromFactor(f));
                     }
 
                 }
@@ -103,7 +106,10 @@ public class FactorManager
     {
         Factor factor = app.toFactor();
         userFactors.add(factor);
-        factor.setShortcuts(getShortcutsFromFactor(factor));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+            factor.setShortcuts(getShortcutsFromFactor(factor));
+
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
@@ -156,7 +162,10 @@ public class FactorManager
         {
             int position = userFactors.indexOf(factor);
             factor.setOrder(position);
-            factor.setShortcuts(getShortcutsFromFactor(factor));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                factor.setShortcuts(getShortcutsFromFactor(factor));
+
             new Thread(()->
             {
                 factorsDatabase.factorsDao().updateFactorInfo(factor);
@@ -296,6 +305,7 @@ public class FactorManager
     }
 
     //find shortcuts related to a factor
+    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
     public List<ShortcutInfo> getShortcutsFromFactor(Factor factor)
     {
 
@@ -315,11 +325,13 @@ public class FactorManager
     }
 
     //launch shortcut
+    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
     private void startShortCut(ShortcutInfo shortcutInfo)
     {
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
+    //add widget to tiles list
     public void addWidget(AppWidgetHostView appWidgetHostView)
     {
 

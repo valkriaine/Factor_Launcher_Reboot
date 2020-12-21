@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.*;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -66,7 +68,7 @@ public class AppListManager
 
     private final LauncherApps launcherApps;
 
-    private final LauncherApps.ShortcutQuery shortcutQuery = new LauncherApps.ShortcutQuery();
+    private LauncherApps.ShortcutQuery shortcutQuery;
 
     private SharedPreferences.Editor editor;
 
@@ -88,7 +90,11 @@ public class AppListManager
         this.activity = fragment.requireActivity();
 
         this.appWidgetManager = AppWidgetManager.getInstance(activity);
-        this.appWidgetHost = new AppWidgetHost(activity, Constants.WIDGET_HOST_ID);
+        this.appWidgetHost = new AppWidgetHost(activity, WIDGET_HOST_ID);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+            this.shortcutQuery = new LauncherApps.ShortcutQuery();
+
 
         this.packageManager = activity.getPackageManager();
         this.launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
@@ -142,7 +148,7 @@ public class AppListManager
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
                     for (ResolveInfo r : availableApps)
                     {
-                        if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME))
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                         {
                             UserApp app = appListDatabase.appListDao().findByPackage(r.activityInfo.packageName);
                             //noinspection ConstantConditions
@@ -152,7 +158,10 @@ public class AppListManager
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
-                                app.setShortCuts(getShortcutsFromApp(app));
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                    app.setShortCuts(getShortcutsFromApp(app));
+
 
                                 app.icon = r.activityInfo.loadIcon(packageManager);
 
@@ -164,7 +173,9 @@ public class AppListManager
                                 if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
                                     app.icon = r.activityInfo.loadIcon(packageManager);
-                                    app.setShortCuts(getShortcutsFromApp(app));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                                        app.setShortCuts(getShortcutsFromApp(app));
+                                    }
                                     userApps.add(app);
                                     app.setPinned(factorManager.isAppPinned(app));
                                     userApps.sort(first_letter);
@@ -196,13 +207,16 @@ public class AppListManager
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
                     for (ResolveInfo r : availableApps)
                     {
-                        if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled)
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled)
                         {
                             UserApp app = new UserApp();
                             app.setLabelOld((String) r.loadLabel(packageManager));
                             app.setLabelNew(app.getLabelOld());
                             app.setPackageName(r.activityInfo.packageName);
-                            app.setShortCuts(getShortcutsFromApp(app));
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                app.setShortCuts(getShortcutsFromApp(app));
+
                             app.icon = r.activityInfo.loadIcon(packageManager);
                             userApps.add(app);
                         }
@@ -320,7 +334,10 @@ public class AppListManager
                     ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
                     app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
                     app.setLabelOld((String) packageManager.getApplicationLabel(info));
-                    app.setShortCuts(getShortcutsFromApp(app));
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                        app.setShortCuts(getShortcutsFromApp(app));
+
                     app.setLabelNew(app.getLabelOld());
                     appListDatabase.appListDao().insert(app);
                     userApps.add(app);
@@ -381,7 +398,11 @@ public class AppListManager
                             ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
                             userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
-                            userApps.get(position).setShortCuts(getShortcutsFromApp(app));
+
+                            //retrieve app shortcuts on api 25 and higher
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                userApps.get(position).setShortCuts(getShortcutsFromApp(app));
+
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
 
@@ -436,7 +457,11 @@ public class AppListManager
                             ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
                             userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
-                            userApps.get(position).setShortCuts(getShortcutsFromApp(app));
+
+                            //retrieve shortcuts on api 25 and higher
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                userApps.get(position).setShortCuts(getShortcutsFromApp(app));
+
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
                             userApps.sort(first_letter);
                             int newPosition = userApps.indexOf(app);
@@ -552,6 +577,7 @@ public class AppListManager
     }
 
     //retrieve list of app shortcuts
+    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
     public List<ShortcutInfo> getShortcutsFromApp(UserApp app)
     {
 
@@ -574,7 +600,8 @@ public class AppListManager
     //start app shortcut
     private void startShortCut(ShortcutInfo shortcutInfo)
     {
-        launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+            launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
     private void renameBroadCast(int position)
@@ -708,7 +735,7 @@ public class AppListManager
         }
     }
 
-
+    //request to configure app widget
     private void conFigureWidget(Intent data)
     {
         Bundle extras = data.getExtras();
@@ -729,6 +756,7 @@ public class AppListManager
         }
     }
 
+    //create appWidgetView
     private void createWidget(Intent data)
     {
         Log.d("widget", "create");
@@ -742,6 +770,7 @@ public class AppListManager
     }
 
 
+    //todo: doesn't work
     public void requestBindWidget(int appWidgetId, AppWidgetProviderInfo info)
     {
         Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
