@@ -311,7 +311,7 @@ public class AppListManager
     //add app after receiving PACKAGE_ADDED broadcast
     public void addApp(UserApp app)
     {
-        if (doesPackageExist(app))
+        if (doesPackageExist(app) && !isAppDuplicate(app))
         {
             new Thread(() ->
             {
@@ -336,10 +336,27 @@ public class AppListManager
         }
     }
 
+    //return true if app exists
+    private boolean isAppDuplicate(UserApp app)
+    {
+        for (UserApp userApp : userApps)
+        {
+            if (userApp.getPackageName().equals(app.getPackageName()))
+                return true;
+        }
+        return false;
+    }
+
     //update app info in database
     public void updateApp(UserApp app)
     {
         UserApp appToUpdate = findAppByPackage(app.getPackageName());
+
+        //app does not exist in the list
+        if (appToUpdate.getPackageName().isEmpty())
+            return;
+
+        //app is not customized (not renamed)
         if (!appToUpdate.getLabelNew().equals(app.getLabelNew()) && !appToUpdate.isCustomized())
             updateAppReorder(app);
         else

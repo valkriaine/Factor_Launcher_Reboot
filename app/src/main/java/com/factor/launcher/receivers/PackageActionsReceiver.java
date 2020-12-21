@@ -11,11 +11,16 @@ import java.util.List;
 //listen for app update, install, uninstall, and other changes related to the app drawer
 public class PackageActionsReceiver extends BroadcastReceiver
 {
-    private final AppListManager appListManager;
+    private AppListManager appListManager;
 
     public PackageActionsReceiver(AppListManager appListManager)
     {
         this.appListManager = appListManager;
+    }
+
+    public void invalidate()
+    {
+        this.appListManager = null;
     }
 
     @Override

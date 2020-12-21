@@ -123,11 +123,23 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (context != null)
         {
             if (appActionReceiver != null)
+            {
+                appActionReceiver.invalidate();
                 context.unregisterReceiver(appActionReceiver);
+            }
+
             if (notificationBroadcastReceiver != null)
+            {
+                notificationBroadcastReceiver.invalidate();
                 context.unregisterReceiver(notificationBroadcastReceiver);
+            }
+
             if (packageActionsReceiver != null)
+            {
+                packageActionsReceiver.invalidate();
                 context.unregisterReceiver(packageActionsReceiver);
+            }
+
         }
         binding = null;
         appListManager = null;

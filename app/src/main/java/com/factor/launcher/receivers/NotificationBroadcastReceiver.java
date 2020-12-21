@@ -8,11 +8,16 @@ import com.factor.launcher.util.Constants;
 
 public class NotificationBroadcastReceiver extends BroadcastReceiver
 {
-    private final AppListManager appListManager;
+    private AppListManager appListManager;
 
     public NotificationBroadcastReceiver(AppListManager appListManager)
     {
         this.appListManager = appListManager;
+    }
+
+    public void invalidate()
+    {
+        this.appListManager = null;
     }
 
     @Override

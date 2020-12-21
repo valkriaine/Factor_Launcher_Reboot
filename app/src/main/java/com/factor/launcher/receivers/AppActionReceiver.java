@@ -18,14 +18,20 @@ public class AppActionReceiver extends BroadcastReceiver
 
     private static final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
 
-    private final AppListManager appListManager;
+    private AppListManager appListManager;
 
-    private final FragmentHomeScreenBinding binding;
+    private  FragmentHomeScreenBinding binding;
 
     public AppActionReceiver(AppListManager appListManager, FragmentHomeScreenBinding binding)
     {
         this.appListManager = appListManager;
         this.binding = binding;
+    }
+
+    public void invalidate()
+    {
+        this.binding = null;
+        this.appListManager = null;
     }
 
 
