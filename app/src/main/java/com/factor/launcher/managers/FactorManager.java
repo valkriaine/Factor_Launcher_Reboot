@@ -1,6 +1,7 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetHostView;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -319,6 +320,11 @@ public class FactorManager
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
+    public void addWidget(AppWidgetHostView appWidgetHostView)
+    {
+
+    }
+
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
         @NonNull
@@ -616,6 +622,7 @@ public class FactorManager
                 }
                 else if (size == Factor.Size.medium)
                 {
+
                     ((FactorMediumBinding)binding).setFactor(factor);
                     ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
 
@@ -647,6 +654,7 @@ public class FactorManager
                 }
                 else if (size == Factor.Size.large)
                 {
+
                     ((FactorLargeBinding)binding).setFactor(factor);
                     ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
 

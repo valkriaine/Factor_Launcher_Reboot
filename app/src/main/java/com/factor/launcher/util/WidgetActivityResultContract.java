@@ -8,10 +8,13 @@ import androidx.annotation.Nullable;
 
 public class WidgetActivityResultContract extends ActivityResultContract<Intent, Intent>
 {
+    private int requestCode = -1;
+
     @NonNull
     @Override
     public Intent createIntent(@NonNull Context context, Intent input)
     {
+        requestCode = input.getIntExtra(Constants.WIDGET_KEY, -1);
         return input;
     }
 
@@ -20,7 +23,9 @@ public class WidgetActivityResultContract extends ActivityResultContract<Intent,
     {
         if (intent != null)
         {
-            return intent.putExtra(Constants.WIDGET_RESULT_KEY, resultCode);
+            intent.putExtra(Constants.WIDGET_RESULT_KEY, resultCode);
+            intent.putExtra(Constants.WIDGET_KEY, requestCode);
+            return intent;
         }
         else return new Intent();
     }

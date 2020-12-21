@@ -9,8 +9,8 @@
 
 
     <com.factor.launcher.ui.AnimatedConstraintLayout
-            android:layout_width="320dp"
-            android:layout_height="160dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
         <!--background-->
         <androidx.cardview.widget.CardView

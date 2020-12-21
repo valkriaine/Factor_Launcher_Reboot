@@ -243,6 +243,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .setMaxViewsInRow(2)
                 .setScrollingEnabled(true)
                 .build();
+
         binding.tilesList.setLayoutManager(chips);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         binding.tilesList.setItemViewCacheSize(20);

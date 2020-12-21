@@ -41,5 +41,7 @@ object Constants
 
     const val REQUEST_CREATE_WIDGET = 69
 
+    const val REQUEST_BIND_WIDGET = 68
+
     const val REQUEST_PICK_WIDGET = 67
 }

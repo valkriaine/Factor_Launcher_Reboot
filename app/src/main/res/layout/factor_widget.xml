@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="binding" type="com.factor.launcher.models.Factor"/>
+    </data>
+
+    <com.factor.launcher.ui.AnimatedConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <!--background-->
+        <androidx.cardview.widget.CardView
+                android:id="@+id/card"
+                android:translationZ="-20dp"
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:tag="background"
+                app:cardCornerRadius="5dp">
+            <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/trans"
+                    app:blurOverlayColor="#99FFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+
+        <!--base-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/base"
+                android:translationZ="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.factor.launcher.ui.AnimatedConstraintLayout>
+</layout>
