@@ -6,6 +6,10 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
+# Version v0.4.7
+
+Support Android 7.0
+
 # Version v0.4.6
 
 Removed widget fragment. In an upcoming version, widgets will be implemented on the home screen.
