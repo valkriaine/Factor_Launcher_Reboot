@@ -72,7 +72,7 @@ public class AppListManager
 
     private SharedPreferences.Editor editor;
 
-    private final FactorManager factorManager;
+    private FactorManager factorManager;
 
     public AppListAdapter adapter;
 
@@ -574,6 +574,13 @@ public class AppListManager
         this.displayHidden = displayHidden;
         this.adapter = new AppListAdapter();
         return adapter;
+    }
+
+    public void invalidate()
+    {
+        this.factorManager.invalidate();
+        this.adapter = null;
+        this.factorManager = null;
     }
 
     //retrieve list of app shortcuts

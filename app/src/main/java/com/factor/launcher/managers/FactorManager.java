@@ -52,7 +52,7 @@ public class FactorManager
 
     private final Activity activity;
 
-    private final ViewGroup background;
+    private ViewGroup background;
 
     private final LauncherApps launcherApps;
 
@@ -303,6 +303,12 @@ public class FactorManager
             adapter.notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
         }
     }
+
+    public void invalidate()
+    {
+        this.background = null;
+    }
+
 
     //find shortcuts related to a factor
     @RequiresApi(api = Build.VERSION_CODES.N_MR1)

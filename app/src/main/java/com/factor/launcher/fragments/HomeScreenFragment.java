@@ -141,6 +141,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             }
 
         }
+        appListManager.invalidate();
         binding = null;
         appListManager = null;
     }
