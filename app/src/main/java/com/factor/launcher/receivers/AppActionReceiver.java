@@ -31,7 +31,8 @@ public class AppActionReceiver extends BroadcastReceiver
     public void invalidate()
     {
         this.binding = null;
-        this.appListManager.invalidate();
+        if (this.appListManager != null)
+            this.appListManager.invalidate();
         this.appListManager = null;
     }
 

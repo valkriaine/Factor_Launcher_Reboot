@@ -502,7 +502,8 @@ public class AppListManager
 
     public void invalidate()
     {
-        this.factorManager.invalidate();
+        if (this.factorManager != null)
+            this.factorManager.invalidate();
         this.adapter = null;
         this.factorManager = null;
     }
