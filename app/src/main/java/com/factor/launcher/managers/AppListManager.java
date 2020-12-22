@@ -287,11 +287,11 @@ public class AppListManager
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-        for (ResolveInfo r : availableApps)
-        {
-            if (!r.activityInfo.packageName.equals(Constants.PACKAGE_NAME)
-                    && r.activityInfo.packageName.equals(a.getPackageName()))
+        for (ResolveInfo r : availableApps) {
+            if (!r.activityInfo.packageName.equals(PACKAGE_NAME)
+                    && r.activityInfo.packageName.equals(a.getPackageName())) {
                 return true;
+            }
         }
         return false;
     }
@@ -356,10 +356,10 @@ public class AppListManager
     //return true if app exists
     private boolean isAppDuplicate(UserApp app)
     {
-        for (UserApp userApp : userApps)
-        {
-            if (userApp.getPackageName().equals(app.getPackageName()))
+        for (UserApp userApp : userApps) {
+            if (userApp.getPackageName().equals(app.getPackageName())) {
                 return true;
+            }
         }
         return false;
     }
@@ -367,83 +367,10 @@ public class AppListManager
     //update app info in database
     public void updateApp(UserApp app)
     {
-        UserApp appToUpdate = findAppByPackage(app.getPackageName());
-
-        //app does not exist in the list
-        if (appToUpdate.getPackageName().isEmpty())
-            return;
-
-        //app is not customized (not renamed)
-        if (!appToUpdate.getLabelNew().equals(app.getLabelNew()) && !appToUpdate.isCustomized())
-            updateAppReorder(app);
-        else
-            updateAppNoReorder(app);
-    }
-
-    //called when receiving PACKAGE_ADDED broadcast with EXTRA_REPLACING set to true
-    private void updateAppNoReorder(UserApp app)
-    {
         UserApp appToUpdate;
         try {
-            if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
-            {
-                if (userApps.contains(app))
-                {
-                    int position = userApps.indexOf(app);
-                    appToUpdate = userApps.get(position);
-                    new Thread(() ->
-                    {
-                        try
-                        {
-                            ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
-                            userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
-                            userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
 
-                            //retrieve app shortcuts on api 25 and higher
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                userApps.get(position).setShortCuts(getShortcutsFromApp(app));
-
-                            appListDatabase.appListDao().updateAppInfo(appToUpdate);
-                            userApps.sort(first_letter);
-
-                            activity.runOnUiThread(() -> adapter.notifyItemChanged(position));
-                        }
-                        catch (PackageManager.NameNotFoundException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }).start();
-
-                    if (appToUpdate.isPinned())
-                    {
-                        factorManager.updateFactor(appToUpdate);
-                    }
-
-                }
-                else
-                {
-                    addApp(app);
-                }
-            }
-            else
-            {
-                if (userApps.contains(app))
-                {
-                    removeApp(app);
-                }
-            }
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            Log.d(TAG, e.getMessage());
-        }
-    }
-
-    //same as updateAppNoReorder, but reorder the app list since the label has changed
-    private void updateAppReorder(UserApp app)
-    {
-        UserApp appToUpdate;
-        try {
+            //only update the app if the package exists in system and is enabled
             if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
             {
                 if (userApps.contains(app))
@@ -467,60 +394,57 @@ public class AppListManager
                             int newPosition = userApps.indexOf(app);
                             activity.runOnUiThread(() ->
                             {
-                                adapter.notifyItemRemoved(position);
-                                adapter.notifyItemInserted(newPosition);
 
+                                if (position != newPosition) //the app's position is changed
+                                {
+                                    adapter.notifyItemRemoved(position);
+                                    adapter.notifyItemInserted(newPosition);
+                                }
+                                else
+                                    adapter.notifyItemChanged(newPosition); //the app's position is unchanged in the list
+
+                                //if updating app list after renaming an app, broadcast request to scroll to the app's new position
                                 if (isAfterRename)
+                                {
                                     renameBroadCast(newPosition);
-
-                                isAfterRename = false;
+                                    isAfterRename = false;
+                                }
                             });
                         }
-                        catch (PackageManager.NameNotFoundException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        catch (PackageManager.NameNotFoundException ignored) {}
                     }).start();
 
+                    //if app is pinned, update its tile
                     if (appToUpdate.isPinned())
-                    {
                         factorManager.updateFactor(appToUpdate);
-                    }
 
                 }
-                else
-                {
-                    addApp(app);
-                }
+                else addApp(app);
             }
             else
             {
+                //the package might exist, but it's disabled by the user
                 if (userApps.contains(app))
-                {
-                    removeApp(app);
-                }
+                    removeApp(app); //remove it from the app drawer if it's disabled
             }
         }
         catch (PackageManager.NameNotFoundException e)
         {
             Log.d(TAG, e.getMessage());
         }
+
     }
+
 
     //remove from home
     public void unPin(String packageName)
     {
-        UserApp appToUnPin = new UserApp();
-        for (UserApp app : userApps)
-        {
-            if (app.getPackageName().equals(packageName))
-            {
-                appToUnPin = app;
+        for (UserApp app : userApps) {
+            if (app.getPackageName().equals(packageName)) {
+                changePin(app);
                 break;
             }
         }
-        if (!appToUnPin.getPackageName().isEmpty())
-            changePin(appToUnPin);
     }
 
     //search bar filter app list
@@ -553,8 +477,8 @@ public class AppListManager
 
         app.setCustomized(true);
         app.setLabelNew(newLabel);
-        updateAppReorder(app);
         isAfterRename = true;
+        updateApp(app);
     }
 
     //reset app's name back to original label
@@ -564,8 +488,8 @@ public class AppListManager
 
         app.setCustomized(false);
         app.setLabelNew(app.getLabelOld());
-        updateAppReorder(app);
         isAfterRename = true;
+        updateApp(app);
     }
 
     //change display mode, return a new adapter
@@ -707,7 +631,7 @@ public class AppListManager
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+           //unable to load icon for the app
             new Thread(() -> appListDatabase.appListDao().delete(app)).start();
         }
     }

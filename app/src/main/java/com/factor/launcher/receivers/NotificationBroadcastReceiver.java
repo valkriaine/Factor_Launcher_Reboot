@@ -17,6 +17,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver
 
     public void invalidate()
     {
+        this.appListManager.invalidate();
         this.appListManager = null;
     }
 

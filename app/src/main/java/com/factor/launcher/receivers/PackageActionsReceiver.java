@@ -20,6 +20,7 @@ public class PackageActionsReceiver extends BroadcastReceiver
 
     public void invalidate()
     {
+        this.appListManager.invalidate();
         this.appListManager = null;
     }
 
