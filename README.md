@@ -6,6 +6,10 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
 
+# Version 0.4.71
+
+Fixed a memory leak when changing system wallpaper
+
 # Version v0.4.7
 
 Support Android 7.0
