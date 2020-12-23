@@ -1,33 +1,56 @@
 package com.factor.launcher.models
 
+import android.appwidget.AppWidgetHost
+import android.appwidget.AppWidgetHostView
+import android.appwidget.AppWidgetManager
+import android.content.Context
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.*
 
 @Entity
-class Factor
+class Factor (@PrimaryKey val packageName: String)
 {
-    @PrimaryKey
-    var packageName: String = ""
-
-    @ColumnInfo(name = "labelOld")
-    var labelOld: String = ""
+    @ColumnInfo(name = "order")
+    var order: Int = 0
 
     @ColumnInfo(name = "labelNew")
     var labelNew: String = ""
-
-    @ColumnInfo(name = "is_customized")
-    var isCustomized: Boolean = false
-
-    @ColumnInfo(name = "order")
-    var order: Int = 0
+        set(value)
+        {
+            userApp.labelNew = value
+            field = userApp.labelNew
+        }
 
     @ColumnInfo(name = "size")
     var size: Int = Size.small
 
+    @ColumnInfo(name = "is_widget")
+    var isWidget : Boolean = false
+
+    @ColumnInfo(name = "widget_id")
+    var widgetId : Int = -1
+
     @Ignore
     var userApp : UserApp = UserApp()
+    set(value)
+    {
+        field = value
+        labelNew = value.labelNew
+    }
+
+    @Ignore
+    var widgetHostView : AppWidgetHostView? = null
+
+
+    fun getWidgetHostView(appWidgetHost : AppWidgetHost, appWidgetManager : AppWidgetManager, context : Context) : AppWidgetHostView
+    {
+        if (widgetHostView != null) return widgetHostView as AppWidgetHostView
+
+        widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
+        return widgetHostView as AppWidgetHostView
+    }
 
     //get notification count
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
@@ -59,5 +82,6 @@ class Factor
         const val small : Int = 1
         const val medium : Int = 2
         const val large : Int = 3
+        const val widget : Int = 4
     }
 }

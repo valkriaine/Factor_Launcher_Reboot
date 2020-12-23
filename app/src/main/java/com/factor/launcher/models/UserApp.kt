@@ -32,6 +32,9 @@ class UserApp
     @ColumnInfo(name = "hidden")
     var isHidden: Boolean = false
 
+    @ColumnInfo(name = "color")
+    var color : String = ""
+
     @Ignore
     var isBeingEdited : Boolean = false
 
@@ -54,11 +57,7 @@ class UserApp
     //generate new factor
     fun toFactor(): Factor
     {
-        val factor = Factor()
-        factor.isCustomized = this.isCustomized
-        factor.packageName = this.packageName
-        factor.labelNew = this.labelNew
-        factor.labelOld = this.labelOld
+        val factor = Factor(this.packageName)
         factor.userApp = this
         return factor
     }

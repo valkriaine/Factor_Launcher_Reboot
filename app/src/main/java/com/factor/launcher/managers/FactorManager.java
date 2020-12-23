@@ -1,7 +1,10 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -19,12 +22,12 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
 import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
+import com.factor.launcher.databinding.FactorWidgetBinding;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.ui.AnimatedConstraintLayout;
@@ -58,8 +61,19 @@ public class FactorManager
 
     private final boolean isLiveWallpaper;
 
+    private final AppWidgetManager appWidgetManager;
+
+    private final AppWidgetHost appWidgetHost;
+
     //constructor
-    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery, Boolean isLiveWallpaper)
+    public FactorManager(Activity activity,
+                         ViewGroup background,
+                         PackageManager pm,
+                         LauncherApps launcherApps,
+                         LauncherApps.ShortcutQuery shortcutQuery,
+                         Boolean isLiveWallpaper,
+                         AppWidgetHost appWidgetHost,
+                         AppWidgetManager appWidgetManager)
     {
         this.activity = activity;
         this.background = background;
@@ -68,8 +82,11 @@ public class FactorManager
         this.launcherApps = launcherApps;
         this.isLiveWallpaper = isLiveWallpaper;
 
+        this.appWidgetHost = appWidgetHost;
+        this.appWidgetManager = appWidgetManager;
+
         adapter = new FactorsAdapter();
-        factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
+        factorsDatabase = FactorsDatabase.Companion.getInstance(activity);
         loadFactors();
     }
 
@@ -94,7 +111,8 @@ public class FactorManager
                 catch (Exception e)
                 {
                     Log.d("icon", "failed to load icon for " + f.getPackageName() + " " +  e.getMessage());
-                    factorsDatabase.factorsDao().delete(f);
+                    if (!f.isWidget())
+                        factorsDatabase.factorsDao().delete(f);
                 }
             }
             activity.runOnUiThread(adapter::notifyDataSetChanged);
@@ -130,6 +148,8 @@ public class FactorManager
         {
             int position = userFactors.indexOf(factor);
             userFactors.remove(factor);
+            if (factor.isWidget())
+                appWidgetHost.deleteAppWidgetId(factor.getWidgetId());
             factorsDatabase.factorsDao().delete(factor);
             updateOrders();
             activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
@@ -146,6 +166,7 @@ public class FactorManager
     }
 
     //resize a factor
+    //todo: handle widget resize
     private boolean resizeFactor(Factor factor, int size)
     {
         factor.setSize(size);
@@ -183,8 +204,6 @@ public class FactorManager
         for (Factor f : factorsToUpdate)
         {
             loadIcon(f);
-            f.setLabelOld(app.getLabelOld());
-            f.setLabelNew(app.getLabelNew());
             f.setUserApp(app);
             new Thread(()->
             {
@@ -244,8 +263,9 @@ public class FactorManager
             if (f.getPackageName().equals(packageName))
                 return f;
         }
-        return new Factor();
+        return new Factor("");
     }
+
 
     //retrieve the icon for a given factor
     private void loadIcon(Factor factor)
@@ -338,9 +358,21 @@ public class FactorManager
     }
 
     //add widget to tiles list
-    public void addWidget(AppWidgetHostView appWidgetHostView)
+    public void addWidget(int id)
     {
-
+        AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+        AppWidgetHostView hostView = appWidgetHost.createView(activity, id, appWidgetInfo);
+        Factor widgetFactor = new Factor(id + "_WIDGET");
+        widgetFactor.setWidget(true);
+        widgetFactor.setWidgetId(id);
+        widgetFactor.setWidgetHostView(hostView);
+        widgetFactor.setOrder(userFactors.indexOf(widgetFactor));
+        userFactors.add(widgetFactor);
+        new Thread(() ->
+        {
+            factorsDatabase.factorsDao().insert(widgetFactor);
+            activity.runOnUiThread(() -> adapter.notifyItemInserted(userFactors.size() - 1));
+        }).start();
     }
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
@@ -354,6 +386,9 @@ public class FactorManager
             //determine factor size
             switch (viewType)
             {
+                case Factor.Size.widget:
+                    id = R.layout.factor_widget;
+                    break;
                 case Factor.Size.small:
                     id = R.layout.factor_small;
                     break;
@@ -376,7 +411,7 @@ public class FactorManager
 
             switch (viewType)
             {
-                case Factor.Size.small:
+                case Factor.Size.small: case Factor.Size.widget:
                     layoutParams.width = (int) (scale/2 + 0.5f);
                     layoutParams.height = (int) (scale/2 + 0.5f);
                     break;
@@ -427,10 +462,12 @@ public class FactorManager
                     selectedFactor = ((FactorLargeBinding) binding).getFactor();
                 else if (binding instanceof FactorMediumBinding)
                     selectedFactor = ((FactorMediumBinding) binding).getFactor();
-                else {
-                    assert binding instanceof FactorSmallBinding;
+                else if (binding instanceof FactorSmallBinding)
                     selectedFactor = ((FactorSmallBinding) binding).getFactor();
-                }
+                else {
+                        assert binding != null;
+                        selectedFactor =((FactorWidgetBinding) binding).getFactor();
+                    }
 
                 if (!selectedFactor.getPackageName().isEmpty())
                 {
@@ -501,6 +538,12 @@ public class FactorManager
                     onBindViewHolder(holder, position);
                 else {
                     assert binding != null;
+                    if (userFactors.get(position).isWidget())
+                    {
+                        onBindViewHolder(holder, position);
+                        return;
+                    }
+
                     if (userFactors.get(position).getSize() == Factor.Size.small)
                     {
                         FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
@@ -563,7 +606,9 @@ public class FactorManager
         public int getItemViewType(int position)
         {
             Factor f = userFactors.get(position);
-            return f.getSize();
+            if (!f.isWidget())
+                return f.getSize();
+            else return Factor.Size.widget;
         }
 
         @Override
@@ -608,6 +653,16 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
+                if (factor.isWidget())
+                {
+                    ((FactorWidgetBinding)binding).setFactor(factor);
+                    try
+                    {
+                        ((FactorWidgetBinding)binding).base.addView(factor.getWidgetHostView(appWidgetHost, appWidgetManager, activity));
+                    }
+                    catch (IllegalStateException ignore){}
+                    return;
+                }
                 //determine layout based on size
                 size = factor.getSize();
 
@@ -753,8 +808,6 @@ public class FactorManager
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
-
-                //todo: customize activity transition animation
                 itemView.setOnClickListener(v -> {
                     Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
                     if (intent != null)
@@ -779,7 +832,7 @@ public class FactorManager
                     return ((FactorLargeBinding)binding).getFactor();
                 }
                 else
-                    return new Factor();
+                    return new Factor("");
             }
 
         }
