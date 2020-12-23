@@ -159,6 +159,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
         int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
         int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
 
 
 
@@ -168,9 +169,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+
+
         //initialize data manager
         //***************************************************************************************************************************************************
         appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+
 
 
         //register broadcast receivers
@@ -247,6 +251,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+
+
         //tile list
         //***************************************************************************************************************************************************
         ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())
@@ -258,10 +264,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .build();
 
         binding.tilesList.setLayoutManager(chips);
+        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         binding.tilesList.setItemViewCacheSize(20);
-        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
 
 
 

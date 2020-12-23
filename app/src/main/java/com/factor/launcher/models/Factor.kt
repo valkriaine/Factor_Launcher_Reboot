@@ -46,11 +46,22 @@ class Factor (@PrimaryKey val packageName: String)
 
     fun getWidgetHostView(appWidgetHost : AppWidgetHost, appWidgetManager : AppWidgetManager, context : Context) : AppWidgetHostView
     {
-        if (widgetHostView != null) return widgetHostView as AppWidgetHostView
+        if (this.widgetHostView != null) return this.widgetHostView as AppWidgetHostView
 
-        widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
+        this.widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
+        this.widgetHostView?.setOnLongClickListener { false }
+        this.widgetHostView?.isClickable = true
         return widgetHostView as AppWidgetHostView
     }
+
+    fun createWidgetHostView(appWidgetHost : AppWidgetHost, appWidgetManager : AppWidgetManager, context : Context)
+    {
+        this.widgetHostView = null
+        this.widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
+        this.widgetHostView?.setOnLongClickListener { false }
+        this.widgetHostView?.isClickable = true
+    }
+
 
     //get notification count
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()

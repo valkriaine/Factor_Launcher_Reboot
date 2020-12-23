@@ -34,10 +34,16 @@
                 android:theme="@style/AppTheme"
                 android:clearTaskOnLaunch="true"
                 android:enabled="true"
+                android:exported="true"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:stateNotNeeded="true"
                 android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
 
         <service

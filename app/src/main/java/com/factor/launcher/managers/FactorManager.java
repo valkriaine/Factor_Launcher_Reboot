@@ -2,9 +2,7 @@ package com.factor.launcher.managers;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -18,6 +16,7 @@ import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -131,9 +130,6 @@ public class FactorManager
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
-            Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
-            Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
-            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts().toString());
             factorsDatabase.factorsDao().insert(factor);
             addFactorBroadcast(userFactors.indexOf(factor));
             activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
@@ -170,7 +166,11 @@ public class FactorManager
     private boolean resizeFactor(Factor factor, int size)
     {
         factor.setSize(size);
-        return  updateFactor(factor);
+        if (factor.isWidget())
+        {
+            factor.createWidgetHostView(appWidgetHost, appWidgetManager, activity.getApplicationContext());
+        }
+        return updateFactor(factor);
     }
 
     //update factor info after editing
@@ -358,25 +358,26 @@ public class FactorManager
     }
 
     //add widget to tiles list
+    //todo: when adding a new widget, it is added to all existing widget tiles
     public void addWidget(int id)
     {
-        AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-        AppWidgetHostView hostView = appWidgetHost.createView(activity, id, appWidgetInfo);
         Factor widgetFactor = new Factor(id + "_WIDGET");
         widgetFactor.setWidget(true);
         widgetFactor.setWidgetId(id);
-        widgetFactor.setWidgetHostView(hostView);
-        widgetFactor.setOrder(userFactors.indexOf(widgetFactor));
         userFactors.add(widgetFactor);
+        widgetFactor.setOrder(userFactors.indexOf(widgetFactor));
         new Thread(() ->
         {
             factorsDatabase.factorsDao().insert(widgetFactor);
+            addFactorBroadcast(userFactors.indexOf(widgetFactor));
             activity.runOnUiThread(() -> adapter.notifyItemInserted(userFactors.size() - 1));
         }).start();
+        updateOrders();
     }
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
+        int scale = 0;
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -405,9 +406,7 @@ public class FactorManager
 
             //resize to fit screen
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            int scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
-
-
+            scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
 
             switch (viewType)
             {
@@ -475,7 +474,15 @@ public class FactorManager
                     inflater.inflate(R.menu.factor_item_menu, menu);
 
                     //remove from home
-                    menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(selectedFactor));
+                    menu.getItem(0).setOnMenuItemClickListener(item ->
+                    {
+                        if (selectedFactor.isWidget())
+                        {
+                            assert binding instanceof FactorWidgetBinding;
+                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
+                        }
+                        return removeFactorBroadcast(selectedFactor);
+                    });
 
                     //resize
                     SubMenu subMenu = menu.getItem(1).getSubMenu();
@@ -596,8 +603,9 @@ public class FactorManager
         @Override
         public void onItemMoved(int fromPosition, int toPosition)
         {
-            activity.closeContextMenu();
             Factor f = userFactors.remove(fromPosition);
+            if (!f.isWidget())
+                activity.closeContextMenu();
             userFactors.add(toPosition, f);
             notifyItemMoved(fromPosition, toPosition);
         }
@@ -656,9 +664,38 @@ public class FactorManager
                 if (factor.isWidget())
                 {
                     ((FactorWidgetBinding)binding).setFactor(factor);
+                    ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+
                     try
                     {
-                        ((FactorWidgetBinding)binding).base.addView(factor.getWidgetHostView(appWidgetHost, appWidgetManager, activity));
+                        if (factor.getSize() == Factor.Size.small)
+                        {
+                            layoutParams.width = (int) (scale/2 + 0.5f);
+                            layoutParams.height = (int) (scale/2 + 0.5f);
+                        }
+                        else if (factor.getSize() == Factor.Size.medium)
+                        {
+                            layoutParams.height = (int) (scale/2 + 0.5f);
+                            layoutParams.width =scale;
+                        }
+                        else if (factor.getSize() == Factor.Size.large)
+                        {
+                            layoutParams.width = scale;
+                            layoutParams.height = scale;
+                        }
+                            itemView.setLayoutParams(layoutParams);
+
+                        if (!isLiveWallpaper)
+                            ((FactorWidgetBinding) binding).trans
+                                    .setupWith(background)
+                                    .setBlurAlgorithm(new RenderScriptBlur(activity))
+                                    .setBlurRadius(18F)
+                                    .setBlurAutoUpdate(false)
+                                    .setHasFixedTransformationMatrix(false);
+
+                        ConstraintLayout.LayoutParams widgetLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
+                        ((FactorWidgetBinding)binding).base.setId(factor.getWidgetId());
+                        ((FactorWidgetBinding)binding).base.addView(factor.getWidgetHostView(appWidgetHost, appWidgetManager, activity.getApplicationContext()), widgetLayoutParams);
                     }
                     catch (IllegalStateException ignore){}
                     return;
