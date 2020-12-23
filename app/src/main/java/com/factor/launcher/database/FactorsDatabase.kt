@@ -26,6 +26,10 @@ abstract class FactorsDatabase : RoomDatabase()
             return instance as FactorsDatabase
         }
 
+        fun invalidate()
+        {
+            this.instance = null
+        }
     }
 }
 

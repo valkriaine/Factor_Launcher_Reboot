@@ -22,6 +22,12 @@ abstract class AppListDatabase : RoomDatabase()
             return instance as AppListDatabase
         }
 
+        fun invalidate()
+        {
+            this.instance = null
+        }
+
+
     }
 
 }

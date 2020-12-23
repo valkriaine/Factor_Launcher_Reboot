@@ -62,6 +62,11 @@ class Factor (@PrimaryKey val packageName: String)
         this.widgetHostView?.isClickable = true
     }
 
+    fun invalidate()
+    {
+        this.widgetHostView = null
+        this.isWidget = false
+    }
 
     //get notification count
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()

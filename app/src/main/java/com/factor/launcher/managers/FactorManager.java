@@ -138,6 +138,7 @@ public class FactorManager
     }
 
     //remove factor from home
+    //todo: (bug) when removing a widget, the tile is removed but the widget view is kept and moved to another widget tile
     public void removeFromHome(Factor factor)
     {
         new Thread(() ->
@@ -146,6 +147,7 @@ public class FactorManager
             userFactors.remove(factor);
             if (factor.isWidget())
                 appWidgetHost.deleteAppWidgetId(factor.getWidgetId());
+            factor.invalidate();
             factorsDatabase.factorsDao().delete(factor);
             updateOrders();
             activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
@@ -162,7 +164,6 @@ public class FactorManager
     }
 
     //resize a factor
-    //todo: handle widget resize
     private boolean resizeFactor(Factor factor, int size)
     {
         factor.setSize(size);
@@ -200,7 +201,6 @@ public class FactorManager
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
-        Log.d("updateFactor", "size: " + factorsToUpdate.size());
         for (Factor f : factorsToUpdate)
         {
             loadIcon(f);
@@ -476,19 +476,39 @@ public class FactorManager
                     //remove from home
                     menu.getItem(0).setOnMenuItemClickListener(item ->
                     {
-                        if (selectedFactor.isWidget())
-                        {
-                            assert binding instanceof FactorWidgetBinding;
-                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
-                        }
                         return removeFactorBroadcast(selectedFactor);
                     });
 
                     //resize
                     SubMenu subMenu = menu.getItem(1).getSubMenu();
-                    subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.small));
-                    subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.medium));
-                    subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.large));
+
+                    subMenu.getItem(0).setOnMenuItemClickListener(item ->
+                    {
+                        if (!selectedFactor.isWidget())
+                        {
+                            assert binding instanceof FactorWidgetBinding;
+                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
+                        }
+                        return resizeFactor(selectedFactor, Factor.Size.small);
+                    });
+                    subMenu.getItem(1).setOnMenuItemClickListener(item ->
+                    {
+                        if (!selectedFactor.isWidget())
+                        {
+                            assert binding instanceof FactorWidgetBinding;
+                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
+                        }
+                        return resizeFactor(selectedFactor, Factor.Size.medium);
+                    });
+                    subMenu.getItem(2).setOnMenuItemClickListener(item ->
+                    {
+                        if (!selectedFactor.isWidget())
+                        {
+                            assert binding instanceof FactorWidgetBinding;
+                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
+                        }
+                        return resizeFactor(selectedFactor, Factor.Size.large);
+                    });
 
                     //info
                     menu.getItem(2).setOnMenuItemClickListener(item ->
