@@ -1,72 +1,33 @@
 package com.factor.launcher.models
 
-import android.appwidget.AppWidgetHost
-import android.appwidget.AppWidgetHostView
-import android.appwidget.AppWidgetManager
-import android.content.Context
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.*
 
 @Entity
-class Factor (@PrimaryKey val packageName: String)
+class Factor
 {
-    @ColumnInfo(name = "order")
-    var order: Int = 0
+    @PrimaryKey
+    var packageName: String = ""
+
+    @ColumnInfo(name = "labelOld")
+    var labelOld: String = ""
 
     @ColumnInfo(name = "labelNew")
     var labelNew: String = ""
-        set(value)
-        {
-            userApp.labelNew = value
-            field = userApp.labelNew
-        }
+
+    @ColumnInfo(name = "is_customized")
+    var isCustomized: Boolean = false
+
+    @ColumnInfo(name = "order")
+    var order: Int = 0
 
     @ColumnInfo(name = "size")
     var size: Int = Size.small
 
-    @ColumnInfo(name = "is_widget")
-    var isWidget : Boolean = false
-
-    @ColumnInfo(name = "widget_id")
-    var widgetId : Int = -1
-
     @Ignore
     var userApp : UserApp = UserApp()
-    set(value)
-    {
-        field = value
-        labelNew = value.labelNew
-    }
-
-    @Ignore
-    var widgetHostView : AppWidgetHostView? = null
-
-
-    fun getWidgetHostView(appWidgetHost : AppWidgetHost, appWidgetManager : AppWidgetManager, context : Context) : AppWidgetHostView
-    {
-        if (this.widgetHostView != null) return this.widgetHostView as AppWidgetHostView
-
-        this.widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
-        this.widgetHostView?.setOnLongClickListener { false }
-        this.widgetHostView?.isClickable = true
-        return widgetHostView as AppWidgetHostView
-    }
-
-    fun createWidgetHostView(appWidgetHost : AppWidgetHost, appWidgetManager : AppWidgetManager, context : Context)
-    {
-        this.widgetHostView = null
-        this.widgetHostView = appWidgetHost.createView(context, widgetId, appWidgetManager.getAppWidgetInfo(widgetId))
-        this.widgetHostView?.setOnLongClickListener { false }
-        this.widgetHostView?.isClickable = true
-    }
-
-    fun invalidate()
-    {
-        this.widgetHostView = null
-        this.isWidget = false
-    }
 
     //get notification count
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
@@ -98,6 +59,5 @@ class Factor (@PrimaryKey val packageName: String)
         const val small : Int = 1
         const val medium : Int = 2
         const val large : Int = 3
-        const val widget : Int = 4
     }
 }

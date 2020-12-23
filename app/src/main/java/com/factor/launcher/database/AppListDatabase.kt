@@ -1,35 +1,12 @@
 package com.factor.launcher.database
 
-import android.content.Context
 import androidx.room.*
 import com.factor.launcher.models.UserApp
 
-@Database(entities = [UserApp::class], version = 2, exportSchema = false)
+@Database(entities = [UserApp::class], version = 1)
 abstract class AppListDatabase : RoomDatabase()
 {
     abstract fun appListDao(): AppListDao
-
-    companion object
-    {
-        private var instance : AppListDatabase? = null
-
-        fun getInstance(context : Context) : AppListDatabase
-        {
-            if (instance == null)
-                instance = Room.databaseBuilder(context, AppListDatabase::class.java, "app_drawer_list.db")
-                        .addMigrations().fallbackToDestructiveMigration().build()
-
-            return instance as AppListDatabase
-        }
-
-        fun invalidate()
-        {
-            this.instance = null
-        }
-
-
-    }
-
 }
 
 @Dao

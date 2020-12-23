@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="factor" type="com.factor.launcher.models.Factor"/>
+        <variable name="binding" type="com.factor.launcher.models.Factor"/>
     </data>
 
     <com.factor.launcher.ui.AnimatedConstraintLayout
@@ -29,13 +29,10 @@
         <!--base-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/base"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="@android:color/transparent"
                 android:translationZ="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="20dp" >
+                android:padding="10dp">
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
@@ -17,7 +18,6 @@ import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -26,6 +26,7 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
@@ -88,8 +89,8 @@ public class AppListManager
     {
         this.activity = fragment.requireActivity();
 
-        this.appWidgetManager = AppWidgetManager.getInstance(activity.getApplicationContext());
-        this.appWidgetHost = new AppWidgetHost(activity.getApplicationContext(), WIDGET_HOST_ID);
+        this.appWidgetManager = AppWidgetManager.getInstance(activity);
+        this.appWidgetHost = new AppWidgetHost(activity, WIDGET_HOST_ID);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
@@ -98,9 +99,9 @@ public class AppListManager
         this.packageManager = activity.getPackageManager();
         this.launcherApps = (LauncherApps) activity.getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter();
-        this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper, appWidgetHost, appWidgetManager);
+        this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
-        this.appListDatabase = AppListDatabase.Companion.getInstance(activity.getApplicationContext());
+        this.appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
 
         this.factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
 
@@ -108,8 +109,6 @@ public class AppListManager
 
         widgetActivityResultContract = new WidgetActivityResultContract();
         widgetResultLauncher = fragment.registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
-
-        this.appWidgetHost.startListening();
     }
 
     //compare app label (new)
@@ -501,14 +500,10 @@ public class AppListManager
         return adapter;
     }
 
-    //invalidate resources on destroy
     public void invalidate()
     {
-        if (this.appWidgetHost != null)
-            this.appWidgetHost.stopListening();
         if (this.factorManager != null)
             this.factorManager.invalidate();
-
         this.adapter = null;
         this.factorManager = null;
     }
@@ -541,7 +536,6 @@ public class AppListManager
             launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
-    //send a broadcast after renaming an app
     private void renameBroadCast(int position)
     {
         Intent intent = new Intent();
@@ -600,12 +594,11 @@ public class AppListManager
     public UserApp getUserApp(int position)
     {
         UserApp appToFind = userApps.get(position);
-        ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
         int newPosition = 0;
         queryApps.clear();
         if (!displayHidden)
         {
-            for (UserApp app : copyApps)
+            for (UserApp app : userApps)
             {
                 if (!app.isHidden())
                     queryApps.add(app);
@@ -615,7 +608,7 @@ public class AppListManager
         }
         else
         {
-            for (UserApp app : copyApps)
+            for (UserApp app : userApps)
             {
                 if (app.isHidden())
                     queryApps.add(app);
@@ -652,30 +645,27 @@ public class AppListManager
         Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
         pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
-        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity.getApplicationContext(), pickIntent));
+        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity, pickIntent));
     }
 
 
     //receive activity result from widget intent
     private void handleWidgetResult(Intent intent)
     {
-        if (intent.getIntExtra(WIDGET_RESULT_KEY, -1) == Activity.RESULT_OK)
+        if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_OK)
         {
-            if (intent.getIntExtra(WIDGET_KEY, -1) == REQUEST_PICK_WIDGET)
+            Log.d("widget", "result: ok");
+            if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_PICK_WIDGET)
                 conFigureWidget(intent);
-            else if (intent.getIntExtra(WIDGET_KEY, -1) == REQUEST_CREATE_WIDGET)
+            else if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_CREATE_WIDGET)
                 createWidget(intent);
         }
         else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
         {
-            Log.d("result_widget", "not okay");
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
             if (appWidgetId != -1) appWidgetHost.deleteAppWidgetId(appWidgetId);
         }
-
-        Log.d("result_widget","request code: " + intent.getIntExtra(WIDGET_KEY, -1));
     }
-
 
     //request to configure app widget
     private void conFigureWidget(Intent data)
@@ -683,52 +673,46 @@ public class AppListManager
         Bundle extras = data.getExtras();
         int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
         AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
-
+        //requestBindWidget(appWidgetId, appWidgetInfo);
         if (appWidgetInfo.configure != null)
         {
-            Log.d("result_widget", "configure");
+            Log.d("widget", "configure");
             Intent createIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
             createIntent.setComponent(appWidgetInfo.configure);
             createIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
-            requestBindWidget(appWidgetId, appWidgetInfo);
-            try
-            {
-                widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity.getApplicationContext(), createIntent));
-            }
-            catch (SecurityException exception)
-            {
-                Toast.makeText(activity.getApplicationContext(), "Failed to configure widget. Error message: " + exception.getMessage(), Toast.LENGTH_LONG).show();
-            }
-
+            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity, createIntent));
         }
-        else createWidget(data);
+        else {
+            createWidget(data);
+        }
     }
 
     //create appWidgetView
     private void createWidget(Intent data)
     {
-        Log.d("result_widget", "create");
+        Log.d("widget", "create");
         Bundle extras = data.getExtras();
         int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-        factorManager.addWidget(appWidgetId);
+        AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
+        requestBindWidget(appWidgetId, appWidgetInfo);
+        AppWidgetHostView hostView = appWidgetHost.createView(activity, appWidgetId, appWidgetInfo);
+        hostView.setAppWidget(appWidgetId, appWidgetInfo);
+        factorManager.addWidget(hostView);
     }
 
-    //request permission to bind widget
-    //todo: handle result
+
+    //todo: doesn't work
     public void requestBindWidget(int appWidgetId, AppWidgetProviderInfo info)
     {
-        if (!appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, info.provider) || !appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, info.configure))
-        {
-            Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, info.configure);
-            intent.putExtra(WIDGET_KEY, REQUEST_BIND_WIDGET);
-            Log.d("result_widget", "request");
-            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity.getApplicationContext(), intent));
-        }
+        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
+        // This is the options bundle discussed above
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, info.configure);
+        activity.startActivityForResult(intent, REQUEST_BIND_WIDGET);
     }
+
 
 
 

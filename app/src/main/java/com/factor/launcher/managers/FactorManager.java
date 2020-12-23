@@ -1,8 +1,7 @@
 package com.factor.launcher.managers;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetHostView;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -16,17 +15,16 @@ import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
 import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
-import com.factor.launcher.databinding.FactorWidgetBinding;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.ui.AnimatedConstraintLayout;
@@ -60,19 +58,8 @@ public class FactorManager
 
     private final boolean isLiveWallpaper;
 
-    private final AppWidgetManager appWidgetManager;
-
-    private final AppWidgetHost appWidgetHost;
-
     //constructor
-    public FactorManager(Activity activity,
-                         ViewGroup background,
-                         PackageManager pm,
-                         LauncherApps launcherApps,
-                         LauncherApps.ShortcutQuery shortcutQuery,
-                         Boolean isLiveWallpaper,
-                         AppWidgetHost appWidgetHost,
-                         AppWidgetManager appWidgetManager)
+    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery, Boolean isLiveWallpaper)
     {
         this.activity = activity;
         this.background = background;
@@ -81,11 +68,8 @@ public class FactorManager
         this.launcherApps = launcherApps;
         this.isLiveWallpaper = isLiveWallpaper;
 
-        this.appWidgetHost = appWidgetHost;
-        this.appWidgetManager = appWidgetManager;
-
         adapter = new FactorsAdapter();
-        factorsDatabase = FactorsDatabase.Companion.getInstance(activity);
+        factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
         loadFactors();
     }
 
@@ -110,8 +94,7 @@ public class FactorManager
                 catch (Exception e)
                 {
                     Log.d("icon", "failed to load icon for " + f.getPackageName() + " " +  e.getMessage());
-                    if (!f.isWidget())
-                        factorsDatabase.factorsDao().delete(f);
+                    factorsDatabase.factorsDao().delete(f);
                 }
             }
             activity.runOnUiThread(adapter::notifyDataSetChanged);
@@ -130,6 +113,9 @@ public class FactorManager
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
+            Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
+            Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
+            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts().toString());
             factorsDatabase.factorsDao().insert(factor);
             addFactorBroadcast(userFactors.indexOf(factor));
             activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
@@ -138,16 +124,12 @@ public class FactorManager
     }
 
     //remove factor from home
-    //todo: (bug) when removing a widget, the tile is removed but the widget view is kept and moved to another widget tile
     public void removeFromHome(Factor factor)
     {
         new Thread(() ->
         {
             int position = userFactors.indexOf(factor);
             userFactors.remove(factor);
-            if (factor.isWidget())
-                appWidgetHost.deleteAppWidgetId(factor.getWidgetId());
-            factor.invalidate();
             factorsDatabase.factorsDao().delete(factor);
             updateOrders();
             activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
@@ -167,11 +149,7 @@ public class FactorManager
     private boolean resizeFactor(Factor factor, int size)
     {
         factor.setSize(size);
-        if (factor.isWidget())
-        {
-            factor.createWidgetHostView(appWidgetHost, appWidgetManager, activity.getApplicationContext());
-        }
-        return updateFactor(factor);
+        return  updateFactor(factor);
     }
 
     //update factor info after editing
@@ -201,9 +179,12 @@ public class FactorManager
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
+        Log.d("updateFactor", "size: " + factorsToUpdate.size());
         for (Factor f : factorsToUpdate)
         {
             loadIcon(f);
+            f.setLabelOld(app.getLabelOld());
+            f.setLabelNew(app.getLabelNew());
             f.setUserApp(app);
             new Thread(()->
             {
@@ -263,9 +244,8 @@ public class FactorManager
             if (f.getPackageName().equals(packageName))
                 return f;
         }
-        return new Factor("");
+        return new Factor();
     }
-
 
     //retrieve the icon for a given factor
     private void loadIcon(Factor factor)
@@ -358,26 +338,13 @@ public class FactorManager
     }
 
     //add widget to tiles list
-    //todo: when adding a new widget, it is added to all existing widget tiles
-    public void addWidget(int id)
+    public void addWidget(AppWidgetHostView appWidgetHostView)
     {
-        Factor widgetFactor = new Factor(id + "_WIDGET");
-        widgetFactor.setWidget(true);
-        widgetFactor.setWidgetId(id);
-        userFactors.add(widgetFactor);
-        widgetFactor.setOrder(userFactors.indexOf(widgetFactor));
-        new Thread(() ->
-        {
-            factorsDatabase.factorsDao().insert(widgetFactor);
-            addFactorBroadcast(userFactors.indexOf(widgetFactor));
-            activity.runOnUiThread(() -> adapter.notifyItemInserted(userFactors.size() - 1));
-        }).start();
-        updateOrders();
+
     }
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
-        int scale = 0;
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -387,9 +354,6 @@ public class FactorManager
             //determine factor size
             switch (viewType)
             {
-                case Factor.Size.widget:
-                    id = R.layout.factor_widget;
-                    break;
                 case Factor.Size.small:
                     id = R.layout.factor_small;
                     break;
@@ -406,11 +370,13 @@ public class FactorManager
 
             //resize to fit screen
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
+            int scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
+
+
 
             switch (viewType)
             {
-                case Factor.Size.small: case Factor.Size.widget:
+                case Factor.Size.small:
                     layoutParams.width = (int) (scale/2 + 0.5f);
                     layoutParams.height = (int) (scale/2 + 0.5f);
                     break;
@@ -461,12 +427,10 @@ public class FactorManager
                     selectedFactor = ((FactorLargeBinding) binding).getFactor();
                 else if (binding instanceof FactorMediumBinding)
                     selectedFactor = ((FactorMediumBinding) binding).getFactor();
-                else if (binding instanceof FactorSmallBinding)
-                    selectedFactor = ((FactorSmallBinding) binding).getFactor();
                 else {
-                        assert binding != null;
-                        selectedFactor =((FactorWidgetBinding) binding).getFactor();
-                    }
+                    assert binding instanceof FactorSmallBinding;
+                    selectedFactor = ((FactorSmallBinding) binding).getFactor();
+                }
 
                 if (!selectedFactor.getPackageName().isEmpty())
                 {
@@ -474,41 +438,13 @@ public class FactorManager
                     inflater.inflate(R.menu.factor_item_menu, menu);
 
                     //remove from home
-                    menu.getItem(0).setOnMenuItemClickListener(item ->
-                    {
-                        return removeFactorBroadcast(selectedFactor);
-                    });
+                    menu.getItem(0).setOnMenuItemClickListener(item -> removeFactorBroadcast(selectedFactor));
 
                     //resize
                     SubMenu subMenu = menu.getItem(1).getSubMenu();
-
-                    subMenu.getItem(0).setOnMenuItemClickListener(item ->
-                    {
-                        if (!selectedFactor.isWidget())
-                        {
-                            assert binding instanceof FactorWidgetBinding;
-                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
-                        }
-                        return resizeFactor(selectedFactor, Factor.Size.small);
-                    });
-                    subMenu.getItem(1).setOnMenuItemClickListener(item ->
-                    {
-                        if (!selectedFactor.isWidget())
-                        {
-                            assert binding instanceof FactorWidgetBinding;
-                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
-                        }
-                        return resizeFactor(selectedFactor, Factor.Size.medium);
-                    });
-                    subMenu.getItem(2).setOnMenuItemClickListener(item ->
-                    {
-                        if (!selectedFactor.isWidget())
-                        {
-                            assert binding instanceof FactorWidgetBinding;
-                            ((FactorWidgetBinding) binding).base.removeView(selectedFactor.getWidgetHostView());
-                        }
-                        return resizeFactor(selectedFactor, Factor.Size.large);
-                    });
+                    subMenu.getItem(0).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.small));
+                    subMenu.getItem(1).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.medium));
+                    subMenu.getItem(2).setOnMenuItemClickListener(item -> resizeFactor(selectedFactor, Factor.Size.large));
 
                     //info
                     menu.getItem(2).setOnMenuItemClickListener(item ->
@@ -565,12 +501,6 @@ public class FactorManager
                     onBindViewHolder(holder, position);
                 else {
                     assert binding != null;
-                    if (userFactors.get(position).isWidget())
-                    {
-                        onBindViewHolder(holder, position);
-                        return;
-                    }
-
                     if (userFactors.get(position).getSize() == Factor.Size.small)
                     {
                         FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
@@ -623,9 +553,8 @@ public class FactorManager
         @Override
         public void onItemMoved(int fromPosition, int toPosition)
         {
+            activity.closeContextMenu();
             Factor f = userFactors.remove(fromPosition);
-            if (!f.isWidget())
-                activity.closeContextMenu();
             userFactors.add(toPosition, f);
             notifyItemMoved(fromPosition, toPosition);
         }
@@ -634,9 +563,7 @@ public class FactorManager
         public int getItemViewType(int position)
         {
             Factor f = userFactors.get(position);
-            if (!f.isWidget())
-                return f.getSize();
-            else return Factor.Size.widget;
+            return f.getSize();
         }
 
         @Override
@@ -681,45 +608,6 @@ public class FactorManager
 
             public void bindFactor(Factor factor)
             {
-                if (factor.isWidget())
-                {
-                    ((FactorWidgetBinding)binding).setFactor(factor);
-                    ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-
-                    try
-                    {
-                        if (factor.getSize() == Factor.Size.small)
-                        {
-                            layoutParams.width = (int) (scale/2 + 0.5f);
-                            layoutParams.height = (int) (scale/2 + 0.5f);
-                        }
-                        else if (factor.getSize() == Factor.Size.medium)
-                        {
-                            layoutParams.height = (int) (scale/2 + 0.5f);
-                            layoutParams.width =scale;
-                        }
-                        else if (factor.getSize() == Factor.Size.large)
-                        {
-                            layoutParams.width = scale;
-                            layoutParams.height = scale;
-                        }
-                            itemView.setLayoutParams(layoutParams);
-
-                        if (!isLiveWallpaper)
-                            ((FactorWidgetBinding) binding).trans
-                                    .setupWith(background)
-                                    .setBlurAlgorithm(new RenderScriptBlur(activity))
-                                    .setBlurRadius(18F)
-                                    .setBlurAutoUpdate(false)
-                                    .setHasFixedTransformationMatrix(false);
-
-                        ConstraintLayout.LayoutParams widgetLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
-                        ((FactorWidgetBinding)binding).base.setId(factor.getWidgetId());
-                        ((FactorWidgetBinding)binding).base.addView(factor.getWidgetHostView(appWidgetHost, appWidgetManager, activity.getApplicationContext()), widgetLayoutParams);
-                    }
-                    catch (IllegalStateException ignore){}
-                    return;
-                }
                 //determine layout based on size
                 size = factor.getSize();
 
@@ -865,6 +753,8 @@ public class FactorManager
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
+
+                //todo: customize activity transition animation
                 itemView.setOnClickListener(v -> {
                     Intent intent = packageManager.getLaunchIntentForPackage(factor.getPackageName());
                     if (intent != null)
@@ -889,7 +779,7 @@ public class FactorManager
                     return ((FactorLargeBinding)binding).getFactor();
                 }
                 else
-                    return new Factor("");
+                    return new Factor();
             }
 
         }

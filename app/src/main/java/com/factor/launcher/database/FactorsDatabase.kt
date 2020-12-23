@@ -1,36 +1,13 @@
 package com.factor.launcher.database
 
-import android.content.Context
 import androidx.room.*
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.factor.launcher.models.Factor
 
 
-@Database(entities = [Factor::class], version = 4, exportSchema = false)
+@Database(entities = [Factor::class], version = 1)
 abstract class FactorsDatabase : RoomDatabase()
 {
     abstract fun factorsDao(): FactorsDao
-
-
-    companion object
-    {
-        private var instance : FactorsDatabase? = null
-
-        fun getInstance(context : Context) : FactorsDatabase
-        {
-            if (instance == null)
-                instance = Room.databaseBuilder(context, FactorsDatabase::class.java, "factor_list.db")
-                        .fallbackToDestructiveMigration().build()
-
-            return instance as FactorsDatabase
-        }
-
-        fun invalidate()
-        {
-            this.instance = null
-        }
-    }
 }
 
 @Dao
