@@ -594,11 +594,12 @@ public class AppListManager
     public UserApp getUserApp(int position)
     {
         UserApp appToFind = userApps.get(position);
+        ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
         int newPosition = 0;
         queryApps.clear();
         if (!displayHidden)
         {
-            for (UserApp app : userApps)
+            for (UserApp app : copyApps)
             {
                 if (!app.isHidden())
                     queryApps.add(app);
@@ -608,7 +609,7 @@ public class AppListManager
         }
         else
         {
-            for (UserApp app : userApps)
+            for (UserApp app : copyApps)
             {
                 if (app.isHidden())
                     queryApps.add(app);
