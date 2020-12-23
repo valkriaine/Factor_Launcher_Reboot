@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
@@ -666,10 +665,6 @@ public class AppListManager
                 conFigureWidget(intent);
             else if (intent.getIntExtra(WIDGET_KEY, -1) == REQUEST_CREATE_WIDGET)
                 createWidget(intent);
-            else if (intent.getIntExtra(WIDGET_KEY, -1) == REQUEST_BIND_WIDGET)
-            {
-
-            }
         }
         else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
         {
