@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
+import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
