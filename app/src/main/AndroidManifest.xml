@@ -21,8 +21,9 @@
 
         <activity
                 android:name=".activities.SettingsActivity"
-                android:theme="@style/WelcomeTheme">
+                android:theme="@style/SettingsTheme">
         </activity>
+
         <activity
                 android:name=".activities.WelcomeActivity"
                 android:screenOrientation="portrait"
@@ -35,6 +36,7 @@
                 <category android:name="android.intent.category.HOME"/>
             </intent-filter>
         </activity>
+
         <activity
                 android:name=".activities.HomeActivity"
                 android:clearTaskOnLaunch="true"
