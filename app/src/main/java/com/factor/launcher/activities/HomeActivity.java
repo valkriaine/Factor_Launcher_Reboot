@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity
             getSupportFragmentManager()
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.home_fragment_container, HomeScreenFragment.class, null)
+                    .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
                     .addToBackStack(null)
                     .commit();
 

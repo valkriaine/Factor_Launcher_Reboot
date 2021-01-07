@@ -11,13 +11,12 @@ import com.factor.launcher.util.Constants;
 
 import java.util.Objects;
 
+import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_HOME_KEY;
+import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_KEY;
+
 //handle tile pinning/unpinning, app editing, and home button press
 public class AppActionReceiver extends BroadcastReceiver
 {
-    private static final String SYSTEM_DIALOG_REASON_KEY = "reason";
-
-    private static final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
-
     private AppListManager appListManager;
 
     private  FragmentHomeScreenBinding binding;
@@ -66,12 +65,13 @@ public class AppActionReceiver extends BroadcastReceiver
             //the home button has been pressed
             case Intent.ACTION_CLOSE_SYSTEM_DIALOGS:
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-                if (reason != null) {
+                if (reason != null)
+                {
                     if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY) && ((HomeActivity)appListManager.getActivity()).isVisible())
                     {
                         // home button short press
                         binding.homePager.setCurrentItem(0, true);
-                        Objects.requireNonNull(binding.appsList.getLayoutManager()).scrollToPosition(0);
+                        binding.appsList.scrollToPosition(0);
                         Objects.requireNonNull(binding.tilesList.getLayoutManager())
                                 .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
                     }

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
+import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
 import com.factor.launcher.models.UserApp;
@@ -91,10 +92,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             if (appListManager.isDisplayingHidden())
             {
                 binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
-                return true;
             }
-            binding.appsList.scrollToPosition(0);
-            binding.homePager.setCurrentItem(0, true);
+            else
+            {
+                if (!binding.appsList.canScrollVertically(-1))
+                    binding.homePager.setCurrentItem(0, true);
+                else
+                    Objects.requireNonNull(binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
+            }
             return true;
         }
         else if (binding.homePager.getCurrentItem() == 0)
@@ -322,7 +327,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             //launch settings
             options.setOnMenuItemClickListener(item ->
             {
-                //todo: launch settings fragment
+                Intent intent = new Intent(requireContext(), SettingsActivity.class);
+                startActivity(intent);
                 return true;
             });
             popup.show();

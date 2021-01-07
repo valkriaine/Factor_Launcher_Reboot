@@ -2,12 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".activities.HomeActivity">
-    <data>
-        <variable
-                name="app_home_binding"
-                type="com.factor.launcher.activities.HomeActivity" />
-    </data>
 
+    <data>
+        <variable name="app_home_binding" type="com.factor.launcher.activities.HomeActivity" />
+    </data>
 
     <androidx.fragment.app.FragmentContainerView
             android:id="@+id/home_fragment_container"

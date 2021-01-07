@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
@@ -10,7 +10,7 @@
         <!--show system wallpaper and hide navigation bar-->
         <item name="android:windowShowWallpaper">true</item>
         <item name="android:fitsSystemWindows">false</item>
-        <item name="android:navigationBarDividerColor">@android:color/transparent</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
