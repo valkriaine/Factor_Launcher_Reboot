@@ -834,23 +834,19 @@ public class AppListManager
         @Override
         public void onBindViewHolder(@NonNull AppListViewHolder holder, int position, @NonNull List<Object> payloads)
         {
-            if (!payloads.isEmpty())
+            if (!payloads.isEmpty() && (payloads.get(0) instanceof Payload))
             {
-                Log.d("payload", "received");
-                AppListItemBinding binding = (AppListItemBinding)holder.binding;
-
-                if (!(payloads.get(0) instanceof Payload))
-                    onBindViewHolder(holder, position);
-                else {
+                ViewDataBinding binding = holder.binding;
+                UserApp appToChange = userApps.get(position);
+                if (binding instanceof AppListItemBinding)
+                {
                     //after receiving notification, change the notification counter
-                    assert binding != null;
-                    UserApp appToChange = binding.getUserApp();
                     if (appToChange.getCurrentNotifications().size() < 1 || appToChange.isBeingEdited())
-                        binding.notificationCount.setVisibility(View.GONE);
+                        ((AppListItemBinding) binding).notificationCount.setVisibility(View.GONE);
                     else if (appToChange.getCurrentNotifications().size() > 0 || !appToChange.isBeingEdited())
                     {
-                        binding.notificationCount.setVisibility(View.VISIBLE);
-                        binding.notificationCount.setText(appToChange.retrieveNotificationCount());
+                        ((AppListItemBinding) binding).notificationCount.setVisibility(View.VISIBLE);
+                        ((AppListItemBinding) binding).notificationCount.setText(appToChange.retrieveNotificationCount());
                     }
                 }
             }

@@ -71,6 +71,10 @@ public class AppActionReceiver extends BroadcastReceiver
                     {
                         // home button short press
                         binding.homePager.setCurrentItem(0, true);
+
+                        if (appListManager.isDisplayingHidden())
+                            binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
+
                         binding.appsList.scrollToPosition(0);
                         Objects.requireNonNull(binding.tilesList.getLayoutManager())
                                 .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);

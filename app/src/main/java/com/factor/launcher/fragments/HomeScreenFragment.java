@@ -90,9 +90,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (binding.homePager.getCurrentItem() == 1)
         {
             if (appListManager.isDisplayingHidden())
-            {
                 binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
-            }
             else
             {
                 if (!binding.appsList.canScrollVertically(-1))
