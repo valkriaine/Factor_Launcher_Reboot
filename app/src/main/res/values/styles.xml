@@ -26,7 +26,6 @@
 
 
     <style name="SettingsTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowActivityTransitions">true</item>
     </style>
 </resources>

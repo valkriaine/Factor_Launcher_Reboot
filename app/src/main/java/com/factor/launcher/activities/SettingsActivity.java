@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.factor.launcher.R;
 import com.factor.launcher.fragments.SettingsFragment;
+
 import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_HOME_KEY;
 import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_KEY;
 
@@ -25,6 +26,7 @@ public class SettingsActivity extends AppCompatActivity
 
         receiver = new HomeButtonPressReceiver(this);
 
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings_fragment_container, new SettingsFragment())
@@ -39,8 +41,7 @@ public class SettingsActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        if (receiver != null)
-            unregisterReceiver(receiver);
+        if (receiver != null) unregisterReceiver(receiver);
     }
 
 
@@ -58,8 +59,7 @@ public class SettingsActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent)
         {
             String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-            if (reason != null && reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY))
-                activity.onBackPressed();
+            if (reason != null && reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) activity.onBackPressed();
         }
     }
 }

@@ -632,7 +632,7 @@ public class FactorManager
                         ((FactorSmallBinding) binding).trans
                             .setupWith(background)
                             .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(18F)
+                            .setBlurRadius(10F)
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
@@ -664,7 +664,7 @@ public class FactorManager
                         ((FactorMediumBinding) binding).trans
                             .setupWith(background)
                             .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(18F)
+                            .setBlurRadius(10F)
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
@@ -747,7 +747,7 @@ public class FactorManager
                         ((FactorLargeBinding)binding).trans
                             .setupWith(background)
                             .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(18F)
+                            .setBlurRadius(10F)
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }

@@ -91,9 +91,6 @@ dependencies {
     //app list fast scroller
     implementation 'com.reddit:indicator-fast-scroll:1.3.0'
 
-    //sqlite browser debug
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
-
     //memory leak detection
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 }
