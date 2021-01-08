@@ -4,8 +4,7 @@ This is a reboot of https://github.com/Valkriaine/Factor_Launcher
 
 All commits will be pushed to this repository instead. The last repo is obsolete
 
-A short video demo: https://www.youtube.com/watch?v=Q2-BkeirE5s
-
+A short video demo: https://www.youtube.com/watch?v=qMug_RbzzCg
 # Version 0.4.71
 
 Fixed a memory leak when changing system wallpaper
