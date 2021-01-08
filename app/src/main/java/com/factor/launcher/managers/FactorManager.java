@@ -501,10 +501,10 @@ public class FactorManager
                     onBindViewHolder(holder, position);
                 else {
                     assert binding != null;
+                    Factor factorToChange = userFactors.get(position);
                     if (userFactors.get(position).getSize() == Factor.Size.small)
                     {
                         FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
-                        Factor factorToChange = tileBinding.getFactor();
 
                         if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
@@ -514,7 +514,6 @@ public class FactorManager
                     else if (userFactors.get(position).getSize() == Factor.Size.medium)
                     {
                         FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
-                        Factor factorToChange = tileBinding.getFactor();
 
                         if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
@@ -527,7 +526,6 @@ public class FactorManager
                     else if (userFactors.get(position).getSize() == Factor.Size.large)
                     {
                         FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
-                        Factor factorToChange = tileBinding.getFactor();
 
                         if (factorToChange.retrieveNotificationCountInNumber() > 0)
                             tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
