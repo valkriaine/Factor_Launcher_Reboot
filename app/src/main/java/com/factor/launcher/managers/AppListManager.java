@@ -58,7 +58,7 @@ public class AppListManager
 
     private final ArrayList<UserApp> queryApps = new ArrayList<>();
 
-    private final Activity activity;
+    private Activity activity;
 
     private final AppListDatabase appListDatabase;
 
@@ -506,6 +506,7 @@ public class AppListManager
             this.factorManager.invalidate();
         this.adapter = null;
         this.factorManager = null;
+        this.activity = null;
     }
 
     //retrieve list of app shortcuts

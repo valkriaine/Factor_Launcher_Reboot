@@ -50,7 +50,7 @@ public class FactorManager
 
     public FactorsAdapter adapter;
 
-    private final Activity activity;
+    private Activity activity;
 
     private ViewGroup background;
 
@@ -307,6 +307,8 @@ public class FactorManager
     public void invalidate()
     {
         this.background = null;
+        this.activity = null;
+        this.adapter = null;
     }
 
 
