@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="binding" type="com.factor.launcher.fragments.SettingsFragment"/>
+        <variable name="settings" type="com.factor.launcher.models.AppSettings"/>
     </data>
 
     <!--root layout-->
@@ -11,10 +11,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <!--demo-->
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/demo_space"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginVertical="20dp">
 
             <!--demo background-->
             <RelativeLayout
@@ -48,10 +51,10 @@
                         android:layout_margin="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:cardCornerRadius="5dp">
+                        app:cardCornerRadius="@{settings.cornerRadius}">
                     <eightbitlab.com.blurview.BlurView
                             android:id="@+id/demo_blur"
-                            app:blurOverlayColor="#99FFFFFF"
+                            app:blurOverlayColor="@{settings.tileThemeColor}"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                 </androidx.cardview.widget.CardView>
@@ -169,6 +172,16 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/demo_space">
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

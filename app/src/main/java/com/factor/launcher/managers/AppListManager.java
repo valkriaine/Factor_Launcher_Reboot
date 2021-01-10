@@ -48,7 +48,7 @@ import static com.factor.launcher.util.Constants.*;
 
 public class AppListManager
 {
-    private final String TAG = "AppListManager";
+    private static final String TAG = "AppListManager";
 
     private boolean displayHidden = false;
 

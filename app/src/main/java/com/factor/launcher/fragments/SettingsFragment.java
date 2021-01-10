@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
+import com.factor.launcher.managers.AppSettingsManager;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 
@@ -45,11 +46,15 @@ public class SettingsFragment extends Fragment
     //todo: add more ui components
     private void initializeComponents()
     {
+
+        AppSettingsManager appSettingsManager = new AppSettingsManager(requireActivity().getApplicationContext());
+
         binding.demoBlur.setupWith(binding.demoBackground)
                 .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
-                .setBlurRadius(15f)
+                .setBlurRadius(appSettingsManager.getAppSettings().getBlurRadius())
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(true);
-    }
 
+
+    }
 }
