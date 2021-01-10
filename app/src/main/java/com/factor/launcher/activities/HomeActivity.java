@@ -5,6 +5,7 @@ import android.app.WallpaperManager;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,8 +13,9 @@ import androidx.fragment.app.Fragment;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
-import com.factor.launcher.util.DrawableComparison;
+import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.util.OnBackPressedCallBack;
+import com.factor.launcher.util.Util;
 
 public class HomeActivity extends AppCompatActivity
 {
@@ -23,6 +25,8 @@ public class HomeActivity extends AppCompatActivity
     private WallpaperManager wm;
 
     private boolean isWallpaperChanged = false;
+
+    private boolean areSettingsChanged = false;
 
     private boolean isVisible = true;
 
@@ -77,9 +81,11 @@ public class HomeActivity extends AppCompatActivity
         isVisible = true;
         detectWallpaperChanges();
 
-        if(isWallpaperChanged)
+        if(isWallpaperChanged || areSettingsChanged)
         {
+            Log.d("settings_changed", "resume");
             isWallpaperChanged = false;
+            areSettingsChanged = false;
             getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
                     .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
                     .addToBackStack(null)
@@ -119,9 +125,28 @@ public class HomeActivity extends AppCompatActivity
             }
             else //static wallpaper
             {
-                isWallpaperChanged = wallpaper == null || !DrawableComparison.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
+                isWallpaperChanged = wallpaper == null || !Util.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
                 wallpaper = wm.getFastDrawable();
             }
         }
     }
+
+
+    //reload fragment after app settings have changed
+    public void reload()
+    {
+        AppSettingsManager.getInstance(getApplicationContext()).respondToSettingsChange();
+
+        if (isVisible)
+        {
+            areSettingsChanged = false;
+            Log.d("settings_changed", "reload");
+            getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
+                    .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        else areSettingsChanged = true; //this activity is paused, delay reload until it's resumed
+    }
+
 }

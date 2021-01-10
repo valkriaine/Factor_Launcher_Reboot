@@ -7,11 +7,23 @@ import com.factor.launcher.models.AppSettings;
 
 public class AppSettingsManager
 {
+    public boolean areSettingsChanged = false;
+
     private AppSettings appSettings;
 
     private final AppSettingsDao daoReference;
 
-    public AppSettingsManager(Context context)
+    private static AppSettingsManager instance;
+
+    //singleton reference
+    public static AppSettingsManager getInstance(Context context)
+    {
+        if (instance == null)
+            instance = new AppSettingsManager(context);
+        return instance;
+    }
+
+    private AppSettingsManager(Context context)
     {
         daoReference = AppSettingsDatabase.Companion.getInstance(context).appSettingsDao();
         appSettings = daoReference.retrieveSettings();
@@ -28,6 +40,22 @@ public class AppSettingsManager
 
     }
 
+    public boolean respondToSettingsChange()
+    {
+        if (areSettingsChanged)
+        {
+            areSettingsChanged = false;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private void notifySettingsChanged()
+    {
+        this.areSettingsChanged = true;
+    }
+
     public AppSettings getAppSettings()
     {
         return appSettings;
@@ -36,5 +64,6 @@ public class AppSettingsManager
     public void updateSettings()
     {
         daoReference.updateSettings(appSettings);
+        notifySettingsChanged();
     }
 }

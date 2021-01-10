@@ -1,19 +1,30 @@
 package com.factor.launcher.util
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import java.io.ByteArrayOutputStream
 
-/*
-** by ChrisDEV @ https://gist.github.com/XinyueZ
- */
-object DrawableComparison
+//util functions
+object Util
 {
+    //convert dp to pixel
+    fun dpToPx(value : Float, context: Context) : Float
+    {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
+    }
 
+
+    /*
+    ** by ChrisDEV @ https://gist.github.com/XinyueZ
+    */
+    //compare drawables
     fun <T : Drawable> T.bytesEqualTo(t: T?) = toBitmap().bytesEqualTo(t?.toBitmap(), true)
 
+    //required for drawable comparison
     private fun Bitmap.bytesEqualTo(otherBitmap: Bitmap?, shouldRecycle: Boolean = false) = otherBitmap?.let { other ->
         if (width == other.width && height == other.height) {
             val res = toBytes().contentEquals(other.toBytes())
@@ -23,7 +34,6 @@ object DrawableComparison
             res
         } else false
     } ?: kotlin.run { false }
-
     private fun Bitmap.doRecycle() {
         if (!isRecycled) recycle()
     }
@@ -37,7 +47,6 @@ object DrawableComparison
         drawable.draw(canvas)
         return bitmap
     }
-
     private fun Bitmap.toBytes(): ByteArray = ByteArrayOutputStream().use { stream ->
         compress(Bitmap.CompressFormat.JPEG, 100, stream)
         stream.toByteArray()

@@ -25,7 +25,7 @@
     </style>
 
 
-    <style name="SettingsTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="SettingsTheme" parent="Theme.MaterialComponents">
         <item name="android:windowActivityTransitions">true</item>
     </style>
 </resources>

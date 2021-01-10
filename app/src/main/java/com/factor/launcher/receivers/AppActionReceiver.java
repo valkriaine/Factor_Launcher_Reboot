@@ -81,6 +81,11 @@ public class AppActionReceiver extends BroadcastReceiver
                     }
                 }
                 break;
+
+            //app settings have been changed, reload the home screen
+            case Constants.SETTINGS_CHANGED:
+                ((HomeActivity)appListManager.getActivity()).reload();
+                break;
         }
     }
 }

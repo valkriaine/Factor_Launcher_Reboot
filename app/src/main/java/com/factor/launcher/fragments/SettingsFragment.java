@@ -1,5 +1,6 @@
 package com.factor.launcher.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -10,12 +11,16 @@ import android.view.ViewGroup;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
 import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.Util;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 
 public class SettingsFragment extends Fragment
 {
     private FragmentSettingsBinding binding;
+
+    private AppSettings settings;
 
     public SettingsFragment()
     {
@@ -32,6 +37,7 @@ public class SettingsFragment extends Fragment
     public void onDestroyView()
     {
         super.onDestroyView();
+        updateSettings();
         binding = null;
     }
 
@@ -48,14 +54,9 @@ public class SettingsFragment extends Fragment
     //todo: add more ui components
     private void initializeComponents()
     {
+        AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(requireActivity().getApplicationContext());
 
-        AppSettingsManager appSettingsManager = new AppSettingsManager(requireActivity().getApplicationContext());
-
-        AppSettings settings = appSettingsManager.getAppSettings();
-
-        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
-
-        binding.demoCard.setRadius(settings.getCornerRadius());
+        settings = appSettingsManager.getAppSettings();
 
         binding.demoBlur.setupWith(binding.demoBackground)
                 .setOverlayColor(Color.parseColor(settings.getTransparentTileColor()))
@@ -65,5 +66,35 @@ public class SettingsFragment extends Fragment
                 .setHasFixedTransformationMatrix(true);
 
 
+        binding.blurToggle.setChecked(settings.isBlurred());
+        binding.blurToggle.setOnClickListener(v -> setUpDemoTile());
+
+        setUpDemoTile();
+    }
+
+    //update demo tile according to user settings
+    private void setUpDemoTile()
+    {
+        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
+
+        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), requireActivity().getApplicationContext()));
+
+        if (binding.blurToggle.isChecked())
+            binding.demoBlur.setVisibility(View.VISIBLE);
+        else
+            binding.demoBlur.setVisibility(View.INVISIBLE);
+    }
+
+    //detect, save, and notify changes in app settings
+    private void updateSettings()
+    {
+        if (binding.blurToggle.isChecked() != settings.isBlurred())
+        {
+            AppSettingsManager.getInstance(requireActivity().getApplicationContext()).getAppSettings().setBlurred(binding.blurToggle.isChecked());
+            AppSettingsManager.getInstance(requireActivity().getApplicationContext()).updateSettings();
+            Intent intent = new Intent();
+            intent.setAction(Constants.SETTINGS_CHANGED);
+            requireContext().sendBroadcast(intent);
+        }
     }
 }

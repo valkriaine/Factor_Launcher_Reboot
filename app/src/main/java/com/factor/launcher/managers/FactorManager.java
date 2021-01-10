@@ -24,11 +24,13 @@ import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
 import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
+import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
+import com.factor.launcher.util.Util;
 import com.valkriaine.factor.BouncyRecyclerView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
@@ -57,8 +59,15 @@ public class FactorManager
 
     private final boolean isLiveWallpaper;
 
+    private final AppSettings appSettings;
+
     //constructor
-    public FactorManager(Activity activity, ViewGroup background, PackageManager pm, LauncherApps launcherApps, LauncherApps.ShortcutQuery shortcutQuery, Boolean isLiveWallpaper)
+    public FactorManager(Activity activity,
+                         ViewGroup background,
+                         PackageManager pm,
+                         LauncherApps launcherApps,
+                         LauncherApps.ShortcutQuery shortcutQuery,
+                         Boolean isLiveWallpaper)
     {
         this.activity = activity;
         this.background = background;
@@ -66,6 +75,7 @@ public class FactorManager
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
         this.isLiveWallpaper = isLiveWallpaper;
+        this.appSettings = AppSettingsManager.getInstance(activity.getApplicationContext()).getAppSettings();
 
         adapter = new FactorsAdapter();
         factorsDatabase = FactorsDatabase.Companion.getInstance(activity.getApplicationContext());
@@ -267,7 +277,7 @@ public class FactorManager
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_REMOVE);
         intent.putExtra(Constants.REMOVE_KEY, factor.getPackageName());
-        activity.sendBroadcast(intent);
+        activity.getApplicationContext().sendBroadcast(intent);
         removeFromHome(factor);
         return true;
     }
@@ -278,7 +288,7 @@ public class FactorManager
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_ADD);
         intent.putExtra(Constants.ADD_KEY, position);
-        activity.sendBroadcast(intent);
+        activity.getApplicationContext().sendBroadcast(intent);
     }
 
     //received notification
@@ -338,7 +348,7 @@ public class FactorManager
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
-    //add widget to tiles list
+    //todo: add widget to tiles list
     public void addWidget(AppWidgetHostView appWidgetHostView)
     {
 
@@ -396,31 +406,33 @@ public class FactorManager
 
             ViewDataBinding binding = DataBindingUtil.bind(view);
 
-
-            if (isLiveWallpaper)
+            //check blur enabled
+            if (isLiveWallpaper || !appSettings.isBlurred())
             {
                 if (binding instanceof FactorSmallBinding)
                 {
                     ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                    ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
 
 
                 if (binding instanceof FactorMediumBinding)
                 {
                     ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                    ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
 
                 if (binding instanceof FactorLargeBinding)
                 {
                     ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.WHITE);
+                    ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
             }
 
-
-
+            //create context menu
             view.setOnCreateContextMenuListener((menu, v, menuInfo) ->
             {
                 Factor selectedFactor;
@@ -614,6 +626,12 @@ public class FactorManager
                 {
                     ((FactorSmallBinding)binding).setFactor(factor);
                     ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
+
+                    if (appSettings.isDarkText())
+                        ((FactorSmallBinding) binding).tileLabel.setTextColor(Color.BLACK);
+                    else
+                        ((FactorSmallBinding) binding).tileLabel.setTextColor(Color.WHITE);
+
                     try
                     {
                         ((FactorSmallBinding)binding).tileIcon.setImageDrawable(factor.getIcon());
@@ -632,8 +650,9 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorSmallBinding) binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(10F)
+                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
@@ -642,6 +661,20 @@ public class FactorManager
 
                     ((FactorMediumBinding)binding).setFactor(factor);
                     ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
+
+                    if (appSettings.isDarkText())
+                    {
+                        ((FactorMediumBinding) binding).tileLabel.setTextColor(Color.BLACK);
+                        ((FactorMediumBinding)binding).notificationTitle.setTextColor(Color.BLACK);
+                        ((FactorMediumBinding)binding).notificationContent.setTextColor(Color.BLACK);
+                    }
+                    else
+                    {
+                        ((FactorMediumBinding) binding).tileLabel.setTextColor(Color.WHITE);
+                        ((FactorMediumBinding)binding).notificationTitle.setTextColor(Color.WHITE);
+                        ((FactorMediumBinding)binding).notificationContent.setTextColor(Color.WHITE);
+                    }
+
 
                     try
                     {
@@ -664,8 +697,9 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorMediumBinding) binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(10F)
+                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }
@@ -674,6 +708,31 @@ public class FactorManager
 
                     ((FactorLargeBinding)binding).setFactor(factor);
                     ((FactorLargeBinding)binding).tileLabel.setText(factor.getLabelNew());
+
+
+                    if (appSettings.isDarkText())
+                    {
+                        ((FactorLargeBinding) binding).tileLabel.setTextColor(Color.BLACK);
+                        ((FactorLargeBinding)binding).shortcut1Label.setTextColor(Color.BLACK);
+                        ((FactorLargeBinding)binding).shortcut2Label.setTextColor(Color.BLACK);
+                        ((FactorLargeBinding)binding).shortcut3Label.setTextColor(Color.BLACK);
+                        ((FactorLargeBinding)binding).notificationContent.setTextColor(Color.BLACK);
+                        ((FactorLargeBinding)binding).notificationTitle.setTextColor(Color.BLACK);
+
+                        ((FactorLargeBinding)binding).divider.setBackgroundColor(Color.BLACK);
+                    }
+                    else
+                    {
+                        ((FactorLargeBinding) binding).tileLabel.setTextColor(Color.WHITE);
+                        ((FactorLargeBinding)binding).shortcut1Label.setTextColor(Color.WHITE);
+                        ((FactorLargeBinding)binding).shortcut2Label.setTextColor(Color.WHITE);
+                        ((FactorLargeBinding)binding).shortcut3Label.setTextColor(Color.WHITE);
+                        ((FactorLargeBinding)binding).notificationContent.setTextColor(Color.WHITE);
+                        ((FactorLargeBinding)binding).notificationTitle.setTextColor(Color.WHITE);
+
+                        ((FactorLargeBinding)binding).divider.setBackgroundColor(Color.WHITE);
+                    }
+
 
                     try
                     {
@@ -688,8 +747,10 @@ public class FactorManager
                     ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
                     ((FactorLargeBinding)binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
                     ((FactorLargeBinding)binding).notificationContent.setText(factor.getUserApp().getNotificationText());
-
                     ((FactorLargeBinding)binding).notificationCount.setVisibility(factor.getUserApp().visibilityNotificationCount());
+
+                    if (factor.retrieveNotificationCountInNumber() > 0)
+                        ((FactorLargeBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
 
                     if (factor.getUserApp().hasShortcuts())
                     {
@@ -747,8 +808,9 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorLargeBinding)binding).trans
                             .setupWith(background)
-                            .setBlurAlgorithm(new RenderScriptBlur(activity))
-                            .setBlurRadius(10F)
+                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
                 }

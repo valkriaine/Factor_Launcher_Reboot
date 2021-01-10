@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -24,12 +23,15 @@ import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.managers.AppListManager;
+import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
+import com.factor.launcher.util.Util;
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -53,6 +55,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private PackageActionsReceiver packageActionsReceiver;
 
     private NotificationBroadcastReceiver notificationBroadcastReceiver;
+
+    private AppSettings appSettings;
 
 
 
@@ -156,22 +160,22 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //initialize resources
         //***************************************************************************************************************************************************
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, getResources().getDisplayMetrics());
-        int paddingHorizontal = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int paddingBottom300 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
-        int paddingBottom150 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
-        int paddingBottomOnSearch = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000, getResources().getDisplayMetrics());
-        int appListPaddingTop100 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+        int paddingTop = (int) Util.INSTANCE.dpToPx(105, requireActivity().getApplicationContext());
+        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, requireActivity().getApplicationContext());
+        int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, requireActivity().getApplicationContext());
+        int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, requireActivity().getApplicationContext());
+        int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, requireActivity().getApplicationContext());
+        int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, requireActivity().getApplicationContext());
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
 
+
+        //initialize saved user settings
+        appSettings = AppSettingsManager.getInstance(requireActivity().getApplicationContext()).getAppSettings();
 
 
         //get system wallpaper
         //***************************************************************************************************************************************************
         checkLiveWallpaper();
-
-
-
 
 
         //initialize data manager
@@ -351,21 +355,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //setup wallpaper
     private void checkLiveWallpaper()
     {
-        //todo: handle blur preferences
-
-
         //static wallpaper
         if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                wm.getWallpaperInfo() == null)
+                wm.getWallpaperInfo() == null && appSettings.isBlurred())
         {
-
             isLiveWallpaper = false;
 
             binding.backgroundImage.setImageDrawable(wm.getDrawable());
 
             binding.blur.setVisibility(View.VISIBLE);
-            binding.searchBase.setCardBackgroundColor(Color.TRANSPARENT);
-            binding.searchBlur.setOverlayColor(Color.parseColor("#4DFFFFFF"));
+            binding.searchBase.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueSearchBarColor()));
 
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
@@ -376,6 +375,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setBlurEnabled(true);
 
             binding.searchBlur.setupWith(binding.rootContent)
+                    .setOverlayColor(Color.parseColor(appSettings.getTransparentSearchBarColor()))
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
                     .setBlurRadius(25f)
@@ -402,6 +402,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterAppAction.addAction(Constants.BROADCAST_ACTION_REMOVE);
         filterAppAction.addAction(Constants.BROADCAST_ACTION_ADD);
         filterAppAction.addAction(Constants.BROADCAST_ACTION_RENAME);
+        filterAppAction.addAction(Constants.SETTINGS_CHANGED);
         filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         requireActivity().registerReceiver(appActionReceiver, filterAppAction);
 

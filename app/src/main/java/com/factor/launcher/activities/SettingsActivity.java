@@ -26,6 +26,9 @@ public class SettingsActivity extends AppCompatActivity
 
         receiver = new HomeButtonPressReceiver(this);
 
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle("Options");
+
 
         getSupportFragmentManager()
                 .beginTransaction()

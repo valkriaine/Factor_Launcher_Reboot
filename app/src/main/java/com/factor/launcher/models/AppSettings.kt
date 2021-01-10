@@ -30,9 +30,12 @@ class AppSettings
     @ColumnInfo(name = "isDarkText")
     var isDarkText = false
 
+    @ColumnInfo(name = "icon_shadow")
+    var showShadowAroundIcon = true
+
     fun getTransparentTileColor() : String
     {
-        return "#4D$tileThemeColor"
+        return "#99$tileThemeColor"
     }
 
     fun getOpaqueTileColor() : String
