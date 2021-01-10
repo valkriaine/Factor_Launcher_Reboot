@@ -47,7 +47,7 @@ public class FactorManager
 
     private final LauncherApps.ShortcutQuery shortcutQuery;
 
-    private final PackageManager packageManager;
+    private PackageManager packageManager;
 
     public FactorsAdapter adapter;
 
@@ -59,7 +59,7 @@ public class FactorManager
 
     private final boolean isLiveWallpaper;
 
-    private final AppSettings appSettings;
+    private AppSettings appSettings;
 
     //constructor
     public FactorManager(Activity activity,
@@ -315,6 +315,8 @@ public class FactorManager
 
     public void invalidate()
     {
+        this.packageManager = null;
+        this.appSettings = null;
         this.background = null;
         this.activity = null;
         this.adapter = null;
@@ -412,7 +414,7 @@ public class FactorManager
                 if (binding instanceof FactorSmallBinding)
                 {
                     ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
                     ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
 
@@ -420,14 +422,14 @@ public class FactorManager
                 if (binding instanceof FactorMediumBinding)
                 {
                     ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
                     ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
 
                 if (binding instanceof FactorLargeBinding)
                 {
                     ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), activity.getApplicationContext()));
+                    ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
                     ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
             }
@@ -651,7 +653,7 @@ public class FactorManager
                         ((FactorSmallBinding) binding).trans
                             .setupWith(background)
                             .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
-                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
@@ -698,7 +700,7 @@ public class FactorManager
                         ((FactorMediumBinding) binding).trans
                             .setupWith(background)
                             .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
-                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);
@@ -809,7 +811,7 @@ public class FactorManager
                         ((FactorLargeBinding)binding).trans
                             .setupWith(background)
                             .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
-                            .setBlurAlgorithm(new RenderScriptBlur(activity.getApplicationContext()))
+                            .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
                             .setHasFixedTransformationMatrix(false);

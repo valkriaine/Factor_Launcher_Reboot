@@ -28,7 +28,7 @@ class AppSettings
     var blurRadius = 15
 
     @ColumnInfo(name = "isDarkText")
-    var isDarkText = false
+    var isDarkText = true
 
     @ColumnInfo(name = "icon_shadow")
     var showShadowAroundIcon = true

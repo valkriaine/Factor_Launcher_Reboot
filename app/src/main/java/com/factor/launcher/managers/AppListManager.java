@@ -503,6 +503,7 @@ public class AppListManager
     {
         if (this.factorManager != null)
             this.factorManager.invalidate();
+
         this.adapter = null;
         this.factorManager = null;
         this.activity = null;

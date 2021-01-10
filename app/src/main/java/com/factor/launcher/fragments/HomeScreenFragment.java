@@ -83,6 +83,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         binding = FragmentHomeScreenBinding.inflate(getLayoutInflater());
+        binding.setLifecycleOwner(getViewLifecycleOwner());
         initializeComponents();
         return binding.getRoot();
     }
@@ -149,6 +150,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         }
         appListManager.invalidate();
+        binding.rootContent.invalidate();
         binding = null;
         appListManager = null;
     }

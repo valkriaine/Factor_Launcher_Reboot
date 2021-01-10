@@ -79,6 +79,7 @@ public class HomeActivity extends AppCompatActivity
     {
         super.onResume();
         isVisible = true;
+
         detectWallpaperChanges();
 
         if(isWallpaperChanged || areSettingsChanged)
@@ -86,11 +87,14 @@ public class HomeActivity extends AppCompatActivity
             Log.d("settings_changed", "resume");
             isWallpaperChanged = false;
             areSettingsChanged = false;
-            getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
                     .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
                     .addToBackStack(null)
                     .commit();
         }
+
     }
 
     //set isVisible to false when activity is no longer visible
@@ -141,7 +145,8 @@ public class HomeActivity extends AppCompatActivity
         {
             areSettingsChanged = false;
             Log.d("settings_changed", "reload");
-            getSupportFragmentManager().beginTransaction().setReorderingAllowed(true)
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
                     .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
                     .addToBackStack(null)
                     .commit();
