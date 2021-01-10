@@ -26,7 +26,6 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.databinding.AppListItemBinding;
@@ -101,7 +100,7 @@ public class AppListManager
         this.adapter = new AppListAdapter();
         this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
-        this.appListDatabase = Room.databaseBuilder(activity.getApplicationContext(), AppListDatabase.class, "app_drawer_list").build();
+        this.appListDatabase = AppListDatabase.Companion.getInstance(activity.getApplicationContext());
 
         this.factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
 

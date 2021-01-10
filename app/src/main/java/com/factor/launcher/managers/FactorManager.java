@@ -19,7 +19,6 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
@@ -69,7 +68,7 @@ public class FactorManager
         this.isLiveWallpaper = isLiveWallpaper;
 
         adapter = new FactorsAdapter();
-        factorsDatabase = Room.databaseBuilder(activity.getApplicationContext(), FactorsDatabase.class, "factor_list").build();
+        factorsDatabase = FactorsDatabase.Companion.getInstance(activity.getApplicationContext());
         loadFactors();
     }
 

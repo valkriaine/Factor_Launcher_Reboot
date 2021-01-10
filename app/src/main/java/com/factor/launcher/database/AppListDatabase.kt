@@ -1,5 +1,6 @@
 package com.factor.launcher.database
 
+import android.content.Context
 import androidx.room.*
 import com.factor.launcher.models.UserApp
 
@@ -7,6 +8,11 @@ import com.factor.launcher.models.UserApp
 abstract class AppListDatabase : RoomDatabase()
 {
     abstract fun appListDao(): AppListDao
+
+    companion object : SingletonHolder<AppListDatabase, Context>({
+        Room.databaseBuilder(it.applicationContext, AppListDatabase::class.java, "app_drawer_list")
+            .build()
+    })
 }
 
 @Dao

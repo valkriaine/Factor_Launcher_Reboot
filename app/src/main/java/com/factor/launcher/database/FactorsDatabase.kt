@@ -1,5 +1,6 @@
 package com.factor.launcher.database
 
+import android.content.Context
 import androidx.room.*
 import com.factor.launcher.models.Factor
 
@@ -8,6 +9,11 @@ import com.factor.launcher.models.Factor
 abstract class FactorsDatabase : RoomDatabase()
 {
     abstract fun factorsDao(): FactorsDao
+
+    companion object : SingletonHolder<FactorsDatabase, Context>({
+        Room.databaseBuilder(it.applicationContext, FactorsDatabase::class.java, "factor_list")
+            .build()
+    })
 }
 
 @Dao
