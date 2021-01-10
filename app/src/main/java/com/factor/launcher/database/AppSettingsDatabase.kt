@@ -10,15 +10,20 @@ abstract class AppSettingsDatabase : RoomDatabase()
     abstract fun appSettingsDao(): AppSettingsDao
 
     companion object : SingletonHolder<AppSettingsDatabase, Context>({
-        Room.databaseBuilder(it.applicationContext, AppSettingsDatabase::class.java, "factor_settings.db").build()
+        Room.databaseBuilder(it.applicationContext, AppSettingsDatabase::class.java, "factor_settings")
+            .allowMainThreadQueries()
+            .build()
     })
 }
 
 @Dao
 interface AppSettingsDao
 {
-    @Query("SELECT * FROM appsettings WHERE `key` =:term LIMIT 1")
-    fun retrieveSettings(term: String): AppSettings
+    @Query("SELECT * FROM appsettings LIMIT 1")
+    fun retrieveSettings(): AppSettings
+
+    @Insert
+    fun initializeSettings(appSettings: AppSettings)
 
     @Update
     fun updateSettings(settings: AppSettings)

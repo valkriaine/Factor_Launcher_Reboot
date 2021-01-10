@@ -101,7 +101,7 @@ public class AppListManager
         this.adapter = new AppListAdapter();
         this.factorManager = new FactorManager(activity, background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
-        this.appListDatabase = Room.databaseBuilder(activity, AppListDatabase.class, "app_drawer_list").build();
+        this.appListDatabase = Room.databaseBuilder(activity.getApplicationContext(), AppListDatabase.class, "app_drawer_list").build();
 
         this.factorSharedPreferences = activity.getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
 

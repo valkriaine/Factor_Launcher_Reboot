@@ -10,7 +10,7 @@ import com.factor.launcher.util.Constants
 class AppSettings
 {
     @PrimaryKey
-    val key = Constants.PACKAGE_NAME
+    var key = Constants.PACKAGE_NAME
 
     @ColumnInfo(name = "corner_radius")
     var cornerRadius = 5
@@ -26,6 +26,9 @@ class AppSettings
 
     @ColumnInfo(name = "blur_radius")
     var blurRadius = 15
+
+    @ColumnInfo(name = "isDarkText")
+    var isDarkText = false
 
     fun getTransparentTileColor() : String
     {

@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="settings" type="com.factor.launcher.models.AppSettings"/>
+        <variable name="binding" type="com.factor.launcher.fragments.SettingsFragment"/>
     </data>
 
     <!--root layout-->
@@ -50,11 +50,9 @@
                         android:translationZ="-20dp"
                         android:layout_margin="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="@{settings.cornerRadius}">
+                        android:layout_height="match_parent">
                     <eightbitlab.com.blurview.BlurView
                             android:id="@+id/demo_blur"
-                            app:blurOverlayColor="@{settings.tileThemeColor}"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                 </androidx.cardview.widget.CardView>

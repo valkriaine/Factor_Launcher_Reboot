@@ -69,7 +69,7 @@ public class FactorManager
         this.isLiveWallpaper = isLiveWallpaper;
 
         adapter = new FactorsAdapter();
-        factorsDatabase = Room.databaseBuilder(activity, FactorsDatabase.class, "factor_list").build();
+        factorsDatabase = Room.databaseBuilder(activity.getApplicationContext(), FactorsDatabase.class, "factor_list").build();
         loadFactors();
     }
 
