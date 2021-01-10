@@ -69,12 +69,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             <!--wallpaper-->
-            <FrameLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/background_host"
                     android:translationZ="-20dp"
                     android:visibility="invisible"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/background_image"
+                        android:scaleType="matrix"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
                     android:id="@+id/dim"

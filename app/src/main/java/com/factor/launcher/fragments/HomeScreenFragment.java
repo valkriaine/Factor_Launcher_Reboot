@@ -361,7 +361,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             isLiveWallpaper = false;
 
-            binding.backgroundHost.setBackground(wm.getDrawable());
+            binding.backgroundImage.setImageDrawable(wm.getDrawable());
 
             binding.blur.setVisibility(View.VISIBLE);
             binding.searchBase.setCardBackgroundColor(Color.TRANSPARENT);
