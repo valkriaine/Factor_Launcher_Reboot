@@ -2,7 +2,7 @@
 
 This is a reboot of https://github.com/Valkriaine/Factor_Launcher
 
-Newest apk: https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.75/debug-v0.4.75.apk
+Newest apk: https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/v0.4.79/debug-v0.4.79.apk
 
 All commits will be pushed to this repository instead. The last repo is obsolete
 
