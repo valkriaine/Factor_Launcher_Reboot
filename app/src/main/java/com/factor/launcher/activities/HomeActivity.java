@@ -48,7 +48,6 @@ public class HomeActivity extends AppCompatActivity
         setContentView(binding.getRoot());
 
 
-
         //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -87,12 +86,7 @@ public class HomeActivity extends AppCompatActivity
             Log.d("settings_changed", "resume");
             isWallpaperChanged = false;
             areSettingsChanged = false;
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
-                    .addToBackStack(null)
-                    .commit();
+            reloadFragment();
         }
 
     }
@@ -145,13 +139,19 @@ public class HomeActivity extends AppCompatActivity
         {
             areSettingsChanged = false;
             Log.d("settings_changed", "reload");
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
-                    .addToBackStack(null)
-                    .commit();
+            reloadFragment();
         }
-        else areSettingsChanged = true; //this activity is paused, delay reload until it's resumed
+        else areSettingsChanged = true; //this activity is paused, reload when resumed
+    }
+
+    private void reloadFragment()
+    {
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
+                .addToBackStack(null)
+                .commit();
     }
 
 }

@@ -86,7 +86,7 @@ public class AppListManager
     //constructor
     public AppListManager(HomeScreenFragment fragment, ViewGroup background, Boolean isLiveWallpaper)
     {
-        this.activity = fragment.requireActivity();
+        this.activity = fragment.getActivity();
 
         this.appWidgetManager = AppWidgetManager.getInstance(activity);
         this.appWidgetHost = new AppWidgetHost(activity, WIDGET_HOST_ID);
@@ -542,7 +542,7 @@ public class AppListManager
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_RENAME);
         intent.putExtra(Constants.RENAME_KEY, position);
-        activity.sendBroadcast(intent);
+        activity.getApplicationContext().sendBroadcast(intent);
     }
 
     //get display mode
@@ -647,7 +647,7 @@ public class AppListManager
         Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
         pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
-        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity, pickIntent));
+        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity.getApplicationContext(), pickIntent));
     }
 
 
@@ -683,7 +683,7 @@ public class AppListManager
             createIntent.setComponent(appWidgetInfo.configure);
             createIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
-            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity, createIntent));
+            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(activity.getApplicationContext(), createIntent));
         }
         else {
             createWidget(data);
@@ -698,7 +698,7 @@ public class AppListManager
         int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
         AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
         requestBindWidget(appWidgetId, appWidgetInfo);
-        AppWidgetHostView hostView = appWidgetHost.createView(activity, appWidgetId, appWidgetInfo);
+        AppWidgetHostView hostView = appWidgetHost.createView(activity.getApplicationContext(), appWidgetId, appWidgetInfo);
         hostView.setAppWidget(appWidgetId, appWidgetInfo);
         factorManager.addWidget(hostView);
     }
@@ -736,7 +736,7 @@ public class AppListManager
 
             View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
 
-            activity.registerForContextMenu(view);
+            getActivity().registerForContextMenu(view);
 
             AppListViewHolder holder =  new AppListViewHolder(view);
 
@@ -745,14 +745,14 @@ public class AppListManager
             {
                 ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) -> {
                     if (hasFocus)
-                        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                     else
-                        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
                 });
 
                 view.setOnCreateContextMenuListener((menu, v, menuInfo) ->
                 {
-                    MenuInflater inflater = activity.getMenuInflater();
+                    MenuInflater inflater = getActivity().getMenuInflater();
                     inflater.inflate(R.menu.app_list_item_menu, menu);
                     if (((AppListItemBinding)holder.binding).getUserApp().isPinned())
                         menu.getItem(0).setEnabled(false);
@@ -771,9 +771,7 @@ public class AppListManager
                     });
                     //hide
                     MenuItem hide = sub.getItem(1);
-                    if (((AppListItemBinding)holder.binding).getUserApp().isHidden())
-                        hide.setTitle("Show");
-                    else hide.setTitle("Hide");
+                    hide.setTitle(((AppListItemBinding) holder.binding).getUserApp().isHidden() ? "Show" : "Hide");
                     hide.setOnMenuItemClickListener(item -> !((AppListItemBinding)holder.binding).getUserApp().isHidden() ?
                             hideApp(((AppListItemBinding)holder.binding).getUserApp()) : showApp(((AppListItemBinding)holder.binding).getUserApp()));
                     //info
@@ -829,7 +827,7 @@ public class AppListManager
         public void onViewRecycled(@NonNull AppListViewHolder holder)
         {
             super.onViewRecycled(holder);
-            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         }
 
         @Override
@@ -937,7 +935,7 @@ public class AppListManager
 
             public void enterEditMode(AppListItemBinding binding)
             {
-                activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                 UserApp app =  binding.getUserApp();
                 app.setBeingEdited(true);
                 removeOnClickListener();
@@ -964,7 +962,7 @@ public class AppListManager
 
             private void exitEditMode(UserApp app)
             {
-                activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
                 setOnClickListener(app);
                 ((AppListItemBinding)binding).labelEdit.clearFocus();
                 app.setBeingEdited(false);

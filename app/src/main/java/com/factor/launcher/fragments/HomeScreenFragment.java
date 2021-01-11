@@ -69,7 +69,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        wm = WallpaperManager.getInstance(requireContext());
+        wm = WallpaperManager.getInstance(getContext());
     }
 
     @Override
@@ -107,7 +107,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
         else if (binding.homePager.getCurrentItem() == 0)
         {
-            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(requireContext())
+            if (getContext() == null)
+                return true;
+
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext())
             {
                 @Override protected int getVerticalSnapPreference()
                 {
@@ -150,7 +153,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         }
         appListManager.invalidate();
-        binding.rootContent.invalidate();
+        binding.homePager.setAdapter(null);
+        binding.getRoot().clearFocus();
+        binding.getRoot().clearAnimation();
+        binding.searchBase.removeAllViews();
+        context = null;
         binding = null;
         appListManager = null;
     }
@@ -161,18 +168,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         //initialize resources
         //***************************************************************************************************************************************************
-        requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        int paddingTop = (int) Util.INSTANCE.dpToPx(105, requireActivity().getApplicationContext());
-        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, requireActivity().getApplicationContext());
-        int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, requireActivity().getApplicationContext());
-        int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, requireActivity().getApplicationContext());
-        int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, requireActivity().getApplicationContext());
-        int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, requireActivity().getApplicationContext());
+
+        if (getActivity() == null || getContext() == null)
+            return;
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        int paddingTop = (int) Util.INSTANCE.dpToPx(105, getContext());
+        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
+        int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, getContext());
+        int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, getContext());
+        int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, getContext());
+        int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, getContext());
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
 
 
         //initialize saved user settings
-        appSettings = AppSettingsManager.getInstance(requireActivity().getApplicationContext()).getAppSettings();
+        appSettings = AppSettingsManager.getInstance(getContext()).getAppSettings();
 
 
         //get system wallpaper
@@ -201,7 +211,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //app drawer
         //***************************************************************************************************************************************************
-        binding.appsList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.appsList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.appsList.setAdapter(appListManager.adapter);
         binding.appsList.setHasFixedSize(true);
         binding.appsList.setItemViewCacheSize(100);
@@ -264,7 +274,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //tile list
         //***************************************************************************************************************************************************
-        ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(requireContext())
+        ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(getContext())
                 .setOrientation(ChipsLayoutManager.HORIZONTAL)
                 .setChildGravity(Gravity.CENTER)
                 .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
@@ -312,7 +322,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         {
             boolean isDisplayingHidden = appListManager.isDisplayingHidden();
 
-            PopupMenu popup = new PopupMenu(requireContext(), binding.menuButton);
+            PopupMenu popup = new PopupMenu(getContext(), binding.menuButton);
             popup.getMenuInflater().inflate(R.menu.app_menu, popup.getMenu());
 
             MenuItem displayMode = popup.getMenu().getItem(0);
@@ -331,7 +341,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             //launch settings
             options.setOnMenuItemClickListener(item ->
             {
-                Intent intent = new Intent(requireContext(), SettingsActivity.class);
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
                 startActivity(intent);
                 return true;
             });
@@ -357,8 +367,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     //setup wallpaper
     private void checkLiveWallpaper()
     {
+
+        if (getContext() == null)
+            return;
+
         //static wallpaper
-        if (requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+        if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 wm.getWallpaperInfo() == null && appSettings.isBlurred())
         {
             isLiveWallpaper = false;
@@ -370,7 +384,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(15f)
                     .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(true)
@@ -379,7 +393,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             binding.searchBlur.setupWith(binding.rootContent)
                     .setOverlayColor(Color.parseColor(appSettings.getTransparentSearchBarColor()))
                     .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(new RenderScriptBlur(requireContext()))
+                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(false)
@@ -399,6 +413,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private void registerBroadcastReceivers(AppListManager appListManager, FragmentHomeScreenBinding binding)
     {
+
+        if (getContext() == null)
+            return;
+
         appActionReceiver = new AppActionReceiver(appListManager, binding);
         IntentFilter filterAppAction = new IntentFilter();
         filterAppAction.addAction(Constants.BROADCAST_ACTION_REMOVE);
@@ -406,7 +424,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterAppAction.addAction(Constants.BROADCAST_ACTION_RENAME);
         filterAppAction.addAction(Constants.SETTINGS_CHANGED);
         filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        requireActivity().registerReceiver(appActionReceiver, filterAppAction);
+        getContext().registerReceiver(appActionReceiver, filterAppAction);
 
         packageActionsReceiver = new PackageActionsReceiver(appListManager);
         IntentFilter filterPackageAction = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
@@ -415,18 +433,18 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterPackageAction.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
         filterPackageAction.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
         filterPackageAction.addDataScheme("package");
-        requireActivity().registerReceiver(packageActionsReceiver, filterPackageAction);
+        getContext().registerReceiver(packageActionsReceiver, filterPackageAction);
 
 
         notificationBroadcastReceiver = new NotificationBroadcastReceiver(appListManager);
         IntentFilter filterNotification = new IntentFilter();
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
-        requireActivity().registerReceiver(notificationBroadcastReceiver, filterNotification);
+        getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
 
 
         Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
-        requireActivity().sendBroadcast(intent);
+        getContext().sendBroadcast(intent);
     }
 
 }

@@ -39,6 +39,7 @@ public class SettingsFragment extends Fragment
         super.onDestroyView();
         updateSettings();
         binding = null;
+        settings = null;
     }
 
     @Override
@@ -54,13 +55,16 @@ public class SettingsFragment extends Fragment
     //todo: add more ui components
     private void initializeComponents()
     {
-        AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(requireActivity().getApplicationContext());
+        if (getContext() == null)
+            return;
+
+        AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(getContext());
 
         settings = appSettingsManager.getAppSettings();
 
         binding.demoBlur.setupWith(binding.demoBackground)
                 .setOverlayColor(Color.parseColor(settings.getTransparentTileColor()))
-                .setBlurAlgorithm(new RenderScriptBlur(requireActivity().getApplicationContext()))
+                .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(settings.getBlurRadius())
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(true);
@@ -75,9 +79,11 @@ public class SettingsFragment extends Fragment
     //update demo tile according to user settings
     private void setUpDemoTile()
     {
-        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
+        if (getContext() == null)
+            return;
 
-        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), requireActivity().getApplicationContext()));
+        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
+        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         if (binding.blurToggle.isChecked())
             binding.demoBlur.setVisibility(View.VISIBLE);
@@ -90,8 +96,8 @@ public class SettingsFragment extends Fragment
     {
         if (binding.blurToggle.isChecked() != settings.isBlurred())
         {
-            AppSettingsManager.getInstance(requireActivity().getApplicationContext()).getAppSettings().setBlurred(binding.blurToggle.isChecked());
-            AppSettingsManager.getInstance(requireActivity().getApplicationContext()).updateSettings();
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurred(binding.blurToggle.isChecked());
+            AppSettingsManager.getInstance(getContext()).updateSettings();
             Intent intent = new Intent();
             intent.setAction(Constants.SETTINGS_CHANGED);
             requireContext().sendBroadcast(intent);
