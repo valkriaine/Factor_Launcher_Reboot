@@ -40,15 +40,9 @@ public class AppSettingsManager
 
     }
 
-    public boolean respondToSettingsChange()
+    public void respondToSettingsChange()
     {
-        if (areSettingsChanged)
-        {
-            areSettingsChanged = false;
-            return true;
-        }
-        else
-            return false;
+        areSettingsChanged = false;
     }
 
     private void notifySettingsChanged()

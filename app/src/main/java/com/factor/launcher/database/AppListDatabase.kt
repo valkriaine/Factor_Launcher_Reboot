@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.*
 import com.factor.launcher.models.UserApp
 
-@Database(entities = [UserApp::class], version = 1)
+@Database(entities = [UserApp::class], exportSchema = false, version = 1)
 abstract class AppListDatabase : RoomDatabase()
 {
     abstract fun appListDao(): AppListDao

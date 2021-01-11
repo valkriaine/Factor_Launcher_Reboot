@@ -5,7 +5,7 @@ import androidx.room.*
 import com.factor.launcher.models.Factor
 
 
-@Database(entities = [Factor::class], version = 1)
+@Database(entities = [Factor::class], exportSchema = false, version = 1)
 abstract class FactorsDatabase : RoomDatabase()
 {
     abstract fun factorsDao(): FactorsDao

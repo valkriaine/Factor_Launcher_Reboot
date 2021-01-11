@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.*
 import com.factor.launcher.models.AppSettings
 
-@Database(entities = [AppSettings::class], version = 2)
+@Database(entities = [AppSettings::class], exportSchema = false, version = 2)
 abstract class AppSettingsDatabase : RoomDatabase()
 {
     abstract fun appSettingsDao(): AppSettingsDao

@@ -13,7 +13,7 @@
             android:layout_height="wrap_content">
 
         <!--background-->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card"
                 android:translationZ="-20dp"
                 android:layout_margin="5dp"
@@ -26,7 +26,7 @@
                     app:blurOverlayColor="#99FFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!--base-->
         <androidx.constraintlayout.widget.ConstraintLayout
