@@ -5,6 +5,19 @@ This is a reboot of https://github.com/Valkriaine/Factor_Launcher
 All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=qMug_RbzzCg
+
+# Version 0.4.75
+Added a blur effect toggle. More customization options incoming
+
+better context references
+
+resolved a memory leak when reloading home fragment on Android 8 and below
+
+(Widget hosting is delayed. The settings screen is currently being worked on first.)
+
+# Version 0.4.73
+Migrated ChipsLayoutManager to Androidx
+
 # Version 0.4.71
 
 Fixed a memory leak when changing system wallpaper
