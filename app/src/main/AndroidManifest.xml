@@ -21,8 +21,20 @@
 
         <activity
                 android:name=".activities.SettingsActivity"
+                android:icon="@drawable/icon_menu_black"
+                android:documentLaunchMode="intoExisting"
                 android:theme="@style/SettingsTheme">
         </activity>
+
+        <activity
+                android:name=".activities.EmptyHome"  android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
 
         <activity
                 android:name=".activities.WelcomeActivity"

@@ -20,7 +20,7 @@
     </style>
 
 
-    <style name="WelcomeTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="WelcomeTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowActivityTransitions">true</item>
         <item name="colorPrimary">#0E7ED6</item>
     </style>
@@ -28,10 +28,14 @@
 
     <style name="SettingsTheme" parent="Theme.MaterialComponents">
         <item name="android:windowActivityTransitions">true</item>
-        <item name="colorPrimary">#0E7ED6</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorAccent">#0E7ED6</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="colorPrimary">#0E7ED6</item>
     </style>
+
+
+
 </resources>

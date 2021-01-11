@@ -414,14 +414,17 @@ public class FactorManager
                 if (binding instanceof FactorSmallBinding)
                 {
                     ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
+                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
                 if (binding instanceof FactorMediumBinding)
                 {
                     ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
+                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
                 if (binding instanceof FactorLargeBinding)
                 {
                     ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
+                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
             }
 
@@ -434,7 +437,6 @@ public class FactorManager
                     ((FactorSmallBinding) binding).tileIcon.setElevation(0);
 
                 ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
             }
 
             if (binding instanceof FactorMediumBinding)
@@ -445,8 +447,6 @@ public class FactorManager
                     ((FactorMediumBinding) binding).tileIcon.setElevation(0);
 
                 ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
-
             }
 
             if (binding instanceof FactorLargeBinding)
@@ -468,7 +468,6 @@ public class FactorManager
                 }
 
                 ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
             }
 
             //create context menu

@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.factor.launcher.R;
+import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
 import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
@@ -112,7 +113,13 @@ public class SettingsFragment extends Fragment
                                 .setTheme(R.style.DialogTheme)
                                 .build()));
         binding.defaultLauncherButton.setOnClickListener(v -> {
-            //todo: request default launcher
+            PackageManager p = getContext().getPackageManager();
+            ComponentName cN = new ComponentName(getContext(), EmptyHome.class);
+            p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            Intent selector = new Intent(Intent.ACTION_MAIN);
+            selector.addCategory(Intent.CATEGORY_HOME);
+            startActivity(selector);
+            p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         });
 
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(settings.isDarkIcon()?Color.BLACK:Color.WHITE);
@@ -217,6 +224,7 @@ public class SettingsFragment extends Fragment
         }
     }
 
+    //check if settings are changed
     private boolean areSettingsChanged()
     {
         return binding.blurToggle.isChecked() != settings.isBlurred() ||
@@ -246,7 +254,6 @@ public class SettingsFragment extends Fragment
         }
         return false;
     }
-
 
     //return dialog to request for notification access
     private void buildNotificationServiceAlertDialog()

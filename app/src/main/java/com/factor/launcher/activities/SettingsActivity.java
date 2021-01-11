@@ -30,9 +30,10 @@ public class SettingsActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Options");
 
 
+        getSupportFragmentManager().popBackStack();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.settings_fragment_container, new SettingsFragment())
+                .replace(R.id.settings_fragment_container, SettingsFragment.class, null)
                 .commit();
 
 
@@ -47,6 +48,12 @@ public class SettingsActivity extends AppCompatActivity
         if (receiver != null) unregisterReceiver(receiver);
     }
 
+    //handle library memory leak
+    @Override
+    public void onBackPressed()
+    {
+        finishAfterTransition();
+    }
 
     //handle home button press
     private static class HomeButtonPressReceiver extends BroadcastReceiver
