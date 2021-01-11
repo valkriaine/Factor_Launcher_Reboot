@@ -196,7 +196,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
                         .setRationale("Factor launcher needs to access your external storage")
                         .setPositiveButtonText("Okay")
                         .setNegativeButtonText("Cancel")
-                        .setTheme(R.style.Theme_AppCompat_Dialog_Alert)
+                        .setTheme(R.style.DialogTheme)
                         .build());
 
 
@@ -251,14 +251,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Factor Notification Service");
         alertDialogBuilder.setMessage("Please allow Factor Launcher to access your notifications");
-        alertDialogBuilder.setPositiveButton("Ok",
-                (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
-        alertDialogBuilder.setNegativeButton("Cancel",
-                (dialog, id) ->
-                {
-                    // If you choose to not enable the notification listener
-                    // the app. will not work as expected
-                });
+        alertDialogBuilder.setPositiveButton("Ok", (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
         return(alertDialogBuilder.create());
     }
 
