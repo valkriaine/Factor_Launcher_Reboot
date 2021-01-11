@@ -30,6 +30,9 @@ class AppSettings
     @ColumnInfo(name = "isDarkText")
     var isDarkText = true
 
+    @ColumnInfo(name = "isDarkIcon")
+    var isDarkIcon = false
+
     @ColumnInfo(name = "icon_shadow")
     var showShadowAroundIcon = true
 

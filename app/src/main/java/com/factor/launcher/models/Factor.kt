@@ -42,6 +42,11 @@ class Factor
         else View.GONE
     }
 
+    fun resetNotifications()
+    {
+        this.userApp.currentNotifications.clear()
+    }
+
     fun setShortcuts(shortcuts : List<ShortcutInfo>)
     {
         this.userApp.shortCuts = shortcuts

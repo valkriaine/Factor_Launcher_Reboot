@@ -33,6 +33,8 @@
                     <androidx.appcompat.widget.SearchView
                             android:id="@+id/search_view"
                             android:layout_width="match_parent"
+                            app:searchIcon="@null"
+                            app:queryHint="@string/search"
                             android:background="@android:color/transparent"
                             app:queryBackground="@android:color/transparent"
                             android:layout_height="match_parent"

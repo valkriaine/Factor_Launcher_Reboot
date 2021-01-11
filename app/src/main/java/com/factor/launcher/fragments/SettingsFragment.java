@@ -52,7 +52,7 @@ public class SettingsFragment extends Fragment
     }
 
 
-    //todo: add more ui components
+    //initialize ui components
     private void initializeComponents()
     {
         if (getContext() == null)
@@ -69,9 +69,30 @@ public class SettingsFragment extends Fragment
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(true);
 
+        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
+        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.blurToggle.setChecked(settings.isBlurred());
         binding.blurToggle.setOnClickListener(v -> setUpDemoTile());
+
+        binding.darkTextToggle.setChecked(settings.isDarkText());
+        binding.darkTextToggle.setOnClickListener(v -> setUpDemoTile());
+
+        binding.iconShadowToggle.setChecked(settings.getShowShadowAroundIcon());
+        binding.iconShadowToggle.setOnClickListener(v -> setUpDemoTile());
+
+        binding.darkIconToggle.setChecked(settings.isDarkIcon());
+        binding.darkIconToggle.setOnClickListener(v -> setUpDemoTile());
+
+        binding.blurRadiusSlider.setValue(settings.getBlurRadius());
+        binding.cornerRadiusSlider.setValue(settings.getCornerRadius());
+
+        binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
+        binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
+
+
+        //todo: add color pickers
+        //todo: add advanced options
 
         setUpDemoTile();
     }
@@ -82,25 +103,55 @@ public class SettingsFragment extends Fragment
         if (getContext() == null)
             return;
 
-        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
-        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.demoBlur.setBlurRadius(binding.blurRadiusSlider.getValue());
 
-        if (binding.blurToggle.isChecked())
-            binding.demoBlur.setVisibility(View.VISIBLE);
-        else
-            binding.demoBlur.setVisibility(View.INVISIBLE);
+
+        binding.demoBlur.setVisibility(binding.blurToggle.isChecked()?View.VISIBLE:View.INVISIBLE);
+        binding.blurRadiusSlider.setEnabled(binding.blurToggle.isChecked());
+        binding.blurRadiusSlider.setAlpha(binding.blurToggle.isChecked()?1:0.5f);
+
+
+        binding.tileLabel.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
+        binding.notificationTitle.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
+        binding.notificationContent.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
+
+        binding.tileIcon.setElevation(binding.iconShadowToggle.isChecked()?Util.INSTANCE.dpToPx(50, getContext()):0);
     }
 
     //detect, save, and notify changes in app settings
     private void updateSettings()
     {
-        if (binding.blurToggle.isChecked() != settings.isBlurred())
+        if (areSettingsChanged())
         {
+            //save settings
+
+            //toggles
             AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurred(binding.blurToggle.isChecked());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setDarkIcon(binding.darkIconToggle.isChecked());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setDarkText(binding.darkTextToggle.isChecked());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setShowShadowAroundIcon(binding.iconShadowToggle.isChecked());
+
+            //sliders
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurRadius((int) binding.blurRadiusSlider.getValue());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setCornerRadius((int) binding.cornerRadiusSlider.getValue());
+
+            //todo: save color pickers
+
             AppSettingsManager.getInstance(getContext()).updateSettings();
             Intent intent = new Intent();
             intent.setAction(Constants.SETTINGS_CHANGED);
             requireContext().sendBroadcast(intent);
         }
+    }
+
+    private boolean areSettingsChanged()
+    {
+        return binding.blurToggle.isChecked() != settings.isBlurred() ||
+                binding.darkTextToggle.isChecked() != settings.isDarkText() ||
+                binding.darkIconToggle.isChecked() != settings.isDarkIcon() ||
+                binding.cornerRadiusSlider.getValue() != settings.getCornerRadius() ||
+                binding.blurRadiusSlider.getValue() != settings.getBlurRadius() ||
+                binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon();
     }
 }

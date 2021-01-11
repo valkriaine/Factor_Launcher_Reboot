@@ -125,6 +125,12 @@ class UserApp
         return false
     }
 
+    //clear notifications
+    fun resetNotifications()
+    {
+        this.currentNotifications.clear()
+    }
+
     //for data binding, only return VISIBLE if the app is being edited
     fun visibilityEditing() : Int
     {

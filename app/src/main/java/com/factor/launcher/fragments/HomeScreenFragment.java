@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
@@ -293,6 +294,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //search bar
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
+        binding.searchBase.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
+        if (appSettings.isDarkIcon())
+        {
+            ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(Color.BLACK);
+            ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(Color.DKGRAY);
+        }
+
         binding.searchView.setOnCloseListener(() -> {
             binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
             return false;
@@ -318,6 +326,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //menu button
         //***************************************************************************************************************************************************
+        binding.menuButton.setImageResource(appSettings.isDarkIcon()? R.drawable.icon_menu_black : R.drawable.icon_menu);
         binding.menuButton.setOnClickListener(view ->
         {
             boolean isDisplayingHidden = appListManager.isDisplayingHidden();
@@ -401,16 +410,17 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
         else //live wallpaper
         {
+            isLiveWallpaper = true;
             binding.blur.setVisibility(View.GONE);
-            binding.searchBase.setCardBackgroundColor(Color.BLACK);
+            binding.searchBase.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueSearchBarColor()));
             binding.searchBlur.setOverlayColor(Color.TRANSPARENT);
             binding.searchBlur.setBlurEnabled(false);
             binding.blur.setBlurEnabled(false);
-            isLiveWallpaper = true;
         }
     }
 
 
+    //setup all broadcast receivers and notify NotificationListener when all receivers are ready
     private void registerBroadcastReceivers(AppListManager appListManager, FragmentHomeScreenBinding binding)
     {
 

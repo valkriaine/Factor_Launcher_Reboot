@@ -150,6 +150,7 @@ public class AppListManager
                         if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                         {
                             UserApp app = appListDatabase.appListDao().findByPackage(r.activityInfo.packageName);
+                            app.resetNotifications();
                             //noinspection ConstantConditions
                             if (app == null) //package name does not exist in database
                             {
@@ -157,7 +158,7 @@ public class AppListManager
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
-
+                                app.resetNotifications();
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                     app.setShortCuts(getShortcutsFromApp(app));
 
@@ -234,6 +235,11 @@ public class AppListManager
                 }
             }).start();
         }
+    }
+
+    public int getAppCount()
+    {
+        return this.userApps.size();
     }
 
     //pin & unpin

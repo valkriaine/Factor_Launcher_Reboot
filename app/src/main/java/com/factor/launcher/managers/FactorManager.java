@@ -414,30 +414,61 @@ public class FactorManager
                 if (binding instanceof FactorSmallBinding)
                 {
                     ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorSmallBinding) binding).tileIcon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(50, parent.getContext()): 0);
-                    ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
-
-
                 if (binding instanceof FactorMediumBinding)
                 {
                     ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorMediumBinding) binding).tileIcon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(50, parent.getContext()): 0);
-                    ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
-
                 if (binding instanceof FactorLargeBinding)
                 {
                     ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorLargeBinding) binding).tileIcon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(50, parent.getContext()): 0);
-                    ((FactorLargeBinding) binding).shortcut1Icon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(10, parent.getContext()): 0);
-                    ((FactorLargeBinding) binding).shortcut2Icon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(10, parent.getContext()): 0);
-                    ((FactorLargeBinding) binding).shortcut3Icon.setElevation(appSettings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(10, parent.getContext()): 0);
-                    ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
+            }
+
+
+            if (binding instanceof FactorSmallBinding)
+            {
+                if (appSettings.getShowShadowAroundIcon())
+                    ((FactorSmallBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                else
+                    ((FactorSmallBinding) binding).tileIcon.setElevation(0);
+
+                ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+                ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
+            }
+
+            if (binding instanceof FactorMediumBinding)
+            {
+                if (appSettings.getShowShadowAroundIcon())
+                    ((FactorMediumBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                else
+                    ((FactorMediumBinding) binding).tileIcon.setElevation(0);
+
+                ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+                ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
+
+            }
+
+            if (binding instanceof FactorLargeBinding)
+            {
+                if (appSettings.getShowShadowAroundIcon())
+                {
+                    ((FactorLargeBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                    ((FactorLargeBinding) binding).shortcut1Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
+                    ((FactorLargeBinding) binding).shortcut2Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
+                    ((FactorLargeBinding) binding).shortcut3Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
+                }
+
+                else
+                {
+                    ((FactorLargeBinding) binding).tileIcon.setElevation(0);
+                    ((FactorLargeBinding) binding).shortcut1Card.setElevation(0);
+                    ((FactorLargeBinding) binding).shortcut2Card.setElevation(0);
+                    ((FactorLargeBinding) binding).shortcut3Card.setElevation(0);
+                }
+
+                ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+                ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
             }
 
             //create context menu
