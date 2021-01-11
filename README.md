@@ -6,6 +6,11 @@ All commits will be pushed to this repository instead. The last repo is obsolete
 
 A short video demo: https://www.youtube.com/watch?v=qMug_RbzzCg
 
+# Version 0.4.79
+Added more customization options
+
+The next release (0.4.8) will include color picker
+
 # Version 0.4.75
 Added a blur effect toggle. More customization options incoming
 
