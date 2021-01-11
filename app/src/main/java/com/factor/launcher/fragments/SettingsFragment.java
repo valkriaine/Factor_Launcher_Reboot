@@ -80,10 +80,7 @@ public class SettingsFragment extends Fragment
 
         settings = appSettingsManager.getAppSettings();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-        {
-            binding.scrollView.setEdgeEffectColor(R.color.colorPrimary);
-        }
+
         binding.demoBlur.setupWith(binding.demoBackground)
                 .setOverlayColor(Color.parseColor(settings.getTransparentTileColor()))
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
