@@ -1,10 +1,18 @@
 # Factor Launcher
 
-This is a reboot of https://github.com/Valkriaine/Factor_Launcher
+Factor Launcher is an upcoming Android Launcher inspired by the original Windows Phone 7 design, supporting Android 7.0 to 11.
 
-All commits will be pushed to this repository instead. The last repo is obsolete
+Newest apk: https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.79/debug-v0.4.79.apk
 
-A short video demo: https://www.youtube.com/watch?v=qMug_RbzzCg
+Development playlist: https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX
+
+Newest video demo: https://youtu.be/Pp7dxoL-XT8
+
+
+# Version 0.4.79
+Added more customization options
+
+The next release (0.4.8) will include color picker
 
 # Version 0.4.75
 Added a blur effect toggle. More customization options incoming
@@ -22,11 +30,11 @@ Migrated ChipsLayoutManager to Androidx
 
 Fixed a memory leak when changing system wallpaper
 
-# Version v0.4.7
+# Version 0.4.7
 
 Support Android 7.0
 
-# Version v0.4.6
+# Version 0.4.6
 
 Removed widget fragment. In an upcoming version, widgets will be implemented on the home screen.
 
@@ -34,28 +42,28 @@ Hide status bar on Android 11
 
 Navigation bar is now displayed on top of the launcher UI on Android 11.
 
-# Version v0.4.5
+# Version 0.4.5
 added animations on tiles/app touched
 
 retrieve currently displayed notifications at launcher start
 
 optimized app drawer scroll
 
-# Version v0.4.4
+# Version 0.4.4
 unregister broadcast receivers in fragments onDestroyView.
 
 better usage of memory
 
-# Version v0.4.3
+# Version 0.4.3
 test changed recyclerview cache size to increase performance
 
-# Version v0.4.2 
+# Version 0.4.2 
 added permission to query all packages due to Android 11's limitation on package visibility
 
-# Version V0.4.1
+# Version 0.4.1
 fixed an issue that causes the app to crash when loading tiles on the home screen
 
-# Version V0.4
+# Version 0.4
 What's implemented:
 1. basic functionality of the app drawer and home screen, app pinning and removing, and resizing tiles
 2. app searching
