@@ -6,7 +6,9 @@ Newest apk: https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/downlo
 
 All commits will be pushed to this repository instead. The last repo is obsolete
 
-A short video demo: https://www.youtube.com/watch?v=qMug_RbzzCg
+video demos: 
+
+https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX
 
 # Version 0.4.79
 Added more customization options
