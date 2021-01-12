@@ -222,7 +222,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--app settings-->
-        <com.factor.launcher.ui.BouncyScrollView
+        <com.factor.launcher.ui.BouncyNestedScrollView
                 android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -622,7 +622,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
 
-        </com.factor.launcher.ui.BouncyScrollView>
+        </com.factor.launcher.ui.BouncyNestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
