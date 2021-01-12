@@ -427,6 +427,24 @@ public class FactorManager
                     ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
                 }
             }
+            else
+            {
+                if (binding instanceof FactorSmallBinding)
+                {
+                    ((FactorSmallBinding) binding).trans.setVisibility(View.VISIBLE);
+                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
+                }
+                if (binding instanceof FactorMediumBinding)
+                {
+                    ((FactorMediumBinding) binding).trans.setVisibility(View.VISIBLE);
+                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
+                }
+                if (binding instanceof FactorLargeBinding)
+                {
+                    ((FactorLargeBinding) binding).trans.setVisibility(View.VISIBLE);
+                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
+                }
+            }
 
 
             if (binding instanceof FactorSmallBinding)
