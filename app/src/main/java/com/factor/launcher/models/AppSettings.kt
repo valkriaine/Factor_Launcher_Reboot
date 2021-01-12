@@ -35,24 +35,4 @@ class AppSettings
 
     @ColumnInfo(name = "icon_shadow")
     var showShadowAroundIcon = true
-
-    fun getTransparentTileColor() : String
-    {
-        return "#99$tileThemeColor"
-    }
-
-    fun getOpaqueTileColor() : String
-    {
-        return "#$tileThemeColor"
-    }
-
-    fun getTransparentSearchBarColor() : String
-    {
-        return "#4D$searchBarColor"
-    }
-
-    fun getOpaqueSearchBarColor() : String
-    {
-        return "#$searchBarColor"
-    }
 }

@@ -414,17 +414,17 @@ public class FactorManager
                 if (binding instanceof FactorSmallBinding)
                 {
                     ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
+                    ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
                 }
                 if (binding instanceof FactorMediumBinding)
                 {
                     ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
+                    ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
                 }
                 if (binding instanceof FactorLargeBinding)
                 {
                     ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
-                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueTileColor()));
+                    ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
                 }
             }
             else
@@ -706,7 +706,7 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorSmallBinding) binding).trans
                             .setupWith(background)
-                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
                             .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
@@ -753,7 +753,7 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorMediumBinding) binding).trans
                             .setupWith(background)
-                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
                             .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)
@@ -864,7 +864,7 @@ public class FactorManager
                     if (!isLiveWallpaper)
                         ((FactorLargeBinding)binding).trans
                             .setupWith(background)
-                            .setOverlayColor(Color.parseColor(appSettings.getTransparentTileColor()))
+                            .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
                             .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
                             .setBlurRadius(appSettings.getBlurRadius())
                             .setBlurAutoUpdate(false)

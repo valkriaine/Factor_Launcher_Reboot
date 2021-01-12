@@ -22,7 +22,6 @@
         <activity
                 android:name=".activities.SettingsActivity"
                 android:icon="@drawable/icon_menu_black"
-                android:documentLaunchMode="intoExisting"
                 android:theme="@style/SettingsTheme">
         </activity>
 

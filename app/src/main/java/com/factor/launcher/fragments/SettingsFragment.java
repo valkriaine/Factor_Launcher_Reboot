@@ -7,8 +7,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,28 +87,69 @@ public class SettingsFragment extends Fragment
 
         settings = appSettingsManager.getAppSettings();
 
+        tileColor = settings.getTileThemeColor();
+        searchColor = settings.getSearchBarColor();
+
         binding.demoBlur.setupWith(binding.demoBackground)
-                .setOverlayColor(Color.parseColor(settings.getTransparentTileColor()))
+                .setOverlayColor(Color.parseColor("#" + tileColor))
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(settings.getBlurRadius())
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(true);
 
         binding.searchBlur.setupWith(binding.demoBackground)
-                .setOverlayColor(Color.parseColor(settings.getTransparentSearchBarColor()))
+                .setOverlayColor(Color.parseColor("#" + searchColor))
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(25f)
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(false)
                 .setBlurEnabled(true);
 
-        tileColor = settings.getTileThemeColor();
-        searchColor = settings.getSearchBarColor();
-
         binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
         binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
 
-        binding.searchBase.setCardBackgroundColor(Color.parseColor(settings.getOpaqueSearchBarColor()));
+        binding.searchBarColorValue.setText(searchColor);
+        binding.tileColorValue.setText(tileColor);
+        binding.searchBarColorValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                searchColor = s.toString();
+                try {
+                    binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
+                    binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
+                    binding.searchBlur.setOverlayColor(Color.parseColor("#" + searchColor));
+                }catch (Exception ignored){}
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        binding.tileColorValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tileColor = s.toString();
+                try {
+                    binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
+                    binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
+                    binding.demoBlur.setOverlayColor(Color.parseColor("#" + tileColor));
+                }
+                catch (Exception ignored) {}
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
         binding.searchBase.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? "Granted" : "Request");
@@ -136,7 +178,7 @@ public class SettingsFragment extends Fragment
 
         binding.menuButton.setImageResource(settings.isDarkIcon()? R.drawable.icon_menu_black : R.drawable.icon_menu);
 
-        binding.demoCard.setCardBackgroundColor(Color.parseColor(settings.getOpaqueTileColor()));
+        binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
         binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.rootCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
@@ -294,22 +336,25 @@ public class SettingsFragment extends Fragment
                         (ColorEnvelopeListener) (envelope, fromUser) -> {
                             if (title.equals("Tile color"))
                             {
-                                tileColor = envelope.getHexCode().substring(2);
+                                tileColor = envelope.getHexCode();
                                 binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
                                 binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
-                                Log.d("color", envelope.getHexCode());
-                                binding.demoBlur.setOverlayColor(Color.parseColor("#99" + tileColor));
+                                binding.demoBlur.setOverlayColor(Color.parseColor("#" + tileColor));
+
+                                binding.tileColorValue.setText(tileColor);
                             }
                             else if (title.equals("Search bar color"))
                             {
-                                searchColor = envelope.getHexCode().substring(2);
+                                searchColor = envelope.getHexCode();
                                 binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
                                 binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
-                                binding.searchBlur.setOverlayColor(Color.parseColor("#4D" + searchColor));
+                                binding.searchBlur.setOverlayColor(Color.parseColor("#" + searchColor));
+
+                                binding.searchBarColorValue.setText(searchColor);
                             }
                         })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
-                .attachAlphaSlideBar(false)
+                .attachAlphaSlideBar(true)
                 .attachBrightnessSlideBar(true)  // the default value is true.
                 .setBottomSpace(12);
 

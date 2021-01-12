@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -42,6 +42,7 @@
             <androidx.cardview.widget.CardView
                     android:id="@+id/search_base"
                     android:translationZ="10dp"
+                    app:cardElevation="50dp"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="10dp"
@@ -377,16 +378,16 @@
                                     android:valueFrom="1"
                                     android:valueTo="20"
                                     android:stepSize="1"
-                                    android:layout_marginHorizontal="20dp"
+                                    android:hapticFeedbackEnabled="true"
+                                    android:layout_marginHorizontal="10dp"
                                     app:haloColor="@android:color/transparent"
                                     app:thumbColor="@color/colorAccent"
+                                    app:tickColorActive="@color/colorAccent"
+                                    app:tickColorInactive="@color/colorPrimary"
                                     app:trackColorActive="@color/colorAccent"
                                     app:trackColorInactive="@color/colorPrimary"
-                                    android:outlineSpotShadowColor="@color/colorHalo"
-                                    android:outlineAmbientShadowColor="@color/colorHalo"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    tools:targetApi="p"/>
+                                    android:layout_height="wrap_content"/>
 
                             <androidx.appcompat.widget.AppCompatTextView
                                     android:text="@string/tile_corner_radius"
@@ -402,22 +403,21 @@
                                     android:valueFrom="0"
                                     android:valueTo="20"
                                     android:stepSize="1"
-                                    android:layout_marginHorizontal="20dp"
+                                    android:hapticFeedbackEnabled="true"
+                                    android:layout_marginHorizontal="10dp"
                                     app:haloColor="@android:color/transparent"
                                     app:thumbColor="@color/colorAccent"
+                                    app:tickColorActive="@color/colorAccent"
+                                    app:tickColorInactive="@color/colorPrimary"
                                     app:trackColorActive="@color/colorAccent"
                                     app:trackColorInactive="@color/colorPrimary"
-                                    android:outlineSpotShadowColor="@color/colorHalo"
-                                    android:outlineAmbientShadowColor="@color/colorHalo"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    tools:targetApi="p"/>
+                                    android:layout_height="wrap_content"/>
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.cardview.widget.CardView>
 
                     <!--color pickers section-->
-                    <!--todo: add color pickers-->
                     <androidx.cardview.widget.CardView
                             android:id="@+id/color_picker_card"
                             android:layout_width="match_parent"
@@ -431,13 +431,12 @@
                                 android:layout_marginVertical="10dp"
                                 android:orientation="vertical">
 
-
                             <!--tile color-->
                             <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_marginHorizontal="20dp"
+                                    android:layout_marginTop="10dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
-
                                 <FrameLayout
                                         android:id="@+id/tile_color_icon"
                                         app:layout_constraintTop_toTopOf="parent"
@@ -445,7 +444,6 @@
                                         app:layout_constraintStart_toStartOf="parent"
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"/>
-
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:text="@string/tile_color"
                                         android:layout_width="wrap_content"
@@ -454,24 +452,40 @@
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintStart_toEndOf="@id/tile_color_icon"/>
-                                <com.google.android.material.button.MaterialButton
-                                        android:id="@+id/tile_color_picker_button"
-                                        android:text="@string/choose"
-                                        android:backgroundTint="@color/colorPrimary"
+                                <androidx.appcompat.widget.AppCompatEditText
+                                        android:id="@+id/tile_color_value"
+                                        android:hint="@string/color_value_hint"
+                                        android:textSize="13sp"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintEnd_toEndOf="parent"/>
                             </androidx.constraintlayout.widget.ConstraintLayout>
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_marginBottom="10dp"
+                                    android:layout_height="wrap_content">
+                                <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/tile_color_picker_button"
+                                        android:text="@string/choose"
+                                        android:backgroundTint="@color/colorAccent"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"/>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
                             <!--Search bar color-->
                             <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_marginHorizontal="20dp"
+                                    android:layout_marginTop="10dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
-
                                 <FrameLayout
                                         android:id="@+id/search_bar_color_icon"
                                         app:layout_constraintTop_toTopOf="parent"
@@ -479,7 +493,6 @@
                                         app:layout_constraintStart_toStartOf="parent"
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"/>
-
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:text="@string/search_bar_color"
                                         android:layout_width="wrap_content"
@@ -488,17 +501,30 @@
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintStart_toEndOf="@id/search_bar_color_icon"/>
-                                <com.google.android.material.button.MaterialButton
-                                        android:id="@+id/search_bar_color_picker_button"
-                                        android:text="@string/choose"
-                                        android:backgroundTint="@color/colorPrimary"
+                                <androidx.appcompat.widget.AppCompatEditText
+                                        android:id="@+id/search_bar_color_value"
+                                        android:hint="@string/color_value_hint"
+                                        android:textSize="13sp"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintEnd_toEndOf="parent"/>
                             </androidx.constraintlayout.widget.ConstraintLayout>
-
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/search_bar_color_picker_button"
+                                        android:text="@string/choose"
+                                        android:backgroundTint="@color/colorAccent"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"/>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                         </androidx.appcompat.widget.LinearLayoutCompat>

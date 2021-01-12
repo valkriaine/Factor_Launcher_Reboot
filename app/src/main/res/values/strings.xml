@@ -48,8 +48,9 @@
     <string name="notification_access">Notification access</string>
     <string name="request">Request</string>
     <string name="default_launcher">Set as default launcher</string>
-    <string name="tile_color">Tile color</string>
-    <string name="choose">Choose</string>
-    <string name="search_bar_color">Search bar color</string>
+    <string name="tile_color">Tile color value</string>
+    <string name="choose">Palette</string>
+    <string name="search_bar_color">Search bar color value</string>
+    <string name="color_value_hint">FFFFFF</string>
 
 </resources>

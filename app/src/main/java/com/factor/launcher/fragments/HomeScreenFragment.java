@@ -378,7 +378,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getContext() == null)
             return;
 
-        binding.searchBase.setCardBackgroundColor(Color.parseColor(appSettings.getOpaqueSearchBarColor()));
+        binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
 
         //static wallpaper
         if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
@@ -399,7 +399,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setBlurEnabled(true);
 
             binding.searchBlur.setupWith(binding.rootContent)
-                    .setOverlayColor(Color.parseColor(appSettings.getTransparentSearchBarColor()))
+                    .setOverlayColor(Color.parseColor("#" + appSettings.getSearchBarColor()))
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(25f)
