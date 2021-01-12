@@ -5,24 +5,27 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
 import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.ui.CustomFlag;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Util;
+import com.skydoves.colorpickerview.ColorPickerDialog;
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
@@ -39,6 +42,9 @@ public class SettingsFragment extends Fragment
     private FragmentSettingsBinding binding;
 
     private AppSettings settings;
+
+    private String tileColor = "";
+    private String searchColor = "";
 
     public SettingsFragment()
     {
@@ -80,7 +86,6 @@ public class SettingsFragment extends Fragment
 
         settings = appSettingsManager.getAppSettings();
 
-
         binding.demoBlur.setupWith(binding.demoBackground)
                 .setOverlayColor(Color.parseColor(settings.getTransparentTileColor()))
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
@@ -95,6 +100,12 @@ public class SettingsFragment extends Fragment
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(false)
                 .setBlurEnabled(true);
+
+        tileColor = settings.getTileThemeColor();
+        searchColor = settings.getSearchBarColor();
+
+        binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
+        binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
 
         binding.searchBase.setCardBackgroundColor(Color.parseColor(settings.getOpaqueSearchBarColor()));
         binding.searchBase.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
@@ -153,9 +164,8 @@ public class SettingsFragment extends Fragment
         binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
         binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
 
-
-        //todo: add color pickers
-        //todo: add advanced options
+        binding.tileColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Tile color"));
+        binding.searchBarColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Search bar color"));
 
         setUpDemoTile();
     }
@@ -212,7 +222,9 @@ public class SettingsFragment extends Fragment
             AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurRadius((int) binding.blurRadiusSlider.getValue());
             AppSettingsManager.getInstance(getContext()).getAppSettings().setCornerRadius((int) binding.cornerRadiusSlider.getValue());
 
-            //todo: save color pickers
+            //colors
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileThemeColor(tileColor);
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setSearchBarColor(searchColor);
 
             AppSettingsManager.getInstance(getContext()).updateSettings();
             Intent intent = new Intent();
@@ -229,6 +241,8 @@ public class SettingsFragment extends Fragment
                 binding.darkIconToggle.isChecked() != settings.isDarkIcon() ||
                 binding.cornerRadiusSlider.getValue() != settings.getCornerRadius() ||
                 binding.blurRadiusSlider.getValue() != settings.getBlurRadius() ||
+                !tileColor.equals(settings.getTileThemeColor()) ||
+                !searchColor.equals(settings.getSearchBarColor()) ||
                 binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon();
     }
 
@@ -269,6 +283,42 @@ public class SettingsFragment extends Fragment
         alertDialogBuilder.setMessage("Please allow Factor Launcher to access your notifications");
         alertDialogBuilder.setPositiveButton("Ok", (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
         alertDialogBuilder.create().show();
+    }
+
+
+    private void showColorPickerDialog(String title)
+    {
+        ColorPickerDialog.Builder builder = new ColorPickerDialog.Builder(getContext())
+                .setTitle(title)
+                .setPositiveButton("Confirm",
+                        (ColorEnvelopeListener) (envelope, fromUser) -> {
+                            if (title.equals("Tile color"))
+                            {
+                                tileColor = envelope.getHexCode().substring(2);
+                                binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
+                                binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
+                                Log.d("color", envelope.getHexCode());
+                                binding.demoBlur.setOverlayColor(Color.parseColor("#99" + tileColor));
+                            }
+                            else if (title.equals("Search bar color"))
+                            {
+                                searchColor = envelope.getHexCode().substring(2);
+                                binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
+                                binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
+                                binding.searchBlur.setOverlayColor(Color.parseColor("#4D" + searchColor));
+                            }
+                        })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
+                .attachAlphaSlideBar(false)
+                .attachBrightnessSlideBar(true)  // the default value is true.
+                .setBottomSpace(12);
+
+        builder.getColorPickerView().setFlagView(new CustomFlag(getContext(), R.layout.layout_color_picker_flag));
+        if (title.equals("Tile color"))
+            builder.getColorPickerView().setInitialColor(Color.parseColor("#" + tileColor));
+        else if (title.equals("Search bar color"))
+            builder.getColorPickerView().setInitialColor(Color.parseColor("#" + searchColor));
+        builder.show();
     }
 
     @Override

@@ -90,6 +90,9 @@ dependencies {
     //ChipsLayoutManager
     implementation project(path: ':chipslayoutmanager')
 
+    //Color picker
+    implementation "com.github.skydoves:colorpickerview:2.2.2"
+
     //blur
     implementation 'com.eightbitlab:blurview:1.6.5'
 
