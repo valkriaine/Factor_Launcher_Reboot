@@ -9,6 +9,7 @@ Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/r
 [Newest video demo](https://youtu.be/Pp7dxoL-XT8)
 
 
+
 Check out my other projects:
 
 [Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
@@ -22,4 +23,6 @@ Finished the app settings screen, including the options to change tile colours
 
 Added haptic feedback to buttons and sliders in the settings screen
 
-support Android 5.0 (need to test)
+Support Android 5.0 (need to test)
+
+Gesture open notification panel will be implemented in the next build
