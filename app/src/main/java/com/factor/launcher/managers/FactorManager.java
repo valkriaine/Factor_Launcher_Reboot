@@ -313,6 +313,15 @@ public class FactorManager
         }
     }
 
+
+    //update UI given the app
+    public void updateUI(UserApp app)
+    {
+        Factor factor = getFactorByPackage(app.getPackageName());
+        if (!factor.getPackageName().isEmpty())
+            adapter.notifyItemChanged(userFactors.indexOf(factor));
+    }
+
     public void invalidate()
     {
         this.packageManager = null;

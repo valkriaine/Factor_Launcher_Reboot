@@ -236,11 +236,6 @@ public class AppListManager
         }
     }
 
-    public int getAppCount()
-    {
-        return this.userApps.size();
-    }
-
     //pin & unpin
     private boolean changePin(UserApp userApp)
     {
@@ -595,6 +590,23 @@ public class AppListManager
                 factorManager.onClearedNotification(intent, app, payload);
         }
     }
+
+
+    //clear all notifications
+    public void clearAllNotifications()
+    {
+        for (UserApp app : userApps)
+        {
+            app.resetNotifications();
+            if (app.getCurrentNotifications().size() > 0)
+                Log.d("clear_notification", app.getPackageName());
+            adapter.notifyItemChanged(userApps.indexOf(app));
+            if (app.isPinned())
+                factorManager.updateUI(app);
+        }
+    }
+
+
 
     //return the app at a given position (not the array position)
     public UserApp getUserApp(int position)

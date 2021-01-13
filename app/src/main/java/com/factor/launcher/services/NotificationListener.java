@@ -14,8 +14,6 @@ public class NotificationListener extends NotificationListenerService
 {
     private ComponentsSetupReceiver componentsSetupReceiver;
 
-    private StatusBarNotification[] currentNotifications = {};
-
     //register components setup receiver when notification listener is created
     @Override
     public void onCreate()
@@ -65,18 +63,10 @@ public class NotificationListener extends NotificationListenerService
     }
 
 
-    //get an array of active notifications when listener is connected
-    @Override
-    public void onListenerConnected()
-    {
-        super.onListenerConnected();
-        currentNotifications = getActiveNotifications();
-    }
-
-
-    //retrieve current notifications
+    //retrieve currently displayed notifications
     private void getCurrentNotifications()
     {
+        StatusBarNotification[] currentNotifications = getActiveNotifications();
         if (currentNotifications.length > 0)
             for (StatusBarNotification notification : currentNotifications)
                 onNotificationPosted(notification);
