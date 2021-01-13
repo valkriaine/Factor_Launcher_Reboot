@@ -83,9 +83,6 @@ What might change:
 2. search feature
 
 
-# My Other Projects:
-
-
 # My other projects
 
 [Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
