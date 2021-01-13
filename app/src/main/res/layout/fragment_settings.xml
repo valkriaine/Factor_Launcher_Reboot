@@ -270,6 +270,7 @@
                                         app:layout_constraintStart_toStartOf="parent"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/blur_toggle"
+                                        android:hapticFeedbackEnabled="true"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:theme="@style/SettingsTheme"
@@ -292,6 +293,7 @@
                                         app:layout_constraintStart_toStartOf="parent"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/dark_text_toggle"
+                                        android:hapticFeedbackEnabled="true"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:theme="@style/SettingsTheme"
@@ -314,6 +316,7 @@
                                         app:layout_constraintStart_toStartOf="parent"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/dark_icon_toggle"
+                                        android:hapticFeedbackEnabled="true"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:theme="@style/SettingsTheme"
@@ -336,6 +339,7 @@
                                         app:layout_constraintStart_toStartOf="parent"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/icon_shadow_toggle"
+                                        android:hapticFeedbackEnabled="true"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:theme="@style/SettingsTheme"

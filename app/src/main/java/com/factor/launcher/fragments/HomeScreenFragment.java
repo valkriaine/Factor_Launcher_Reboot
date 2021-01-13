@@ -269,10 +269,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.thumb.setupWithFastScroller(binding.scrollBar);
 
 
-
-
-
-
         //tile list
         //***************************************************************************************************************************************************
         ChipsLayoutManager chips = ChipsLayoutManager.newBuilder(getContext())

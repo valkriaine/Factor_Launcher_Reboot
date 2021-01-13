@@ -65,7 +65,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
 
     implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
     implementation 'pub.devrel:easypermissions:3.0.0'
@@ -83,7 +82,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //my library
-    implementation 'com.factor:bouncy:1.0'
+    implementation 'com.factor:bouncy:1.1'
 
     //other libraries
 

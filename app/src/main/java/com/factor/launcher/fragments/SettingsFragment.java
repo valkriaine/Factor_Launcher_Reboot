@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,10 +116,11 @@ public class SettingsFragment extends Fragment
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
                 searchColor = s.toString();
-                try {
+                try
+                {
                     binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
                     binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
                     binding.searchBlur.setOverlayColor(Color.parseColor("#" + searchColor));
@@ -134,9 +136,11 @@ public class SettingsFragment extends Fragment
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
                 tileColor = s.toString();
-                try {
+                try
+                {
                     binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
                     binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
                     binding.demoBlur.setOverlayColor(Color.parseColor("#" + tileColor));
@@ -155,14 +159,15 @@ public class SettingsFragment extends Fragment
         binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? "Granted" : "Request");
         binding.notificationAccessButton.setOnClickListener(v -> buildNotificationServiceAlertDialog());
         binding.storageAccessButton.setOnClickListener(v ->
-                EasyPermissions.requestPermissions(
-                        new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
+                EasyPermissions.requestPermissions
+                        (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
                                 .setRationale("Factor launcher needs to access your external storage")
                                 .setPositiveButtonText("Okay")
                                 .setNegativeButtonText("Cancel")
                                 .setTheme(R.style.DialogTheme)
                                 .build()));
-        binding.defaultLauncherButton.setOnClickListener(v -> {
+        binding.defaultLauncherButton.setOnClickListener(v ->
+        {
             PackageManager p = getContext().getPackageManager();
             ComponentName cN = new ComponentName(getContext(), EmptyHome.class);
             p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -189,22 +194,43 @@ public class SettingsFragment extends Fragment
         binding.advancedOptionsCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.blurToggle.setChecked(settings.isBlurred());
-        binding.blurToggle.setOnClickListener(v -> setUpDemoTile());
+        binding.blurToggle.setOnClickListener(v -> {
+            setUpDemoTile();
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        });
 
         binding.darkTextToggle.setChecked(settings.isDarkText());
-        binding.darkTextToggle.setOnClickListener(v -> setUpDemoTile());
+        binding.darkTextToggle.setOnClickListener(v -> {
+            setUpDemoTile();
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        });
 
         binding.iconShadowToggle.setChecked(settings.getShowShadowAroundIcon());
-        binding.iconShadowToggle.setOnClickListener(v -> setUpDemoTile());
+        binding.iconShadowToggle.setOnClickListener(v -> {
+            setUpDemoTile();
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        });
 
         binding.darkIconToggle.setChecked(settings.isDarkIcon());
-        binding.darkIconToggle.setOnClickListener(v -> setUpDemoTile());
+        binding.darkIconToggle.setOnClickListener(v -> {
+            setUpDemoTile();
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        });
 
         binding.blurRadiusSlider.setValue(settings.getBlurRadius());
         binding.cornerRadiusSlider.setValue(settings.getCornerRadius());
 
-        binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
-        binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) -> setUpDemoTile());
+        binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
+        {
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            setUpDemoTile();
+        });
+
+        binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
+        {
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            setUpDemoTile();
+        });
 
         binding.tileColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Tile color"));
         binding.searchBarColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Search bar color"));
@@ -311,20 +337,19 @@ public class SettingsFragment extends Fragment
     //return dialog to request for notification access
     private void buildNotificationServiceAlertDialog()
     {
-        if (getContext() == null)
-            return;
-
-        if (isNotificationServiceEnabled())
+        if (getContext() != null)
         {
-            startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
-            return;
+            if (isNotificationServiceEnabled())
+                startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            else
+            {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                alertDialogBuilder.setTitle("Factor Notification Service");
+                alertDialogBuilder.setMessage("Please allow Factor Launcher to access your notifications");
+                alertDialogBuilder.setPositiveButton("Ok", (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
+                alertDialogBuilder.create().show();
+            }
         }
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setTitle("Factor Notification Service");
-        alertDialogBuilder.setMessage("Please allow Factor Launcher to access your notifications");
-        alertDialogBuilder.setPositiveButton("Ok", (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
-        alertDialogBuilder.create().show();
     }
 
 
@@ -333,7 +358,8 @@ public class SettingsFragment extends Fragment
         ColorPickerDialog.Builder builder = new ColorPickerDialog.Builder(getContext())
                 .setTitle(title)
                 .setPositiveButton("Confirm",
-                        (ColorEnvelopeListener) (envelope, fromUser) -> {
+                        (ColorEnvelopeListener) (envelope, fromUser) ->
+                        {
                             if (title.equals("Tile color"))
                             {
                                 tileColor = envelope.getHexCode();
