@@ -2,11 +2,12 @@
 
 Factor Launcher is an upcoming Android Launcher inspired by the original Windows Phone 7 design, supporting Android 5.0 to 11.
 
-Newest apk: https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.79/debug-v0.4.79.apk
+[Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.79/debug-v0.4.79.apk)
 
-Development playlist: https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX
+[Development playlist](https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX)
 
-Newest video demo: https://youtu.be/Pp7dxoL-XT8
+[Newest video demo](https://youtu.be/Pp7dxoL-XT8)
+
 
 Check out my other projects:
 
