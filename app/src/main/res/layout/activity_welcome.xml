@@ -51,7 +51,7 @@
 
 
 
-        <com.valkriaine.factor.HomePager
+        <com.factor.launcher.ui.HomePager
                 android:id="@+id/welcome_home_pager"
                 android:translationZ="20dp"
                 android:layout_width="match_parent"
@@ -462,7 +462,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </com.valkriaine.factor.HomePager>
+        </com.factor.launcher.ui.HomePager>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     

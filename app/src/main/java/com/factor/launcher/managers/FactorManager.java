@@ -19,6 +19,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
+import com.factor.bouncy.BouncyRecyclerView;
 import com.factor.launcher.R;
 import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.databinding.FactorLargeBinding;
@@ -31,7 +32,6 @@ import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 import com.factor.launcher.util.Util;
-import com.valkriaine.factor.BouncyRecyclerView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 

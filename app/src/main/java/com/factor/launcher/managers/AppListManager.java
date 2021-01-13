@@ -38,10 +38,7 @@ import com.factor.launcher.util.WidgetActivityResultContract;
 
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.factor.launcher.util.Constants.*;
 
@@ -178,7 +175,8 @@ public class AppListManager
                                     }
                                     userApps.add(app);
                                     app.setPinned(factorManager.isAppPinned(app));
-                                    userApps.sort(first_letter);
+
+                                    Collections.sort(userApps, first_letter);
                                 }
                                 else
                                 {
@@ -221,7 +219,8 @@ public class AppListManager
                             userApps.add(app);
                         }
                     }
-                    userApps.sort(first_letter);
+                    Collections.sort(userApps, first_letter);
+
                     appListDatabase.appListDao().insertAll(userApps);
 
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
@@ -346,7 +345,7 @@ public class AppListManager
                     app.setLabelNew(app.getLabelOld());
                     appListDatabase.appListDao().insert(app);
                     userApps.add(app);
-                    userApps.sort(first_letter);
+                    Collections.sort(userApps, first_letter);
 
                     activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
                 }
@@ -395,7 +394,7 @@ public class AppListManager
                                 userApps.get(position).setShortCuts(getShortcutsFromApp(app));
 
                             appListDatabase.appListDao().updateAppInfo(appToUpdate);
-                            userApps.sort(first_letter);
+                            Collections.sort(userApps, first_letter);
                             int newPosition = userApps.indexOf(app);
                             activity.runOnUiThread(() ->
                             {

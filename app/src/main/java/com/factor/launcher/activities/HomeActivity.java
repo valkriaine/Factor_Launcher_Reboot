@@ -1,6 +1,7 @@
 package com.factor.launcher.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
@@ -30,6 +32,7 @@ public class HomeActivity extends AppCompatActivity
 
     private boolean isVisible = true;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -50,8 +53,11 @@ public class HomeActivity extends AppCompatActivity
 
         //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        {
             if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
+        }
+
 
 
         if (savedInstanceState == null)
