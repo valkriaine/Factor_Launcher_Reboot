@@ -8,9 +8,12 @@ Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/r
 
 [Development playlist](https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX)
 
-[Newest video demo](https://youtu.be/Pp7dxoL-XT8)
+[Newest video demo](https://youtu.be/q3KTT-URb1M)
+
+<p>&nbsp;</p>
 
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
+
 
 # Newest Version: 0.4.8-alpha
 
