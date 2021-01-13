@@ -4,7 +4,7 @@ Factor Launcher is an upcoming Android Launcher inspired by the original Windows
 
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
 
-Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.8-alpha/debug-v0.4.8.apk)
+Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.8-alpha/0.4.8-alpha.apk)
 
 [Development playlist](https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX)
 
