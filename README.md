@@ -8,10 +8,7 @@ Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/r
 
 [Newest video demo](https://youtu.be/Pp7dxoL-XT8)
 
-
-
-
-
+<img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 # Newest Version: 0.4.8-alpha
 
@@ -23,12 +20,8 @@ Support Android 5.0 (need to test)
 
 Gesture open notification panel will be implemented in the next build
 
+<p>&nbsp;</p>
 
-# Contact Me
-
-[Email Me](valkriaine@hotmail.com)
-
-[My YouTube Channel](https://www.youtube.com/channel/UC8deY7v1W_NH3I5_f9ZVscw)
 
 
 # My Other Projects
@@ -36,3 +29,9 @@ Gesture open notification panel will be implemented in the next build
 [Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
 
 [Mutify](https://github.com/Valkriaine/Mutify) - Automatically turn on do-not-disturb based on where you are
+
+# Contact Me
+
+[Email Me](mailto:valkriaine@hotmail.com)
+
+[My YouTube Channel](https://www.youtube.com/channel/UC8deY7v1W_NH3I5_f9ZVscw)
