@@ -1,6 +1,7 @@
 package com.factor.launcher.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
@@ -165,6 +167,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
     //initialize views and listeners
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeComponents()
     {
         //initialize resources
@@ -282,6 +285,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 .build());
 
 
+        binding.tilesList.addOnOverPulledListener(new OnOverPullListener() {
+            @Override
+            public void onOverPulledTop(float v)
+            {
+                if (getContext()!= null && v >= 0.04)
+                    Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
+            }
+
+            @Override
+            public void onOverPulledBottom(float v) {}
+
+            @Override
+            public void onRelease() {}
+        });
+
 
         //search bar
         //***************************************************************************************************************************************************
@@ -299,7 +317,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
         {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(String query)
+            {
                 return false;
             }
 
