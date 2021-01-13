@@ -3,6 +3,7 @@ package com.factor.launcher.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.Gravity
 import android.widget.EdgeEffect
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.factor.bouncy.util.DragDropAdapter
 import com.factor.bouncy.util.DragDropCallBack
 import com.factor.bouncy.util.OnOverPullListener
+import com.factor.chips.chipslayoutmanager.ChipsLayoutManager
 
 class TilesRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs)
 {
@@ -22,13 +24,7 @@ class TilesRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(c
 
     var flingAnimationSize = 0.5f
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    var longPressDragEnabled = false
-        set(value)
-        {
-            field = value
-            if (adapter is DragDropAdapter) callBack.setDragEnabled(value)
-        }
+    private var longPressDragEnabled = true
 
     @Suppress("MemberVisibilityCanBePrivate")
     var itemSwipeEnabled = false
@@ -62,6 +58,14 @@ class TilesRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(c
     init {
 
         val rc = this
+
+        this.layoutManager = ChipsLayoutManager.newBuilder(context)
+            .setOrientation(ChipsLayoutManager.HORIZONTAL)
+            .setChildGravity(Gravity.CENTER)
+            .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+            .setMaxViewsInRow(2)
+            .setScrollingEnabled(true)
+            .build()
 
         //create edge effect
         this.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory()
