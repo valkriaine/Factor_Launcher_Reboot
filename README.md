@@ -26,7 +26,7 @@ Gesture open notification panel will be implemented in the next build
 
 # My Other Projects
 
-[Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
+[Bouncy](https://github.com/Valkriaine/bouncy#bouncy) - Add IOS-like overscroll animation to your scrolling views.
 
 [Mutify](https://github.com/Valkriaine/Mutify) - Automatically turn on do-not-disturb based on where you are
 
