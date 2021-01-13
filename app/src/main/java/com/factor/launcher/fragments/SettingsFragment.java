@@ -111,7 +111,8 @@ public class SettingsFragment extends Fragment
 
         binding.searchBarColorValue.setText(searchColor);
         binding.tileColorValue.setText(tileColor);
-        binding.searchBarColorValue.addTextChangedListener(new TextWatcher() {
+        binding.searchBarColorValue.addTextChangedListener(new TextWatcher()
+        {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -194,25 +195,29 @@ public class SettingsFragment extends Fragment
         binding.advancedOptionsCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.blurToggle.setChecked(settings.isBlurred());
-        binding.blurToggle.setOnClickListener(v -> {
+        binding.blurToggle.setOnClickListener(v ->
+        {
             setUpDemoTile();
             v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.darkTextToggle.setChecked(settings.isDarkText());
-        binding.darkTextToggle.setOnClickListener(v -> {
+        binding.darkTextToggle.setOnClickListener(v ->
+        {
             setUpDemoTile();
             v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.iconShadowToggle.setChecked(settings.getShowShadowAroundIcon());
-        binding.iconShadowToggle.setOnClickListener(v -> {
+        binding.iconShadowToggle.setOnClickListener(v ->
+        {
             setUpDemoTile();
             v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.darkIconToggle.setChecked(settings.isDarkIcon());
-        binding.darkIconToggle.setOnClickListener(v -> {
+        binding.darkIconToggle.setOnClickListener(v ->
+        {
             setUpDemoTile();
             v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
