@@ -23,7 +23,9 @@ Added haptic feedback to buttons and sliders in the settings screen
 
 Support Android 5.0 (need to test)
 
-Gesture open notification panel will be implemented in the next build
+Swipe down from the home screen to open notification panel
+
+***currently the notification panel will not open if the home screen cannot be overscrolled (eg. having too few tiles)
 
 <p>&nbsp;</p>
 
