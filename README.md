@@ -8,6 +8,11 @@ Development playlist: https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIf
 
 Newest video demo: https://youtu.be/Pp7dxoL-XT8
 
+Check out my other projects:
+
+[Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
+
+[Mutify](https://github.com/Valkriaine/Mutify) - Automatically turn on do-not-disturb based on where you are
 
 # Version 0.4.79
 Added more customization options
@@ -81,11 +86,4 @@ What's missing:
 What might change:
 1. tiles design
 2. search feature
-
-
-# My other projects
-
-[Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
-
-[Mutify](https://github.com/Valkriaine/Mutify) - Automatically turn on do-not-disturb based on where you are
 
