@@ -274,7 +274,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         binding.tilesList.setItemViewCacheSize(20);
-
+        binding.tilesList
+                .setLayoutManager(ChipsLayoutManager.newBuilder(getContext())
+                .setOrientation(ChipsLayoutManager.HORIZONTAL)
+                .setChildGravity(Gravity.CENTER)
+                .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                .setMaxViewsInRow(2)
+                .setScrollingEnabled(true)
+                .build());
 
 
 

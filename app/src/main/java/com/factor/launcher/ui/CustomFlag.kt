@@ -17,7 +17,7 @@ class CustomFlag(context: Context?, layout: Int) : FlagView(context, layout)
 
     override fun onRefresh(colorEnvelope: ColorEnvelope)
     {
-        textView.text = "#$colorEnvelope.hexCode"
+        textView.text = "#" + colorEnvelope.hexCode
         alphaTileView.setPaintColor(colorEnvelope.color)
     }
 
