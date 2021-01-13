@@ -89,5 +89,6 @@ What might change:
 # My other projects
 
 [Bouncy](https://github.com/Valkriaine/bouncy) - Add IOS-like overscroll animation to your scrolling views.
+
 [Mutify](https://github.com/Valkriaine/Mutify) - Automatically turn on do-not-disturb based on where you are
 
