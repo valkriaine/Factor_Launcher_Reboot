@@ -1,5 +1,6 @@
 package com.factor.launcher.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -7,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import java.io.ByteArrayOutputStream
+import java.lang.reflect.Method
 
 //util functions
 object Util
@@ -15,6 +17,27 @@ object Util
     fun dpToPx(value : Float, context: Context) : Float
     {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
+    }
+
+    @SuppressLint("WrongConstant", "PrivateApi")
+    fun setExpandNotificationDrawer(context: Context, expand: Boolean)
+    {
+        try
+        {
+            val statusBarService = context.getSystemService("statusbar")
+            val methodName =
+                if (expand)
+                    "expandNotificationsPanel"
+                else
+                    "collapsePanels"
+            val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
+            val method: Method = statusBarManager.getMethod(methodName)
+            method.invoke(statusBarService)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
 

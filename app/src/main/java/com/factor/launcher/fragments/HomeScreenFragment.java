@@ -208,8 +208,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.homePager.addView(binding.drawerPage, 1);
 
 
-
-
         //app drawer
         //***************************************************************************************************************************************************
         binding.appsList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -293,18 +291,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(appSettings.isDarkIcon()?Color.BLACK:Color.WHITE);
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(appSettings.isDarkIcon()?Color.DKGRAY:Color.LTGRAY);
 
-        binding.searchView.setOnCloseListener(() -> {
+        binding.searchView.setOnCloseListener(() ->
+        {
             binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
             return false;
         });
-        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String newText)
+            {
                 binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottomOnSearch);
                 String queryText = newText.toLowerCase().trim();
                 appListManager.findPosition(binding.appsList, queryText);
@@ -447,5 +448,4 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
         getContext().sendBroadcast(intent);
     }
-
 }
