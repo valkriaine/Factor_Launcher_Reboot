@@ -82,7 +82,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //my library
-    implementation 'com.factor:bouncy:1.1'
+    implementation 'com.factor:bouncy:1.4'
 
     //other libraries
 
