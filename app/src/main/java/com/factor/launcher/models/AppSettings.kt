@@ -16,10 +16,10 @@ class AppSettings
     var cornerRadius = 5
 
     @ColumnInfo(name = "tile_theme_color")
-    var tileThemeColor = "FFFFFF"
+    var tileThemeColor = "99FFFFFF"
 
     @ColumnInfo(name = "search_bar_color")
-    var searchBarColor = "FFFFFF"
+    var searchBarColor = "4DFFFFFF"
 
     @ColumnInfo(name = "is_blurred")
     var isBlurred = true

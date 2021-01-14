@@ -77,6 +77,13 @@ public class SettingsFragment extends Fragment
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        setUpUIState();
+    }
+
 
     //initialize ui components
     private void initializeComponents()
@@ -157,16 +164,8 @@ public class SettingsFragment extends Fragment
         binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
         binding.searchBase.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
 
-        binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? "Granted" : "Request");
         binding.notificationAccessButton.setOnClickListener(v -> buildNotificationServiceAlertDialog());
-        binding.storageAccessButton.setOnClickListener(v ->
-                EasyPermissions.requestPermissions
-                        (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
-                                .setRationale("Factor launcher needs to access your external storage")
-                                .setPositiveButtonText("Okay")
-                                .setNegativeButtonText("Cancel")
-                                .setTheme(R.style.DialogTheme)
-                                .build()));
+        binding.storageAccessButton.setOnClickListener(v -> requestStoragePermission());
         binding.defaultLauncherButton.setOnClickListener(v ->
         {
             PackageManager p = getContext().getPackageManager();
@@ -240,6 +239,7 @@ public class SettingsFragment extends Fragment
         binding.tileColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Tile color"));
         binding.searchBarColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Search bar color"));
 
+        setUpUIState();
         setUpDemoTile();
     }
 
@@ -357,7 +357,7 @@ public class SettingsFragment extends Fragment
         }
     }
 
-
+    //display color picker dialog
     private void showColorPickerDialog(String title)
     {
         ColorPickerDialog.Builder builder = new ColorPickerDialog.Builder(getContext())
@@ -397,18 +397,39 @@ public class SettingsFragment extends Fragment
         builder.show();
     }
 
-    @Override
-    public void onResume()
+    private void requestStoragePermission()
     {
-        super.onResume();
-        binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? "Granted" : "Request");
-
-        if (getContext() == null)
-            return;
-
-        if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-            binding.storageAccessButton.setText("Granted");
-        else
-            binding.storageAccessButton.setText("Request");
+        EasyPermissions.requestPermissions
+                (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
+                        .setRationale(R.string.storage_permission_rationale)
+                        .setPositiveButtonText(R.string.okay)
+                        .setNegativeButtonText(R.string.cancel)
+                        .setTheme(R.style.DialogTheme)
+                        .build());
     }
+
+    //change UI enabled state and displayed text based on granted permissions
+    private void setUpUIState()
+    {
+        binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? getString(R.string.granted) : getString(R.string.request));
+
+        if (getContext() != null)
+            if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+                binding.storageAccessButton.setText(getString(R.string.granted));
+                binding.blurToggleLabel.setText(R.string.blur_effect);
+                binding.blurToggle.setClickable(true);
+                binding.blurToggleBase.setOnClickListener(null);
+            }
+            else {
+
+                binding.storageAccessButton.setText(getString(R.string.request));
+                binding.blurToggleLabel.setText(R.string.blur_effect_missing_permission);
+                binding.blurToggle.setChecked(false);
+                binding.blurToggle.setClickable(false);
+                binding.blurToggleBase.setOnClickListener(v -> requestStoragePermission());
+            }
+    }
+
+
 }

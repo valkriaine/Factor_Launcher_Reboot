@@ -319,7 +319,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //search bar
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
-        binding.searchBase.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
+        binding.searchCard.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
 
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(appSettings.isDarkIcon()?Color.BLACK:Color.WHITE);
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(appSettings.isDarkIcon()?Color.DKGRAY:Color.LTGRAY);
@@ -387,7 +387,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             wallpaperOption.setOnMenuItemClickListener(item ->
             {
                 Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
-                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                startActivity(Intent.createChooser(intent, getString(R.string.select_wallpaper)));
                 return true;
             });
         });
@@ -407,7 +407,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getContext() == null)
             return;
 
-        binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
+        binding.searchCard.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
 
         //static wallpaper
         if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
@@ -416,9 +416,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             isLiveWallpaper = false;
 
             binding.backgroundImage.setImageDrawable(wm.getDrawable());
-
-            binding.blur.setVisibility(View.VISIBLE);
-
             binding.blur.setupWith(binding.backgroundHost)
                     .setFrameClearDrawable(wm.getDrawable())
                     .setBlurAlgorithm(new RenderScriptBlur(getContext()))
@@ -439,7 +436,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else //live wallpaper
         {
             isLiveWallpaper = true;
-            binding.blur.setVisibility(View.GONE);
+            binding.blur.setBlurEnabled(false);
             binding.searchBlur.setBlurEnabled(false);
             binding.blur.setBlurEnabled(false);
         }

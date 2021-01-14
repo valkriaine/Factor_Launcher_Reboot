@@ -52,5 +52,11 @@
     <string name="choose">Palette</string>
     <string name="search_bar_color">Search bar color value</string>
     <string name="color_value_hint">FFFFFF</string>
+    <string name="granted">Granted</string>
+    <string name="blur_effect_missing_permission">Requires storage access</string>
+    <string name="storage_permission_rationale">Factor launcher needs to access your external storage</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_wallpaper">Select Wallpaper</string>
 
 </resources>

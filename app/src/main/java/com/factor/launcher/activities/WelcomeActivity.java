@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityWelcomeBinding;
+import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.util.Constants;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -83,13 +84,13 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         {
             if(isNotificationServiceEnabled())
             {
-                binding.turnOnNotificationServiceButton.setText("Enabled");
-                binding.skipNotificationServiceButton.setText("Next");
+                binding.turnOnNotificationServiceButton.setText(R.string.enabled);
+                binding.skipNotificationServiceButton.setText(R.string.next);
             }
             else
             {
-                binding.turnOnNotificationServiceButton.setText("Enable");
-                binding.skipNotificationServiceButton.setText("Skip");
+                binding.turnOnNotificationServiceButton.setText(R.string.enable);
+                binding.skipNotificationServiceButton.setText(R.string.skip);
             }
         }
         else
@@ -258,6 +259,12 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //go to home screen
     private void toHomeScreen()
     {
+        boolean isBlurred = AppSettingsManager.getInstance(getApplicationContext()).getAppSettings().isBlurred();
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && isBlurred)
+        {
+            AppSettingsManager.getInstance(getApplicationContext()).getAppSettings().setBlurred(false);
+            AppSettingsManager.getInstance(getApplicationContext()).updateSettings();
+        }
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(intent);
     }
