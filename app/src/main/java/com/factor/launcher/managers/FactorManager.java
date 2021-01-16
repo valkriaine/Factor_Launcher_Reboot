@@ -359,11 +359,12 @@ public class FactorManager
         launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
     }
 
-    //todo: add widget to tiles list
+    //add widget to tiles list
     public void addWidget(AppWidgetHostView appWidgetHostView)
     {
-
+        //todo: add widget to tiles list
     }
+
 
     class FactorsAdapter extends BouncyRecyclerView.Adapter
     {
@@ -404,7 +405,7 @@ public class FactorManager
                     break;
                 case Factor.Size.medium:
                     layoutParams.height = (int) (scale/2 + 0.5f);
-                    layoutParams.width =scale;
+                    layoutParams.width = scale;
                     break;
                 case Factor.Size.large:
                     layoutParams.width = scale;

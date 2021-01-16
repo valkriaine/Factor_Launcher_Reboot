@@ -6,13 +6,13 @@ import com.factor.chips.chipslayoutmanager.cache.IViewCacheStorage;
 
 public class DecoratorBreakerFactory implements IBreakerFactory {
 
-    private IBreakerFactory breakerFactory;
-    private IViewCacheStorage cacheStorage;
-    private IRowBreaker rowBreaker;
+    private final IBreakerFactory breakerFactory;
+    private final IViewCacheStorage cacheStorage;
+    private final IRowBreaker rowBreaker;
 
     /** Max items in row restriction. Layout of row should be stopped when this count of views reached*/
     @Nullable
-    private Integer maxViewsInRow;
+    private final Integer maxViewsInRow;
 
     public DecoratorBreakerFactory(@NonNull IViewCacheStorage cacheStorage,
                                    @NonNull IRowBreaker rowBreaker,

@@ -7,7 +7,7 @@ import com.factor.chips.chipslayoutmanager.layouter.ILayouterListener;
 
 class CriteriaAdditionalRow extends FinishingCriteriaDecorator implements IFinishingCriteria, ILayouterListener {
 
-    private int requiredRowsCount;
+    private final int requiredRowsCount;
 
     private int additionalRowsCount;
 
