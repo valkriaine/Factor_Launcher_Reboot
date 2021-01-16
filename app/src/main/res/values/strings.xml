@@ -58,5 +58,9 @@
     <string name="okay">Okay</string>
     <string name="cancel">Cancel</string>
     <string name="select_wallpaper">Select Wallpaper</string>
+    <string name="crash_text">Sorry, the application has crashed. Please send the crash report to the developer.
+    </string>
+    <string name="crash_report">Crash Report</string>
+    <string name="channel_name">factor_launcher_crash_report_channel</string>
 
 </resources>

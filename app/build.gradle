@@ -103,6 +103,11 @@ dependencies {
 
     //memory leak detection
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+
+    //crash report
+    def acraVersion = '5.7.0'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-notification:$acraVersion"
 }
 repositories {
     mavenCentral()
