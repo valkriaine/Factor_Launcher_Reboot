@@ -84,6 +84,7 @@
 
             <!--demo tile (wide)-->
             <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/demo_base"
                     android:layout_width="320dp"
                     android:layout_height="160dp"
                     android:layout_marginVertical="20dp"
@@ -408,6 +409,60 @@
                                     android:id="@+id/corner_radius_slider"
                                     android:valueFrom="0"
                                     android:valueTo="20"
+                                    android:stepSize="1"
+                                    android:hapticFeedbackEnabled="true"
+                                    android:layout_marginHorizontal="10dp"
+                                    app:haloColor="@android:color/transparent"
+                                    app:thumbColor="@color/colorAccent"
+                                    app:tickColorActive="@color/colorAccent"
+                                    app:tickColorInactive="@color/colorPrimary"
+                                    app:trackColorActive="@color/colorAccent"
+                                    app:trackColorInactive="@color/colorPrimary"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/home_screen_width"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"/>
+
+                            <com.google.android.material.slider.Slider
+                                    android:id="@+id/tile_list_scale_slider"
+                                    android:valueFrom="0.7"
+                                    android:valueTo="0.8"
+                                    android:stepSize="0.01"
+                                    android:hapticFeedbackEnabled="true"
+                                    android:layout_marginHorizontal="10dp"
+                                    app:haloColor="@android:color/transparent"
+                                    app:thumbColor="@color/colorAccent"
+                                    app:tickColorActive="@color/colorAccent"
+                                    app:tickColorInactive="@color/colorPrimary"
+                                    app:trackColorActive="@color/colorAccent"
+                                    app:trackColorInactive="@color/colorPrimary"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                    android:text="@string/tile_margin"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"/>
+
+                            <com.google.android.material.slider.Slider
+                                    android:id="@+id/tile_margin_slider"
+                                    android:valueFrom="5"
+                                    android:valueTo="15"
                                     android:stepSize="1"
                                     android:hapticFeedbackEnabled="true"
                                     android:layout_marginHorizontal="10dp"

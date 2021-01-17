@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
@@ -173,7 +172,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         super.onResume();
         if (getContext()!= null)
         {
-            Log.d("resumed", "resumed");
             appListManager.clearAllNotifications();
             Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
             getContext().sendBroadcast(intent);
@@ -203,6 +201,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //initialize saved user settings
         appSettings = AppSettingsManager.getInstance(getContext()).getAppSettings();
 
+        //tile list guideline position
+        binding.guideline.setGuidelinePercent(appSettings.getTileListScale());
 
         //get system wallpaper
         //***************************************************************************************************************************************************

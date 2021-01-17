@@ -27,6 +27,7 @@ import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
+import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
@@ -315,11 +316,12 @@ public class FactorManager
 
 
     //update UI given the app
-    public void updateUI(UserApp app)
+    public void clearNotification(UserApp app)
     {
         Factor factor = getFactorByPackage(app.getPackageName());
         if (!factor.getPackageName().isEmpty())
-            adapter.notifyItemChanged(userFactors.indexOf(factor));
+            adapter.notifyItemChanged(userFactors.indexOf(factor),
+                    new Payload(new NotificationHolder(0, "", "")));
     }
 
     public void invalidate()
@@ -393,18 +395,18 @@ public class FactorManager
 
             //resize to fit screen
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            int scale = (int)(parent.getWidth() * 0.8 + 0.5f) - parent.getPaddingLeft();
+            int scale = (int)(parent.getWidth() * appSettings.getTileListScale()) - parent.getPaddingLeft();
 
 
 
             switch (viewType)
             {
                 case Factor.Size.small:
-                    layoutParams.width = (int) (scale/2 + 0.5f);
-                    layoutParams.height = (int) (scale/2 + 0.5f);
+                    layoutParams.width = scale/2;
+                    layoutParams.height = scale/2;
                     break;
                 case Factor.Size.medium:
-                    layoutParams.height = (int) (scale/2 + 0.5f);
+                    layoutParams.height = scale/2;
                     layoutParams.width = scale;
                     break;
                 case Factor.Size.large:
@@ -413,6 +415,8 @@ public class FactorManager
                     break;
             }
 
+            int padding = (int) Util.INSTANCE.dpToPx(appSettings.getTileMargin(), parent.getContext());
+            view.setPadding(padding, padding, padding, padding);
             view.setLayoutParams(layoutParams);
             activity.registerForContextMenu(view);
 
@@ -464,6 +468,7 @@ public class FactorManager
                 else
                     ((FactorSmallBinding) binding).tileIcon.setElevation(0);
 
+                ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
                 ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
             }
 

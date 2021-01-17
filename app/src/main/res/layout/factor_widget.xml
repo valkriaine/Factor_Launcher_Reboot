@@ -14,7 +14,6 @@
         <androidx.cardview.widget.CardView
                 android:id="@+id/card"
                 android:translationZ="-20dp"
-                android:layout_margin="5dp"
                 app:cardElevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

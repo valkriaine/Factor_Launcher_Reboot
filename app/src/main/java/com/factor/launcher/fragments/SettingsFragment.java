@@ -32,6 +32,7 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
+
 import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 
 
@@ -46,6 +47,7 @@ public class SettingsFragment extends Fragment
     private AppSettings settings;
 
     private String tileColor = "";
+
     private String searchColor = "";
 
     public SettingsFragment()
@@ -91,6 +93,8 @@ public class SettingsFragment extends Fragment
         if (getContext() == null)
             return;
 
+        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
+
         AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(getContext());
 
         settings = appSettingsManager.getAppSettings();
@@ -116,6 +120,7 @@ public class SettingsFragment extends Fragment
         binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));
         binding.searchBarColorIcon.setBackgroundColor(Color.parseColor("#" + searchColor));
 
+        binding.searchBase.setPadding(paddingHorizontal, 0, paddingHorizontal, 0);
         binding.searchBarColorValue.setText(searchColor);
         binding.tileColorValue.setText(tileColor);
         binding.searchBarColorValue.addTextChangedListener(new TextWatcher()
@@ -223,6 +228,8 @@ public class SettingsFragment extends Fragment
 
         binding.blurRadiusSlider.setValue(settings.getBlurRadius());
         binding.cornerRadiusSlider.setValue(settings.getCornerRadius());
+        binding.tileListScaleSlider.setValue(settings.getTileListScale());
+        binding.tileMarginSlider.setValue(settings.getTileMargin());
 
         binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
@@ -231,6 +238,18 @@ public class SettingsFragment extends Fragment
         });
 
         binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
+        {
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            setUpDemoTile();
+        });
+
+        binding.tileListScaleSlider.addOnChangeListener((slider, value, fromUser) ->
+        {
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            setUpDemoTile();
+        });
+
+        binding.tileMarginSlider.addOnChangeListener((slider, value, fromUser) ->
         {
             slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             setUpDemoTile();
@@ -248,6 +267,9 @@ public class SettingsFragment extends Fragment
     {
         if (getContext() == null)
             return;
+
+        int padding = (int) Util.INSTANCE.dpToPx(binding.tileMarginSlider.getValue(), getContext());
+        binding.demoBase.setPadding(padding, padding, padding, padding);
 
         binding.rootCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
         binding.demoCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
@@ -294,10 +316,14 @@ public class SettingsFragment extends Fragment
             //sliders
             AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurRadius((int) binding.blurRadiusSlider.getValue());
             AppSettingsManager.getInstance(getContext()).getAppSettings().setCornerRadius((int) binding.cornerRadiusSlider.getValue());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileListScale(binding.tileListScaleSlider.getValue());
+            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileMargin((int) binding.tileMarginSlider.getValue());
 
             //colors
             AppSettingsManager.getInstance(getContext()).getAppSettings().setTileThemeColor(tileColor);
             AppSettingsManager.getInstance(getContext()).getAppSettings().setSearchBarColor(searchColor);
+
+
 
             AppSettingsManager.getInstance(getContext()).updateSettings();
             Intent intent = new Intent();
@@ -314,6 +340,8 @@ public class SettingsFragment extends Fragment
                 binding.darkIconToggle.isChecked() != settings.isDarkIcon() ||
                 binding.cornerRadiusSlider.getValue() != settings.getCornerRadius() ||
                 binding.blurRadiusSlider.getValue() != settings.getBlurRadius() ||
+                binding.tileListScaleSlider.getValue() != settings.getTileListScale() ||
+                binding.tileMarginSlider.getValue() != settings.getTileMargin() ||
                 !tileColor.equals(settings.getTileThemeColor()) ||
                 !searchColor.equals(settings.getSearchBarColor()) ||
                 binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon();

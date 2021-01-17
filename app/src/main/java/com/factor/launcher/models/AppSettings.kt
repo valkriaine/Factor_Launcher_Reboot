@@ -35,4 +35,10 @@ class AppSettings
 
     @ColumnInfo(name = "icon_shadow")
     var showShadowAroundIcon = true
+
+    @ColumnInfo(name = "tile_list_scale")
+    var tileListScale : Float = 0.8f
+
+    @ColumnInfo(name = "tile_margin")
+    var tileMargin = 5
 }

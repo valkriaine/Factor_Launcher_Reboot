@@ -559,7 +559,7 @@ public class AppListManager
                 new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0),
                         intent.getStringExtra(Constants.NOTIFICATION_INTENT_TITLE_TEXT_KEY),
                         intent.getStringExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY));
-        Payload payload = new Payload(notificationHolder, Payload.NOTIFICATION_RECEIVED);
+        Payload payload = new Payload(notificationHolder);
         if (userApps.contains(app))
         {
             if (app.incrementNotificationCount(notificationHolder))
@@ -579,7 +579,7 @@ public class AppListManager
         UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
         NotificationHolder notificationHolder =
                 new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0), "", "");
-        Payload payload = new Payload(notificationHolder, Payload.NOTIFICATION_CLEARED);
+        Payload payload = new Payload(notificationHolder);
         if (userApps.contains(app))
         {
             Log.d("payload", app.getPackageName() + " created payload");
@@ -595,15 +595,17 @@ public class AppListManager
     //clear all notifications
     public void clearAllNotifications()
     {
-        for (UserApp app : userApps)
+        ArrayList<UserApp> copyList = new ArrayList<>(userApps);
+
+        for (UserApp app : copyList)
         {
-            app.resetNotifications();
-            if (app.getCurrentNotifications().size() > 0)
-                Log.d("clear_notification", app.getPackageName());
-            adapter.notifyItemChanged(userApps.indexOf(app));
-            if (app.isPinned())
-                factorManager.updateUI(app);
+            UserApp appToUpdate = findAppByPackage(app.getPackageName());
+            appToUpdate.resetNotifications();
+            adapter.notifyItemChanged(userApps.indexOf(appToUpdate), new Payload(new NotificationHolder(0, "", "")));
+            if (appToUpdate.isPinned())
+                factorManager.clearNotification(appToUpdate);
         }
+
     }
 
 
