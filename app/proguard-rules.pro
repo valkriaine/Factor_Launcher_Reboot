@@ -20,3 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keepattributes LineNumberTable,SourceFile
+
+-keepclasseswithmembernames class * {
+native <methods>;
+}
+-keep class androidx.renderscript.** { *; }
