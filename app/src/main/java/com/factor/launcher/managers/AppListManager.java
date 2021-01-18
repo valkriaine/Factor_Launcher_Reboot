@@ -309,15 +309,21 @@ public class AppListManager
     {
         if (!doesPackageExist(app))
         {
-            int position = userApps.indexOf(app);
-            userApps.remove(app);
-            new Thread(() ->
+            try
             {
-
-                appListDatabase.appListDao().delete(app);
-                activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
-            }).start();
-            factorManager.remove(app);
+                new Thread(() ->
+                {
+                    int position = userApps.indexOf(app);
+                    userApps.remove(app);
+                    appListDatabase.appListDao().delete(app);
+                    activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
+                }).start();
+                factorManager.remove(app);
+            }
+            catch (Exception e)
+            {
+                Log.d("add app", e.getMessage());
+            }
         }
     }
 
@@ -343,6 +349,7 @@ public class AppListManager
                     Collections.sort(userApps, first_letter);
 
                     activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
+                    Log.d("Add app", "app added");
                 }
                 catch (PackageManager.NameNotFoundException e)
                 {
@@ -613,34 +620,42 @@ public class AppListManager
     //return the app at a given position (not the array position)
     public UserApp getUserApp(int position)
     {
-        UserApp appToFind = userApps.get(position);
-        ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
-        int newPosition = 0;
-        queryApps.clear();
-        if (!displayHidden)
+        try
         {
-            for (UserApp app : copyApps)
+            UserApp appToFind = userApps.get(position);
+            ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
+            int newPosition = 0;
+            queryApps.clear();
+            if (!displayHidden)
             {
-                if (!app.isHidden())
-                    queryApps.add(app);
+                for (UserApp app : copyApps)
+                {
+                    if (!app.isHidden())
+                        queryApps.add(app);
+                }
+                if (!appToFind.isHidden())
+                    newPosition = queryApps.indexOf(appToFind);
             }
-            if (!appToFind.isHidden())
-                newPosition = queryApps.indexOf(appToFind);
+            else
+            {
+                for (UserApp app : copyApps)
+                {
+                    if (app.isHidden())
+                        queryApps.add(app);
+                }
+                if (appToFind.isHidden())
+                    newPosition = queryApps.indexOf(appToFind);
+            }
+            if (queryApps.size() > 0)
+                return queryApps.get(newPosition);
+            else
+                return new UserApp();
         }
-        else
+        catch (Exception e)
         {
-            for (UserApp app : copyApps)
-            {
-                if (app.isHidden())
-                    queryApps.add(app);
-            }
-            if (appToFind.isHidden())
-                newPosition = queryApps.indexOf(appToFind);
-        }
-        if (queryApps.size() > 0)
-            return queryApps.get(newPosition);
-        else
             return new UserApp();
+        }
+
     }
 
     //load icon for the app

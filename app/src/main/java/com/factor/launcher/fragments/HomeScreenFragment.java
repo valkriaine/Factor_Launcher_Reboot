@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -32,6 +31,7 @@ import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
+import com.factor.launcher.ui.FixedLinearLayoutManager;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
@@ -228,7 +228,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //app drawer
         //***************************************************************************************************************************************************
-        binding.appsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.appsList.setLayoutManager(new FixedLinearLayoutManager(getContext()));
         binding.appsList.setAdapter(appListManager.adapter);
         binding.appsList.setHasFixedSize(true);
         binding.appsList.setItemViewCacheSize(100);
