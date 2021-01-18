@@ -56,7 +56,7 @@
 
 
             <!--app icon-->
-            <com.qhutch.elevationimageview.ElevationImageView
+            <com.factor.launcher.ui.ElevationImageView
                     android:id="@+id/tileIcon"
                     android:layout_height="70dp"
                     android:layout_width="70dp"

@@ -36,7 +36,7 @@
                 android:layout_height="match_parent">
 
             <!--app icon-->
-            <com.qhutch.elevationimageview.ElevationImageView
+            <com.factor.launcher.ui.ElevationImageView
                     android:id="@+id/tileIcon"
                     android:background="@android:color/transparent"
                     android:layout_height="70dp"

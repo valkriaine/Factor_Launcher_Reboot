@@ -464,9 +464,9 @@ public class FactorManager
             if (binding instanceof FactorSmallBinding)
             {
                 if (appSettings.getShowShadowAroundIcon())
-                    ((FactorSmallBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                    ((FactorSmallBinding) binding).tileIcon.setElevationDp(50);
                 else
-                    ((FactorSmallBinding) binding).tileIcon.setElevation(0);
+                    ((FactorSmallBinding) binding).tileIcon.setElevationDp(0);
 
                 ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
                 ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
@@ -475,9 +475,9 @@ public class FactorManager
             if (binding instanceof FactorMediumBinding)
             {
                 if (appSettings.getShowShadowAroundIcon())
-                    ((FactorMediumBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                    ((FactorMediumBinding) binding).tileIcon.setElevationDp(50);
                 else
-                    ((FactorMediumBinding) binding).tileIcon.setElevation(0);
+                    ((FactorMediumBinding) binding).tileIcon.setElevationDp(0);
 
                 ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
             }
@@ -486,7 +486,7 @@ public class FactorManager
             {
                 if (appSettings.getShowShadowAroundIcon())
                 {
-                    ((FactorLargeBinding) binding).tileIcon.setElevation(Util.INSTANCE.dpToPx(50, parent.getContext()));
+                    ((FactorLargeBinding) binding).tileIcon.setElevationDp(50);
                     ((FactorLargeBinding) binding).shortcut1Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
                     ((FactorLargeBinding) binding).shortcut2Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
                     ((FactorLargeBinding) binding).shortcut3Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
@@ -494,7 +494,7 @@ public class FactorManager
 
                 else
                 {
-                    ((FactorLargeBinding) binding).tileIcon.setElevation(0);
+                    ((FactorLargeBinding) binding).tileIcon.setElevationDp(0);
                     ((FactorLargeBinding) binding).shortcut1Card.setElevation(0);
                     ((FactorLargeBinding) binding).shortcut2Card.setElevation(0);
                     ((FactorLargeBinding) binding).shortcut3Card.setElevation(0);

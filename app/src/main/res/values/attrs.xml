@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ElevationImageView">
+        <attr name="compatElevation" format="dimension"/>
+        <attr name="clipShadow" format="boolean"/>
+        <attr name="isTranslucent" format="boolean"/>
+        <attr name="forceClip" format="boolean"/>
+    </declare-styleable>
+</resources>

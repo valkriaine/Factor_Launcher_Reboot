@@ -290,7 +290,7 @@
                                 android:layout_marginEnd="40dp"/>
 
                         <!--app icon-->
-                        <com.qhutch.elevationimageview.ElevationImageView
+                        <com.factor.launcher.ui.ElevationImageView
                                 android:id="@+id/tileIcon"
                                 android:src="@mipmap/factor_icon_round"
                                 android:layout_height="70dp"
