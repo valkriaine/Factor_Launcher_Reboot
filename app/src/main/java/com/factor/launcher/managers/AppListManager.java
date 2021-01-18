@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -137,15 +138,12 @@ public class AppListManager
         {
             new Thread(() ->
             {
-                try
-                {
+                try {
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : availableApps)
-                    {
-                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
-                        {
+                    for (ResolveInfo r : availableApps) {
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME)) {
                             UserApp app = appListDatabase.appListDao().findByPackage(r.activityInfo.packageName);
                             app.resetNotifications();
                             //noinspection ConstantConditions
@@ -164,11 +162,8 @@ public class AppListManager
 
                                 userApps.add(app);
                                 appListDatabase.appListDao().insert(app);
-                            }
-                            else
-                            {
-                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
-                                {
+                            } else {
+                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled) {
                                     app.icon = r.activityInfo.loadIcon(packageManager);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                                         app.setShortCuts(getShortcutsFromApp(app));
@@ -177,9 +172,7 @@ public class AppListManager
                                     app.setPinned(factorManager.isAppPinned(app));
 
                                     Collections.sort(userApps, first_letter);
-                                }
-                                else
-                                {
+                                } else {
                                     appListDatabase.appListDao().delete(app);
                                 }
                             }
@@ -187,10 +180,7 @@ public class AppListManager
                     }
                     activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
-                catch (Exception ex)
-                {
-                    Log.e(TAG, ex.getMessage());
-                }
+                catch (PackageManager.NameNotFoundException ignored) {}
             }).start();
         }
         else //if the app drawer is loading for the first time, load all apps with default configuration
@@ -198,15 +188,12 @@ public class AppListManager
             editor = factorSharedPreferences.edit();
             new Thread(() ->
             {
-                try
-                {
+                try {
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : availableApps)
-                    {
-                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled)
-                        {
+                    for (ResolveInfo r : availableApps) {
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled) {
                             UserApp app = new UserApp();
                             app.setLabelOld((String) r.loadLabel(packageManager));
                             app.setLabelNew(app.getLabelOld());
@@ -228,10 +215,7 @@ public class AppListManager
                     editor.apply();
 
                 }
-                catch (Exception ex)
-                {
-                    Log.d(TAG, ex.getMessage());
-                }
+                catch (PackageManager.NameNotFoundException ignored){}
             }).start();
         }
     }
@@ -573,8 +557,11 @@ public class AppListManager
 
                 Log.d("payload", app.getNotificationTitle() + " created payload");
             }
-        }catch (ConcurrentModificationException ex)
+        }
+        catch (ConcurrentModificationException ex)
         {
+            //if app list is being modified, wait 5 seconds for another attempt
+            SystemClock.sleep(5000);
             onReceivedNotification(intent);
         }
 
@@ -651,7 +638,7 @@ public class AppListManager
             else
                 return new UserApp();
         }
-        catch (Exception e)
+        catch (ConcurrentModificationException e)
         {
             return new UserApp();
         }
@@ -661,14 +648,13 @@ public class AppListManager
     //load icon for the app
     private void loadIcon(UserApp app)
     {
-        try
-        {
+        try {
             if (packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                 app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
         }
-        catch (Exception e)
+        catch (PackageManager.NameNotFoundException e)
         {
-           //unable to load icon for the app
+            //app package cannot be found
             new Thread(() -> appListDatabase.appListDao().delete(app)).start();
         }
     }
