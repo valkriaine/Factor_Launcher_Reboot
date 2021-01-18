@@ -554,23 +554,30 @@ public class AppListManager
     //received notifications
     public void onReceivedNotification(Intent intent)
     {
-        UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
-        NotificationHolder notificationHolder =
-                new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0),
-                        intent.getStringExtra(Constants.NOTIFICATION_INTENT_TITLE_TEXT_KEY),
-                        intent.getStringExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY));
-        Payload payload = new Payload(notificationHolder);
-        if (userApps.contains(app))
+        try
         {
-            if (app.incrementNotificationCount(notificationHolder))
-                adapter.notifyItemChanged(userApps.indexOf(app), payload);
+            UserApp app = findAppByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
+            NotificationHolder notificationHolder =
+                    new NotificationHolder(intent.getIntExtra(Constants.NOTIFICATION_INTENT_ID_KEY, 0),
+                            intent.getStringExtra(Constants.NOTIFICATION_INTENT_TITLE_TEXT_KEY),
+                            intent.getStringExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY));
+            Payload payload = new Payload(notificationHolder);
+            if (userApps.contains(app))
+            {
+                if (app.incrementNotificationCount(notificationHolder))
+                    adapter.notifyItemChanged(userApps.indexOf(app), payload);
 
-            if (app.isPinned())
-                factorManager.onReceivedNotification(intent, app, payload);
+                if (app.isPinned())
+                    factorManager.onReceivedNotification(intent, app, payload);
 
 
-            Log.d("payload", app.getNotificationTitle() + " created payload");
+                Log.d("payload", app.getNotificationTitle() + " created payload");
+            }
+        }catch (ConcurrentModificationException ex)
+        {
+            onReceivedNotification(intent);
         }
+
     }
 
     //cleared notification
