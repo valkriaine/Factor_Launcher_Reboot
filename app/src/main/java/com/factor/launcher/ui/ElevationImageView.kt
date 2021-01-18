@@ -147,8 +147,8 @@ open class ElevationImageView : AppCompatImageView
             val element = Element.U8_4(rs)
             blurScript = ScriptIntrinsicBlur.create(rs, element)
             colorMatrixScript = ScriptIntrinsicColorMatrix.create(rs, element)
-            super.onAttachedToWindow()
         }
+        super.onAttachedToWindow()
     }
 
     private fun getBlurRadius(): Float
