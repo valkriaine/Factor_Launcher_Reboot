@@ -81,7 +81,11 @@ public class NotificationListener extends NotificationListenerService
         {
             if (intent.getAction().equals(Constants.NOTIFICATION_INTENT_ACTION_SETUP))
             {
-                getCurrentNotifications();
+                try
+                {
+                    getCurrentNotifications();
+                }
+                catch (Exception ignored){}
             }
         }
     }

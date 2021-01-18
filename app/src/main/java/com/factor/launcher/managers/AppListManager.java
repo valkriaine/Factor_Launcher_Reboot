@@ -309,8 +309,6 @@ public class AppListManager
     {
         if (!doesPackageExist(app))
         {
-            try
-            {
                 new Thread(() ->
                 {
                     int position = userApps.indexOf(app);
@@ -319,11 +317,7 @@ public class AppListManager
                     activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
                 }).start();
                 factorManager.remove(app);
-            }
-            catch (Exception e)
-            {
-                Log.d("add app", e.getMessage());
-            }
+
         }
     }
 
@@ -349,7 +343,6 @@ public class AppListManager
                     Collections.sort(userApps, first_letter);
 
                     activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
-                    Log.d("Add app", "app added");
                 }
                 catch (PackageManager.NameNotFoundException e)
                 {
