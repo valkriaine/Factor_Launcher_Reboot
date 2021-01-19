@@ -77,8 +77,8 @@ public class HomeActivity extends AppCompatActivity
         //first launch, start welcome activity
         if (isFirstTime())
         {
-            final Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
-            getApplicationContext().startActivity(intent);
+            final Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
         }
 
     }
@@ -99,8 +99,8 @@ public class HomeActivity extends AppCompatActivity
         //first launch, start welcome activity
         if (isFirstTime())
         {
-            final Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
-            getApplicationContext().startActivity(intent);
+            final Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
             return;
         }
 
