@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -42,15 +43,8 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        if (isFirstTime())
-        {
-            binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
-            initializeComponents();
-        }
-        else
-            toHomeScreen();
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
+        initializeComponents();
     }
 
     @Override
@@ -80,8 +74,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     protected void onResume()
     {
         super.onResume();
-        if (isFirstTime())
-        {
+
             if(isNotificationServiceEnabled())
             {
                 binding.turnOnNotificationServiceButton.setText(R.string.enabled);
@@ -92,10 +85,6 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
                 binding.turnOnNotificationServiceButton.setText(R.string.enable);
                 binding.skipNotificationServiceButton.setText(R.string.skip);
             }
-        }
-        else
-            toHomeScreen();
-
     }
 
 
@@ -185,7 +174,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //check if first time launch
     private boolean isFirstTime()
     {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         return  !preferences.getBoolean(PACKAGE_NAME + "_RanBefore", false);
     }
 
@@ -222,10 +211,12 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //the user has finished setting up, move to home screen
     public void allSet(View view)
     {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PACKAGE_NAME + "_RanBefore", true);
         editor.commit();
+
+        Log.d("AllSet", "first run? " + isFirstTime());
         toHomeScreen();
     }
 

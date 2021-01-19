@@ -3,6 +3,9 @@ package com.factor.launcher.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -18,6 +21,8 @@ import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.managers.AppSettingsManager;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
+
+import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 public class HomeActivity extends AppCompatActivity
 {
@@ -50,7 +55,6 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(binding.getRoot());
 
-
         //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -69,6 +73,14 @@ public class HomeActivity extends AppCompatActivity
                     .commit();
 
 
+
+        //first launch, start welcome activity
+        if (isFirstTime())
+        {
+            final Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
+            getApplicationContext().startActivity(intent);
+        }
+
     }
 
     @Override
@@ -83,6 +95,15 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
+
+        //first launch, start welcome activity
+        if (isFirstTime())
+        {
+            final Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
+            getApplicationContext().startActivity(intent);
+            return;
+        }
+
         isVisible = true;
 
         detectWallpaperChanges();
@@ -158,6 +179,13 @@ public class HomeActivity extends AppCompatActivity
                 .replace(R.id.home_fragment_container, HomeScreenFragment.class, null)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    //check if first time launch
+    private boolean isFirstTime()
+    {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+        return  !preferences.getBoolean(PACKAGE_NAME + "_RanBefore", false);
     }
 
 }

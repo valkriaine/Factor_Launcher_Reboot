@@ -302,7 +302,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
-        binding.tilesList.addOnOverPulledListener(new OnOverPullListener() {
+        binding.tilesList.setOnOverPullListener(new OnOverPullListener() {
             @Override
             public void onOverPulledTop(float v)
             {

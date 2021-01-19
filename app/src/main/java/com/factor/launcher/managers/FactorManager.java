@@ -149,7 +149,8 @@ public class FactorManager
     //check if the app is added to home
     public boolean isAppPinned(UserApp app)
     {
-        for (Factor f : userFactors)
+        ArrayList<Factor> copyFactors = new ArrayList<>(userFactors);
+        for (Factor f : copyFactors)
             if (f.getPackageName().equals(app.getPackageName())) return true;
 
         return false;
@@ -368,11 +369,11 @@ public class FactorManager
     }
 
 
-    class FactorsAdapter extends BouncyRecyclerView.Adapter
+    class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.FactorsViewHolder>
     {
         @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+        public FactorsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             int id = 0;
 
@@ -568,19 +569,18 @@ public class FactorManager
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
+        public void onBindViewHolder(@NonNull FactorsViewHolder holder, int position)
         {
-            FactorsViewHolder factorsViewHolder = (FactorsViewHolder)holder;
-            factorsViewHolder.bindFactor(userFactors.get(position));
+            holder.bindFactor(userFactors.get(position));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads)
+        public void onBindViewHolder(@NonNull FactorsViewHolder holder, int position, @NonNull List<Object> payloads)
         {
             if (!payloads.isEmpty())
             {
                 Log.d("payload", "received");
-                ViewDataBinding binding = ((FactorsViewHolder)holder).binding;
+                ViewDataBinding binding = holder.binding;
                 if (!(payloads.get(0) instanceof Payload))
                     onBindViewHolder(holder, position);
                 else {

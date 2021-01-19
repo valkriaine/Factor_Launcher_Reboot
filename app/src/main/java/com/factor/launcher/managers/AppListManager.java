@@ -142,10 +142,11 @@ public class AppListManager
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : availableApps) {
-                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME)) {
+                    for (ResolveInfo r : availableApps)
+                    {
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
+                        {
                             UserApp app = appListDatabase.appListDao().findByPackage(r.activityInfo.packageName);
-                            app.resetNotifications();
                             //noinspection ConstantConditions
                             if (app == null) //package name does not exist in database
                             {
@@ -162,19 +163,31 @@ public class AppListManager
 
                                 userApps.add(app);
                                 appListDatabase.appListDao().insert(app);
-                            } else {
-                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled) {
+                            }
+                            else {
+                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+                                {
+                                    app.resetNotifications();
                                     app.icon = r.activityInfo.loadIcon(packageManager);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                         app.setShortCuts(getShortcutsFromApp(app));
-                                    }
+
                                     userApps.add(app);
-                                    app.setPinned(factorManager.isAppPinned(app));
+                                    try
+                                    {
+                                        app.setPinned(factorManager.isAppPinned(app));
+                                    }
+                                    catch(NullPointerException ex)
+                                    {
+                                        Log.d("setPinned", String.valueOf(app == null));
+                                    }
+
 
                                     Collections.sort(userApps, first_letter);
-                                } else {
-                                    appListDatabase.appListDao().delete(app);
                                 }
+                                else
+                                    appListDatabase.appListDao().delete(app);
                             }
                         }
                     }
@@ -282,7 +295,9 @@ public class AppListManager
     //find app object given package name
     private UserApp findAppByPackage(String packageName)
     {
-        for (UserApp a : userApps)
+        ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
+
+        for (UserApp a : copyApps)
             if (a.getPackageName().equals(packageName)) return a;
 
         return new UserApp();
