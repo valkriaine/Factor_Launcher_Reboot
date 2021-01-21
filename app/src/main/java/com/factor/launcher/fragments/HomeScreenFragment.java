@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -24,9 +26,10 @@ import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
-import com.factor.launcher.managers.AppListManager;
-import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.view_models.AppListManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
@@ -38,10 +41,11 @@ import com.factor.launcher.util.Util;
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack
+public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
 {
     private boolean isLiveWallpaper = false;
 
@@ -183,11 +187,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     @SuppressLint("ClickableViewAccessibility")
     private void initializeComponents()
     {
-        //initialize resources
-        //***************************************************************************************************************************************************
 
         if (getActivity() == null || getContext() == null)
             return;
+
+
+        //initialize resources
+        //***************************************************************************************************************************************************
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         int height = Resources.getSystem().getDisplayMetrics().heightPixels;
@@ -214,7 +220,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
         //initialize saved user settings
-        appSettings = AppSettingsManager.getInstance(getContext()).getAppSettings();
+        appSettings = AppSettingsManager.getInstance(getActivity().getApplication()).getAppSettings();
+
+
+
+
 
         //tile list guideline position
         binding.guideline.setGuidelinePercent(appSettings.getTileListScale());
@@ -241,24 +251,43 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.homePager.addView(binding.drawerPage, 1);
 
 
+
+
         //arrow button guideline
         if (paddingTop == paddingTop105)
             binding.guidelineArrowHorizontal.setGuidelinePercent((appListPaddingTop100 + dp20 - .5f) /height);
         else
             binding.guidelineArrowHorizontal.setGuidelinePercent((paddingTop + dp20 - .5f) /height);
 
+
+
+
+
         //app drawer
         //***************************************************************************************************************************************************
-        binding.appsList.setLayoutManager(new FixedLinearLayoutManager(getContext()));
-
         if (paddingTop == paddingTop105)
             binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
         else
             binding.appsList.setPadding(0, paddingTop + dp4, 0, paddingBottom150);
 
-        binding.appsList.setAdapter(appListManager.adapter);
+
+        Observer<ArrayList<UserApp>> appsObserver = userArrayList ->
+        {
+            binding.appsList.setLayoutManager(new FixedLinearLayoutManager(getContext()));
+            binding.appsList.setAdapter(appListManager.adapter);
+        };
+
+        appListManager.getAppsMutableLiveData().observe(getViewLifecycleOwner(), appsObserver);
+
         binding.appsList.setHasFixedSize(true);
-        binding.appsList.setItemViewCacheSize(100);
+        binding.appsList.setItemViewCacheSize(appListManager.getListSize());
+
+
+
+
+
+
+        //home pager on scroll
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
@@ -291,6 +320,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrollStateChanged(int state) {}
 
         });
+        //todo: add long press listener to display a list of app names with the same cap letter
         binding.scrollBar.setupWithRecyclerView(
                 binding.appsList,
                 (position) ->
@@ -310,7 +340,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                         //todo: convert chinese to pinyin
                         //return new FastScrollItemIndicator.Icon("some drawable");
                     }
-
                     return new FastScrollItemIndicator.Text(capString);
                 }
         );
@@ -320,17 +349,25 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //tile list
         //***************************************************************************************************************************************************
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
-        binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
+
+
+        Observer<ArrayList<Factor>> factorObserver = userArrayList ->
+        {
+            binding.tilesList
+                    .setLayoutManager(ChipsLayoutManager.newBuilder(getContext())
+                            .setOrientation(ChipsLayoutManager.HORIZONTAL)
+                            .setChildGravity(Gravity.CENTER)
+                            .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                            .setMaxViewsInRow(8)
+                            .setScrollingEnabled(true)
+                            .build());
+
+            binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
+        };
+
+        appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
         binding.tilesList.setItemViewCacheSize(20);
 
-        binding.tilesList
-                .setLayoutManager(ChipsLayoutManager.newBuilder(getContext())
-                .setOrientation(ChipsLayoutManager.HORIZONTAL)
-                .setChildGravity(Gravity.CENTER)
-                .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
-                .setMaxViewsInRow(8)
-                .setScrollingEnabled(true)
-                .build());
 
 
 

@@ -14,32 +14,35 @@ abstract class FactorsDatabase : RoomDatabase()
         Room.databaseBuilder(it.applicationContext, FactorsDatabase::class.java, "factor_list")
             .build()
     })
+
+
+
+    @Dao
+    interface FactorsDao
+    {
+        @Query("SELECT * FROM factor ORDER BY `order`")
+        fun getAll(): List<Factor>
+
+        @Query("SELECT * FROM factor WHERE packageName =:term LIMIT 1")
+        fun findByPackage(term: String): Factor
+
+        @Update
+        fun updateFactorInfo(factor: Factor)
+
+        @Query("UPDATE factor SET `order`=:position where packageName =:packageName")
+        fun updateFactorOrder(packageName: String, position: Int)
+
+        @Update(onConflict = OnConflictStrategy.REPLACE)
+        fun updateAll(wordEntities: List<Factor>)
+
+        @Insert
+        fun insertAll(factors: List<Factor>)
+
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        fun insert(factor: Factor)
+
+        @Delete
+        fun delete(factor: Factor)
+    }
 }
 
-@Dao
-interface FactorsDao
-{
-    @Query("SELECT * FROM factor ORDER BY `order`")
-    fun getAll(): List<Factor>
-
-    @Query("SELECT * FROM factor WHERE packageName =:term LIMIT 1")
-    fun findByPackage(term: String): Factor
-
-    @Update
-    fun updateFactorInfo(factor: Factor)
-
-    @Query("UPDATE factor SET `order`=:position where packageName =:packageName")
-    fun updateFactorOrder(packageName: String, position: Int)
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateAll(wordEntities: List<Factor>)
-
-    @Insert
-    fun insertAll(factors: List<Factor>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(factor: Factor)
-
-    @Delete
-    fun delete(factor: Factor)
-}

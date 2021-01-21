@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
-import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
 
@@ -160,7 +160,7 @@ public class HomeActivity extends AppCompatActivity
     //reload fragment after app settings have changed
     public void reload()
     {
-        AppSettingsManager.getInstance(getApplicationContext()).respondToSettingsChange();
+        AppSettingsManager.getInstance(getApplication()).respondToSettingsChange();
 
         if (isVisible)
         {

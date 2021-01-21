@@ -19,6 +19,7 @@ object Util
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
     }
 
+    //expand notification panel
     @SuppressLint("WrongConstant", "PrivateApi")
     fun setExpandNotificationDrawer(context: Context, expand: Boolean)
     {

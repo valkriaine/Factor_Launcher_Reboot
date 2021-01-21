@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
-import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.ui.CustomFlag;
 import com.factor.launcher.util.Constants;
@@ -90,12 +90,12 @@ public class SettingsFragment extends Fragment
     //initialize ui components
     private void initializeComponents()
     {
-        if (getContext() == null)
+        if (getContext() == null || getActivity() == null)
             return;
 
         int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
 
-        AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(getContext());
+        AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(getActivity().getApplication());
 
         settings = appSettingsManager.getAppSettings();
 
@@ -303,29 +303,33 @@ public class SettingsFragment extends Fragment
     //detect, save, and notify changes in app settings
     private void updateSettings()
     {
-        if (areSettingsChanged())
+        if (areSettingsChanged() && getActivity() != null)
         {
+
+            AppSettings updated = AppSettingsManager.getInstance(getActivity().getApplication()).getAppSettings();
+
+
             //save settings
 
+
             //toggles
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurred(binding.blurToggle.isChecked());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setDarkIcon(binding.darkIconToggle.isChecked());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setDarkText(binding.darkTextToggle.isChecked());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setShowShadowAroundIcon(binding.iconShadowToggle.isChecked());
+            updated.setBlurred(binding.blurToggle.isChecked());
+            updated.setDarkIcon(binding.darkIconToggle.isChecked());
+            updated.setDarkText(binding.darkTextToggle.isChecked());
+            updated.setShowShadowAroundIcon(binding.iconShadowToggle.isChecked());
 
             //sliders
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setBlurRadius((int) binding.blurRadiusSlider.getValue());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setCornerRadius((int) binding.cornerRadiusSlider.getValue());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileListScale(binding.tileListScaleSlider.getValue());
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileMargin((int) binding.tileMarginSlider.getValue());
+            updated.setBlurRadius((int) binding.blurRadiusSlider.getValue());
+            updated.setCornerRadius((int) binding.cornerRadiusSlider.getValue());
+            updated.setTileListScale(binding.tileListScaleSlider.getValue());
+            updated.setTileMargin((int) binding.tileMarginSlider.getValue());
 
             //colors
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setTileThemeColor(tileColor);
-            AppSettingsManager.getInstance(getContext()).getAppSettings().setSearchBarColor(searchColor);
+            updated.setTileThemeColor(tileColor);
+            updated.setSearchBarColor(searchColor);
 
 
-
-            AppSettingsManager.getInstance(getContext()).updateSettings();
+            AppSettingsManager.getInstance(getActivity().getApplication()).setAppSettings(updated).updateSettings();
             Intent intent = new Intent();
             intent.setAction(Constants.SETTINGS_CHANGED);
             requireContext().sendBroadcast(intent);

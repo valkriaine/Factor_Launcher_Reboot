@@ -19,7 +19,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityWelcomeBinding;
-import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.util.Constants;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -250,11 +250,11 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //go to home screen
     private void toHomeScreen()
     {
-        boolean isBlurred = AppSettingsManager.getInstance(getApplicationContext()).getAppSettings().isBlurred();
+        boolean isBlurred = AppSettingsManager.getInstance(getApplication()).getAppSettings().isBlurred();
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && isBlurred)
         {
-            AppSettingsManager.getInstance(getApplicationContext()).getAppSettings().setBlurred(false);
-            AppSettingsManager.getInstance(getApplicationContext()).updateSettings();
+            AppSettingsManager.getInstance(getApplication()).getAppSettings().setBlurred(false);
+            AppSettingsManager.getInstance(getApplication()).updateSettings();
         }
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(intent);

@@ -1,7 +1,7 @@
 package com.factor.launcher;
 
 import android.app.Application;
-import com.factor.launcher.managers.AppSettingsManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import org.acra.ACRA;
 import org.acra.annotation.AcraCore;
 import org.acra.annotation.AcraLimiter;
@@ -30,6 +30,6 @@ public class FactorApplication extends Application
         ACRA.init(this);
 
         //initialize settings
-        AppSettingsManager.getInstance(getApplicationContext());
+        AppSettingsManager.getInstance(this);
     }
 }

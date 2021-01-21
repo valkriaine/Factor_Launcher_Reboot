@@ -1,31 +1,33 @@
-package com.factor.launcher.managers;
+package com.factor.launcher.view_models;
 
-import android.content.Context;
-import com.factor.launcher.database.AppSettingsDao;
+import android.app.Application;
+import androidx.lifecycle.AndroidViewModel;
 import com.factor.launcher.database.AppSettingsDatabase;
 import com.factor.launcher.models.AppSettings;
 
-public class AppSettingsManager
+public class AppSettingsManager extends AndroidViewModel
 {
     public boolean areSettingsChanged = false;
 
     private AppSettings appSettings;
 
-    private final AppSettingsDao daoReference;
+    private final AppSettingsDatabase.AppSettingsDao daoReference;
 
     private static AppSettingsManager instance;
 
+    //todo: implement LiveData here
     //singleton reference
-    public static AppSettingsManager getInstance(Context context)
+    public static AppSettingsManager getInstance(Application application)
     {
         if (instance == null)
-            instance = new AppSettingsManager(context);
+            instance = new AppSettingsManager(application);
         return instance;
     }
 
-    private AppSettingsManager(Context context)
+    private AppSettingsManager(Application application)
     {
-        daoReference = AppSettingsDatabase.Companion.getInstance(context).appSettingsDao();
+        super(application);
+        daoReference = AppSettingsDatabase.Companion.getInstance(application.getApplicationContext()).appSettingsDao();
         appSettings = daoReference.retrieveSettings();
 
         try
@@ -37,8 +39,8 @@ public class AppSettingsManager
             appSettings = new AppSettings();
             daoReference.initializeSettings(appSettings);
         }
-
     }
+
 
     public void respondToSettingsChange()
     {
@@ -53,6 +55,12 @@ public class AppSettingsManager
     public AppSettings getAppSettings()
     {
         return appSettings;
+    }
+
+    public AppSettingsManager setAppSettings(AppSettings settings)
+    {
+        this.appSettings = settings;
+        return this;
     }
 
     public void updateSettings()

@@ -19,7 +19,7 @@ public class NotificationListener extends NotificationListenerService
     public void onCreate()
     {
         super.onCreate();
-        componentsSetupReceiver = new ComponentsSetupReceiver();
+        componentsSetupReceiver = new ComponentsSetupReceiver(this);
         registerReceiver(componentsSetupReceiver, new IntentFilter(Constants.NOTIFICATION_INTENT_ACTION_SETUP));
     }
 
@@ -29,7 +29,10 @@ public class NotificationListener extends NotificationListenerService
     {
         super.onDestroy();
         if (componentsSetupReceiver != null)
+        {
             unregisterReceiver(componentsSetupReceiver);
+            componentsSetupReceiver.invalidate();
+        }
     }
 
     //send a broadcast to NotificationBroadcastReceiver when a new notification has arrived
@@ -74,8 +77,21 @@ public class NotificationListener extends NotificationListenerService
 
 
     //receive broadcast when app has successfully registered all other receivers
-    private class ComponentsSetupReceiver extends BroadcastReceiver
+    private static class ComponentsSetupReceiver extends BroadcastReceiver
     {
+
+        private NotificationListener listener;
+
+        public ComponentsSetupReceiver(NotificationListener listener)
+        {
+            this.listener = listener;
+        }
+
+        public void invalidate()
+        {
+            listener = null;
+        }
+
         @Override
         public void onReceive(Context context, Intent intent)
         {
@@ -83,7 +99,7 @@ public class NotificationListener extends NotificationListenerService
             {
                 try
                 {
-                    getCurrentNotifications();
+                    listener.getCurrentNotifications();
                 }
                 catch (Exception ignored){}
             }

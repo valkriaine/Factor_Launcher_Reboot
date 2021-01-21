@@ -3,7 +3,7 @@ package com.factor.launcher.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.factor.launcher.managers.AppListManager;
+import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.models.UserApp;
 
 import java.util.List;

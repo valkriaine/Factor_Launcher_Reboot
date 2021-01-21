@@ -6,7 +6,7 @@ import android.content.Intent;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.activities.HomeActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
-import com.factor.launcher.managers.AppListManager;
+import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.util.Constants;
 
 import java.util.Objects;
