@@ -63,6 +63,6 @@
     <string name="crash_report">Crash Report</string>
     <string name="channel_name">factor_launcher_crash_report_channel</string>
     <string name="home_screen_width">Tile list width (% of home screen)</string>
-    <string name="tile_margin">Tile margin</string>
+    <string name="tile_margin">Tile padding</string>
 
 </resources>

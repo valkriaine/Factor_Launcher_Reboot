@@ -189,13 +189,28 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getActivity() == null || getContext() == null)
             return;
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        int paddingTop = (int) Util.INSTANCE.dpToPx(105, getContext());
-        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
+
+
+        int paddingTop105 = (int) Util.INSTANCE.dpToPx(105, getContext());
+        int dp4 = (int) Util.INSTANCE.dpToPx(4, getContext());
+        int dp20 = (int) Util.INSTANCE.dpToPx(20, getContext());
+
+        int paddingTop;
+
+        if (((float)height)/8 > paddingTop105)
+            paddingTop = paddingTop105;
+        else
+            paddingTop = height/8;
+
+        int paddingHorizontal = width / 20;
         int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, getContext());
         int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, getContext());
         int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, getContext());
         int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, getContext());
-        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+
 
 
         //initialize saved user settings
@@ -226,9 +241,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.homePager.addView(binding.drawerPage, 1);
 
 
+        //arrow button guideline
+        if (paddingTop == paddingTop105)
+            binding.guidelineArrowHorizontal.setGuidelinePercent((appListPaddingTop100 + dp20 - .5f) /height);
+        else
+            binding.guidelineArrowHorizontal.setGuidelinePercent((paddingTop + dp20 - .5f) /height);
+
         //app drawer
         //***************************************************************************************************************************************************
         binding.appsList.setLayoutManager(new FixedLinearLayoutManager(getContext()));
+
+        if (paddingTop == paddingTop105)
+            binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
+        else
+            binding.appsList.setPadding(0, paddingTop + dp4, 0, paddingBottom150);
+
         binding.appsList.setAdapter(appListManager.adapter);
         binding.appsList.setHasFixedSize(true);
         binding.appsList.setItemViewCacheSize(100);
@@ -243,13 +270,18 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.blur.setAlpha(xOffset / 0.5f);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
-                binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
+
+                if (paddingTop == paddingTop105)
+                    binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
+                else
+                    binding.appsList.setPadding(0, paddingTop + dp4, 0, paddingBottom150);
             }
 
             @Override
             public void onPageSelected(int position)
             {
-                if (position == 0) {
+                if (position == 0)
+                {
                     binding.arrowButton.setRotation(180);
                     binding.blur.setAlpha(0f);
                 }
@@ -287,7 +319,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //tile list
         //***************************************************************************************************************************************************
-        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width / 5, paddingBottom300);
+        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
         binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         binding.tilesList.setItemViewCacheSize(20);
 
@@ -326,6 +358,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(appSettings.isDarkIcon()?Color.BLACK:Color.WHITE);
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(appSettings.isDarkIcon()?Color.DKGRAY:Color.LTGRAY);
 
+        //select all text when the user clicks on the search bar
+        //instead of clearing the search input
+        ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setSelectAllOnFocus(true);
+
         binding.searchView.setOnCloseListener(() ->
         {
             binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
@@ -348,7 +384,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             }
         });
-        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150));
+        binding.searchView.setOnQueryTextFocusChangeListener((v, hasFocus) ->
+        {
+            if (paddingTop == paddingTop105)
+                binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
+            else
+                binding.appsList.setPadding(0, paddingTop + dp4, 0, paddingBottom150);
+        });
 
 
 

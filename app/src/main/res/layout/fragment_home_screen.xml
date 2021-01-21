@@ -130,21 +130,26 @@
                             android:orientation="vertical"
                             app:layout_constraintGuide_percent=".8"/>
 
+                    <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline_arrow_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintGuide_percent=".2"/>
+
 
                     <!--arrow-->
                     <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/arrowButton"
-                            android:hapticFeedbackEnabled="true"
                             android:src="@drawable/arrow"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:foregroundGravity="center"
-                            android:layout_marginTop="120dp"
                             android:background="@drawable/circle"
                             android:scaleType="center"
                             android:rotation="180"
                             android:transitionName="arrow_transition"
-                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/guideline_arrow_horizontal"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/guideline"/>
 
@@ -207,9 +212,6 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="100dp"
-                                android:paddingBottom="150dp"
-                                android:paddingHorizontal="20dp"
                                 android:clipToPadding="false"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

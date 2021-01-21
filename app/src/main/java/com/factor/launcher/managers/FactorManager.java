@@ -719,13 +719,16 @@ public class FactorManager
                         ((FactorSmallBinding)binding).notificationCount.setText(factor.retrieveNotificationCount());
 
                     if (!isLiveWallpaper)
+                    {
                         ((FactorSmallBinding) binding).trans
-                            .setupWith(background)
-                            .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                            .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
-                            .setBlurRadius(appSettings.getBlurRadius())
-                            .setBlurAutoUpdate(false)
-                            .setHasFixedTransformationMatrix(false);
+                                .setupWith(background)
+                                .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
+                                .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
+                                .setBlurRadius(appSettings.getBlurRadius())
+                                .setBlurAutoUpdate(false)
+                                .setHasFixedTransformationMatrix(false);
+                    }
+
                 }
                 else if (size == Factor.Size.medium)
                 {
