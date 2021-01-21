@@ -6,9 +6,11 @@ Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor
 
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
 
-Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
-Download the [Newest apk](https://github.com/Valkriaine/Factor_Launcher_Reboot/releases/download/0.4.8-alpha/0.4.8-alpha.apk)
+<a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
+<img src="https://raw.githubusercontent.com/Ramotion/react-native-circle-menu/master/google_play@2x.png" width="200" height="60"></a>
+
+Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 [Development playlist](https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX)
 
