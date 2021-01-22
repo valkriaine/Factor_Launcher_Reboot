@@ -42,7 +42,6 @@ import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
@@ -108,7 +107,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 if (!binding.appsList.canScrollVertically(-1))
                     binding.homePager.setCurrentItem(0, true);
                 else
-                    Objects.requireNonNull(binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
+                {
+                    if (binding.appsList.getLayoutManager() != null)
+                        (binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
+                }
             }
             return true;
         }
@@ -125,8 +127,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 }
             };
             smoothScroller.setTargetPosition(0);
-            Objects.requireNonNull((ChipsLayoutManager)binding.tilesList.getLayoutManager())
-                    .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+            if (binding.tilesList.getLayoutManager() != null)
+            binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
             return true;
         }
         else
@@ -280,7 +282,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         appListManager.getAppsMutableLiveData().observe(getViewLifecycleOwner(), appsObserver);
 
         binding.appsList.setHasFixedSize(true);
-        binding.appsList.setItemViewCacheSize(appListManager.getListSize());
+        binding.appsList.setItemViewCacheSize(appListManager.getListSize() * 2);
 
 
 

@@ -18,7 +18,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.adapters.AppListAdapter;
@@ -447,24 +446,28 @@ public class AppListManager extends ViewModel
     //search bar filter app list
     public void findPosition(RecyclerView rc, String newText)
     {
-        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(adapter.activity)
+        if (rc != null && rc.getLayoutManager() != null)
         {
-            @Override protected int getVerticalSnapPreference()
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(adapter.activity)
             {
-                return LinearSmoothScroller.SNAP_TO_START;
-            }
-        };
-        for (UserApp a : userApps)
-        {
-            if (a.getSearchReference().contains(newText.toLowerCase()))
+                @Override protected int getVerticalSnapPreference()
+                {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            for (UserApp a : userApps)
             {
-                smoothScroller.setTargetPosition(userApps.indexOf(a));
-                Objects.requireNonNull((LinearLayoutManager)rc.getLayoutManager()).startSmoothScroll(smoothScroller);
-                return;
+                if (a.getSearchReference().contains(newText.toLowerCase()))
+                {
+                    smoothScroller.setTargetPosition(userApps.indexOf(a));
+                    rc.getLayoutManager().startSmoothScroll(smoothScroller);
+                    return;
+                }
             }
+            smoothScroller.setTargetPosition(0);
+            rc.getLayoutManager().startSmoothScroll(smoothScroller);
         }
-        smoothScroller.setTargetPosition(0);
-        Objects.requireNonNull((LinearLayoutManager)rc.getLayoutManager()).startSmoothScroll(smoothScroller);
+
     }
 
 

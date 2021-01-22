@@ -28,7 +28,6 @@ import com.factor.launcher.util.Payload;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.Objects;
 
 //adapter for app drawer
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
@@ -355,17 +354,20 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                     appBinding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
                     appBinding.confirmEditButton.setOnClickListener(view ->
                     {
-                        String newName = Objects.requireNonNull(appBinding.labelEdit.getText()).toString();
-                        if (newName.isEmpty())
-                            exitEditMode(app);
-                        else if (app.isCustomized() && newName.equals(app.getLabelNew()))
-                            exitEditMode(app);
-                        else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
-                            exitEditMode(app);
-                        else
+                        if (appBinding.labelEdit.getText() != null)
                         {
-                            exitEditMode(app);
-                            renameApp(app, newName);
+                            String newName = appBinding.labelEdit.getText().toString();
+                            if (newName.isEmpty())
+                                exitEditMode(app);
+                            else if (app.isCustomized() && newName.equals(app.getLabelNew()))
+                                exitEditMode(app);
+                            else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
+                                exitEditMode(app);
+                            else
+                            {
+                                exitEditMode(app);
+                                renameApp(app, newName);
+                            }
                         }
                     });
                 }
@@ -386,17 +388,20 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             binding.resetEditButton.setOnClickListener(view -> resetEditMode(app));
             binding.confirmEditButton.setOnClickListener(view ->
             {
-                String newName = Objects.requireNonNull(binding.labelEdit.getText()).toString();
-                if (newName.isEmpty())
-                    exitEditMode(app);
-                else if (app.isCustomized() && newName.equals(app.getLabelNew()))
-                    exitEditMode(app);
-                else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
-                    exitEditMode(app);
-                else
+                if (binding.labelEdit.getText() != null)
                 {
-                    exitEditMode(app);
-                    renameApp(app, newName);
+                    String newName = binding.labelEdit.getText().toString();
+                    if (newName.isEmpty())
+                        exitEditMode(app);
+                    else if (app.isCustomized() && newName.equals(app.getLabelNew()))
+                        exitEditMode(app);
+                    else if (!app.isCustomized() && newName.equals(app.getLabelOld()))
+                        exitEditMode(app);
+                    else
+                    {
+                        exitEditMode(app);
+                        renameApp(app, newName);
+                    }
                 }
             });
             appListAdapter.notifyItemChanged(appListAdapter.userApps.indexOf(app));
