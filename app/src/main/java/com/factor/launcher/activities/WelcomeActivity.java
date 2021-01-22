@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityWelcomeBinding;
@@ -31,7 +32,7 @@ import java.util.List;
 import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
-public class WelcomeActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks
+public class WelcomeActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LifecycleOwner
 {
     private final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
 

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
@@ -24,7 +25,7 @@ import com.factor.launcher.util.Util;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
-public class HomeActivity extends AppCompatActivity
+public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 {
 
     private Drawable wallpaper = null;

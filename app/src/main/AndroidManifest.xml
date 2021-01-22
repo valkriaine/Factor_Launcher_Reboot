@@ -24,6 +24,9 @@
 
         <activity
                 android:name=".activities.SettingsActivity"
+                android:documentLaunchMode="intoExisting"
+                android:autoRemoveFromRecents="true"
+                android:launchMode="singleInstance"
                 android:icon="@drawable/icon_menu_black"
                 android:theme="@style/SettingsTheme">
         </activity>

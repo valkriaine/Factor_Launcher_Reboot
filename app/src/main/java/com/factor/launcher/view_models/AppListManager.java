@@ -455,11 +455,12 @@ public class AppListManager extends ViewModel
                     return LinearSmoothScroller.SNAP_TO_START;
                 }
             };
-            for (UserApp a : userApps)
+            ArrayList<UserApp> copyList = new ArrayList<>(userApps);
+            for (UserApp a : copyList)
             {
                 if (a.getSearchReference().contains(newText.toLowerCase()))
                 {
-                    smoothScroller.setTargetPosition(userApps.indexOf(a));
+                    smoothScroller.setTargetPosition(copyList.indexOf(a));
                     rc.getLayoutManager().startSmoothScroll(smoothScroller);
                     return;
                 }

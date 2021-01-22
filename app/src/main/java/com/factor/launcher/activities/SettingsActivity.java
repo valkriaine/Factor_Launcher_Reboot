@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.fragments.SettingsFragment;
 
@@ -19,7 +20,7 @@ import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_HOME_KEY;
 import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_KEY;
 
 
-public class SettingsActivity extends AppCompatActivity
+public class SettingsActivity extends AppCompatActivity implements LifecycleOwner
 {
     private HomeButtonPressReceiver receiver;
 

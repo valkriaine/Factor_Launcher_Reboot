@@ -18,6 +18,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
@@ -36,7 +37,7 @@ import pub.devrel.easypermissions.PermissionRequest;
 import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 
 
-public class SettingsFragment extends Fragment
+public class SettingsFragment extends Fragment implements LifecycleOwner
 {
     private final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
 
@@ -66,8 +67,6 @@ public class SettingsFragment extends Fragment
     {
         super.onDestroyView();
         updateSettings();
-        binding = null;
-        settings = null;
     }
 
     @Override
@@ -86,6 +85,12 @@ public class SettingsFragment extends Fragment
         setUpUIState();
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        updateSettings();
+    }
 
     //initialize ui components
     private void initializeComponents()
@@ -310,7 +315,6 @@ public class SettingsFragment extends Fragment
 
 
             //save settings
-
 
             //toggles
             updated.setBlurred(binding.blurToggle.isChecked());

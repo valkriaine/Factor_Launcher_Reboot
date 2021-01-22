@@ -64,6 +64,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private AppSettings appSettings;
 
+    private String selectedLetter = "";
+
 
 
     public HomeScreenFragment()
@@ -94,6 +96,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         return binding.getRoot();
     }
 
+
     //handle back button press
     @Override
     public boolean onBackPressed()
@@ -119,14 +122,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             if (getContext() == null)
                 return true;
 
-            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext())
-            {
-                @Override protected int getVerticalSnapPreference()
-                {
-                    return LinearSmoothScroller.SNAP_TO_START;
-                }
-            };
-            smoothScroller.setTargetPosition(0);
             if (binding.tilesList.getLayoutManager() != null)
             binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
             return true;
@@ -159,16 +154,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 packageActionsReceiver.invalidate();
                 context.unregisterReceiver(packageActionsReceiver);
             }
-
         }
-        appListManager.invalidate();
-        binding.homePager.setAdapter(null);
-        binding.getRoot().clearFocus();
-        binding.getRoot().clearAnimation();
-        binding.searchBase.removeAllViews();
-        context = null;
-        binding = null;
-        appListManager = null;
     }
 
 
@@ -179,7 +165,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getContext()!= null)
         {
             appListManager.clearAllNotifications();
-            Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
+            Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
             getContext().sendBroadcast(intent);
         }
     }
@@ -322,7 +308,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrollStateChanged(int state) {}
 
         });
-        //todo: add long press listener to display a list of app names with the same cap letter
+
         binding.scrollBar.setupWithRecyclerView(
                 binding.appsList,
                 (position) ->
@@ -346,6 +332,31 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 }
         );
         binding.thumb.setupWithFastScroller(binding.scrollBar);
+        binding.scrollBar.setUseDefaultScroller(false);
+
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext())
+        {
+            @Override protected int getVerticalSnapPreference()
+            {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+
+        binding.scrollBar.getItemIndicatorSelectedCallbacks().add(
+                (indicator, indicatorCenterY, itemPosition) ->
+                {
+                    binding.appsList.stopScroll();
+                    smoothScroller.setTargetPosition(itemPosition);
+                    if (binding.appsList.getLayoutManager() != null)
+                    binding.appsList.getLayoutManager().startSmoothScroll(smoothScroller);
+                    selectedLetter = indicator.toString();
+
+                    //todo: add touch event callback here
+                    //key down while selectedLetter is not empty -> show list of apps
+                    //key up clears selectedLetter, hide list of apps
+                    //if key up on top of an app, launch the app
+                }
+        );
 
 
         //tile list
@@ -562,4 +573,5 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
         getContext().sendBroadcast(intent);
     }
+
 }
