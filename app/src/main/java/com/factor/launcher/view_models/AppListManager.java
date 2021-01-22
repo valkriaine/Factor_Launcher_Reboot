@@ -142,14 +142,14 @@ public class AppListManager extends ViewModel
                         if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                         {
                             UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
-                            //noinspection ConstantConditions
+
                             if (app == null) //package name does not exist in database
                             {
                                 app = new UserApp();
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
-                                app.resetNotifications();
+
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                     app.setShortCuts(getShortcutsFromApp(app));
 
@@ -162,7 +162,6 @@ public class AppListManager extends ViewModel
                             else {
                                 if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
-                                    app.resetNotifications();
                                     app.icon = r.activityInfo.loadIcon(packageManager);
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)

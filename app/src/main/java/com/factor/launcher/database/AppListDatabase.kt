@@ -24,7 +24,7 @@ abstract class AppListDatabase : RoomDatabase()
         fun findByName(label: String): List<UserApp>
 
         @Query("SELECT * FROM userApp WHERE packageName =:term LIMIT 1")
-        fun findByPackage(term: String): UserApp
+        fun findByPackage(term: String): UserApp?
 
         @Update
         fun updateAppInfo(app: UserApp)

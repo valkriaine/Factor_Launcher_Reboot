@@ -5,13 +5,14 @@ apply plugin: "kotlin-kapt"
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
+    ndkVersion "21.0.6113669"
 
     defaultConfig {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 7
-        versionName "0.53-alpha"
+        versionCode 8
+        versionName "0.54-beta"
 
         renderscriptTargetApi 30
         renderscriptSupportModeEnabled true
@@ -56,6 +57,8 @@ android {
         viewBinding = true
     }
 }
+
+
 
 dependencies {
     def room_version = "2.2.6"
