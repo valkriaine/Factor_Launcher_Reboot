@@ -9,7 +9,6 @@ import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.util.Constants;
 
-import java.util.Objects;
 
 import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_HOME_KEY;
 import static com.factor.launcher.util.Constants.SYSTEM_DIALOG_REASON_KEY;
@@ -52,13 +51,15 @@ public class AppActionReceiver extends BroadcastReceiver
             //a factor has been pinned, scroll to home screen and location the newly pinned tile
             case Constants.BROADCAST_ACTION_ADD:
                 binding.homePager.setCurrentItem(0, true);
-                Objects.requireNonNull(binding.tilesList.getLayoutManager())
+                if (binding.tilesList.getLayoutManager() != null)
+                binding.tilesList.getLayoutManager()
                         .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), intent.getIntExtra(Constants.ADD_KEY, 0));
                 break;
 
             //an app has been renamed, scroll to the new position of the app
             case Constants.BROADCAST_ACTION_RENAME:
-                Objects.requireNonNull(binding.appsList.getLayoutManager())
+                if (binding.appsList.getLayoutManager() != null)
+                binding.appsList.getLayoutManager()
                         .smoothScrollToPosition(binding.appsList, new RecyclerView.State(), intent.getIntExtra(Constants.RENAME_KEY, 0));
                 break;
 
@@ -76,8 +77,8 @@ public class AppActionReceiver extends BroadcastReceiver
                             binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
 
                         binding.appsList.scrollToPosition(0);
-                        Objects.requireNonNull(binding.tilesList.getLayoutManager())
-                                .smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+                        if (binding.tilesList.getLayoutManager() != null)
+                        binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
                     }
                 }
                 break;

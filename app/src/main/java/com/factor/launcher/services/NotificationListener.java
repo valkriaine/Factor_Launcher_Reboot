@@ -32,6 +32,7 @@ public class NotificationListener extends NotificationListenerService
         {
             unregisterReceiver(componentsSetupReceiver);
             componentsSetupReceiver.invalidate();
+            componentsSetupReceiver = null;
         }
     }
 
@@ -44,7 +45,7 @@ public class NotificationListener extends NotificationListenerService
         String title = String.valueOf(sbn.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE));
         String text = String.valueOf(sbn.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT));
 
-        Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_POST);
+        Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_POST);
         intent.putExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY, packageName);
         intent.putExtra(Constants.NOTIFICATION_INTENT_ID_KEY, id);
         intent.putExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY, text);
@@ -59,7 +60,7 @@ public class NotificationListener extends NotificationListenerService
         int id = sbn.getId();
         String packageName = sbn.getPackageName();
 
-        Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
+        Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
         intent.putExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY, packageName);
         intent.putExtra(Constants.NOTIFICATION_INTENT_ID_KEY, id);
         sendBroadcast(intent);
