@@ -6,6 +6,8 @@ Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor
 
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
 
+Updates will be released through Play Store only now. There will be fewer updates/builds, but each build will contain more features and fixes.
+
 
 <a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
 <img src="https://raw.githubusercontent.com/Ramotion/react-native-circle-menu/master/google_play@2x.png" width="200" height="60"></a>
@@ -21,15 +23,15 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Newest Version: 0.4.8-alpha
+# Newest Version: 0.52-beta
 
-Finished the app settings screen, including the options to change tile colours
+Better first launch logic
 
-Added haptic feedback to buttons and sliders in the settings screen
+Resolved some stability issues
 
-Swipe down from the home screen to open notification panel
+Implemented bug report with ACRA
 
-***currently the notification panel will not open if the home screen cannot be overscrolled (eg. having too few tiles)
+***starting from this build, all future releases will be available through Play Store only
 
 <p>&nbsp;</p>
 

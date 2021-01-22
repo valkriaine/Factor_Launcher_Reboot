@@ -1,4 +1,15 @@
 
+# Version: 0.4.8-alpha
+
+Finished the app settings screen, including the options to change tile colours
+
+Added haptic feedback to buttons and sliders in the settings screen
+
+Swipe down from the home screen to open notification panel
+
+***currently the notification panel will not open if the home screen cannot be overscrolled (eg. having too few tiles)
+
+
 # Version 0.4.79
 Added more customization options
 
