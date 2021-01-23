@@ -25,3 +25,4 @@
 native <methods>;
 }
 -keep class androidx.renderscript.** { *; }
+-keep class com.factor.launcher.view_models.** { *; }
