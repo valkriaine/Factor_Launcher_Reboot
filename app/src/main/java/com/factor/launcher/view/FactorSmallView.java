@@ -1,4 +1,4 @@
-package com.factor.launcher;
+package com.factor.launcher.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import com.factor.launcher.R;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
@@ -19,7 +20,7 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 /**
  * Small tile
  */
-public class FactorMediumView extends ConstraintLayout
+public class FactorSmallView extends ConstraintLayout
 {
     private BlurView trans;
 
@@ -31,21 +32,17 @@ public class FactorMediumView extends ConstraintLayout
 
     private AppCompatTextView tileLabel;
 
-    private AppCompatTextView notificationTitle;
-
-    private AppCompatTextView notificationContent;
-
-    public FactorMediumView(Context context) {
+    public FactorSmallView(Context context) {
         super(context);
         init();
     }
 
-    public FactorMediumView(Context context, AttributeSet attrs) {
+    public FactorSmallView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public FactorMediumView(Context context, AttributeSet attrs, int defStyle) {
+    public FactorSmallView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -53,14 +50,12 @@ public class FactorMediumView extends ConstraintLayout
 
     private void init()
     {
-        View.inflate(getContext(), R.layout.factor_medium_view, this);
+        View.inflate(getContext(), R.layout.factor_small_view, this);
         trans = findViewById(R.id.trans);
         card = findViewById(R.id.card);
         tileLabel = findViewById(R.id.tileLabel);
         tileIcon = findViewById(R.id.tileIcon);
         notificationCount = findViewById(R.id.notification_count);
-        notificationTitle = findViewById(R.id.notification_title);
-        notificationContent = findViewById(R.id.notification_content);
     }
 
     private void setUpNotificationCount(String count)
@@ -73,8 +68,6 @@ public class FactorMediumView extends ConstraintLayout
     {
         //label color
         tileLabel.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
-        notificationTitle.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
-        notificationContent.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
 
         //initialize blur and color
         if (isLiveWallpaper || !appSettings.isBlurred())
@@ -101,13 +94,8 @@ public class FactorMediumView extends ConstraintLayout
 
     public void setupContent(Factor factor)
     {
-
-        setUpNotificationCount(factor.retrieveNotificationCount());
-
-        notificationTitle.setText(factor.getUserApp().getNotificationTitle());
-        notificationContent.setText(factor.getUserApp().getNotificationText());
-
         tileLabel.setText(factor.getLabelNew());
+        setUpNotificationCount(factor.retrieveNotificationCount());
         tileIcon.setImageDrawable(factor.getIcon());
     }
 }

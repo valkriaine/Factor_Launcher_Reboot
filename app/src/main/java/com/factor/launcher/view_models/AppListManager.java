@@ -9,10 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.*;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
@@ -20,10 +22,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import com.factor.launcher.EmptyActivityException;
+import com.factor.launcher.exceptions.EmptyActivityException;
 import com.factor.launcher.adapters.AppListAdapter;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.fragments.HomeScreenFragment;
+import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.WidgetActivityResultContract;
@@ -504,23 +507,30 @@ public class AppListManager extends ViewModel
 
     //retrieve list of app shortcuts
     @RequiresApi(api = Build.VERSION_CODES.N_MR1)
-    public List<ShortcutInfo> getShortcutsFromApp(UserApp app)
+    public ArrayList<AppShortcut> getShortcutsFromApp(UserApp app)
     {
+        ArrayList<AppShortcut> shortcuts = new ArrayList<>();
 
         if (launcherApps == null || !launcherApps.hasShortcutHostPermission())
-            return new ArrayList<>(0);
-
+            return shortcuts;
 
         shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
                 LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
                 LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
 
         shortcutQuery.setPackage(app.getPackageName());
-        List<ShortcutInfo> shortcuts = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
-        if (shortcuts == null || shortcuts.isEmpty())
-            return new ArrayList<>(0);
-        else
-            return shortcuts;
+        List<ShortcutInfo> s = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+        if (s != null && !s.isEmpty())
+        {
+            for (ShortcutInfo info : s)
+            {
+                Drawable icon = factorManager.launcherApps.getShortcutIconDrawable(info, getActivity().getResources().getDisplayMetrics().densityDpi);
+                View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
+                shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+            }
+        }
+        return shortcuts;
+
     }
 
 

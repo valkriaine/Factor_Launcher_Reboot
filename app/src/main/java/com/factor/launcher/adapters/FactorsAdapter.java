@@ -2,16 +2,10 @@ package com.factor.launcher.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Process;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -21,7 +15,6 @@ import com.factor.launcher.R;
 import com.factor.launcher.databinding.FactorLargeBinding;
 import com.factor.launcher.databinding.FactorMediumBinding;
 import com.factor.launcher.databinding.FactorSmallBinding;
-import com.factor.launcher.view_models.FactorManager;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.NotificationHolder;
@@ -30,7 +23,7 @@ import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 import com.factor.launcher.util.Util;
-import eightbitlab.com.blurview.RenderScriptBlur;
+import com.factor.launcher.view_models.FactorManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -135,25 +128,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         ViewDataBinding binding = DataBindingUtil.bind(view);
 
-        //check blur enabled
-        if (isLiveWallpaper || !appSettings.isBlurred())
-        {
-            if (binding instanceof FactorLargeBinding)
-            {
-                ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
-                ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
-            }
-        }
-        else
-        {
-
-            if (binding instanceof FactorLargeBinding)
-            {
-                ((FactorLargeBinding) binding).trans.setVisibility(View.VISIBLE);
-                ((FactorLargeBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
-            }
-        }
-
 
         if (binding instanceof FactorSmallBinding)
         {
@@ -167,23 +141,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         if (binding instanceof FactorLargeBinding)
         {
-            if (appSettings.getShowShadowAroundIcon())
-            {
-                ((FactorLargeBinding) binding).tileIcon.setElevationDp(50);
-                ((FactorLargeBinding) binding).shortcut1Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
-                ((FactorLargeBinding) binding).shortcut2Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
-                ((FactorLargeBinding) binding).shortcut3Icon.setElevation(Util.INSTANCE.dpToPx(10, parent.getContext()));
-            }
-
-            else
-            {
-                ((FactorLargeBinding) binding).tileIcon.setElevationDp(0);
-                ((FactorLargeBinding) binding).shortcut1Card.setElevation(0);
-                ((FactorLargeBinding) binding).shortcut2Card.setElevation(0);
-                ((FactorLargeBinding) binding).shortcut3Card.setElevation(0);
-            }
-
-            ((FactorLargeBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+            ((FactorLargeBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         //create context menu
@@ -194,10 +152,12 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 selectedFactor = ((FactorLargeBinding) binding).getFactor();
             else if (binding instanceof FactorMediumBinding)
                 selectedFactor = ((FactorMediumBinding) binding).getFactor();
-            else {
-                assert binding instanceof FactorSmallBinding;
+            else
+            {
+                //noinspection ConstantConditions
                 selectedFactor = ((FactorSmallBinding) binding).getFactor();
             }
+
 
             if (!selectedFactor.getPackageName().isEmpty())
             {
@@ -247,7 +207,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         });
 
 
-        return new FactorsAdapter.FactorsViewHolder(view, appSettings, factorManager, isLiveWallpaper, background);
+        return new FactorsAdapter.FactorsViewHolder(view, factorManager);
     }
 
     @Override
@@ -282,13 +242,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 else if (userFactors.get(position).getSize() == Factor.Size.large)
                 {
                     FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
-
-                    if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-
-                    tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
-                    tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
-                    tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
+                    tileBinding.tile.setupContent(factorToChange);
                 }
             }
         }
@@ -414,23 +368,14 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         private int size = 0;
 
-        private final AppSettings appSettings;
-
         private final FactorManager factorManager;
 
-        private final boolean isLiveWallpaper;
 
-        private final ViewGroup background;
-
-
-        public FactorsViewHolder(@NonNull View itemView, AppSettings appSettings, FactorManager factorManager, boolean isLiveWallpaper, ViewGroup background)
+        public FactorsViewHolder(@NonNull View itemView, FactorManager factorManager)
         {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
-            this.appSettings = appSettings;
             this.factorManager = factorManager;
-            this.isLiveWallpaper = isLiveWallpaper;
-            this.background = background;
         }
 
         public void bindFactor(Factor factor)
@@ -470,102 +415,18 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                     break;
 
 
-
-
                 case Factor.Size.large:
 
                     ((FactorLargeBinding) binding).setFactor(factor);
-                    ((FactorLargeBinding) binding).tileLabel.setText(factor.getLabelNew());
-
-
-                    if (appSettings.isDarkText()) {
-                        ((FactorLargeBinding) binding).tileLabel.setTextColor(Color.BLACK);
-                        ((FactorLargeBinding) binding).shortcut1Label.setTextColor(Color.BLACK);
-                        ((FactorLargeBinding) binding).shortcut2Label.setTextColor(Color.BLACK);
-                        ((FactorLargeBinding) binding).shortcut3Label.setTextColor(Color.BLACK);
-                        ((FactorLargeBinding) binding).notificationContent.setTextColor(Color.BLACK);
-                        ((FactorLargeBinding) binding).notificationTitle.setTextColor(Color.BLACK);
-
-                        ((FactorLargeBinding) binding).divider.setBackgroundColor(Color.BLACK);
-                    } else {
-                        ((FactorLargeBinding) binding).tileLabel.setTextColor(Color.WHITE);
-                        ((FactorLargeBinding) binding).shortcut1Label.setTextColor(Color.WHITE);
-                        ((FactorLargeBinding) binding).shortcut2Label.setTextColor(Color.WHITE);
-                        ((FactorLargeBinding) binding).shortcut3Label.setTextColor(Color.WHITE);
-                        ((FactorLargeBinding) binding).notificationContent.setTextColor(Color.WHITE);
-                        ((FactorLargeBinding) binding).notificationTitle.setTextColor(Color.WHITE);
-
-                        ((FactorLargeBinding) binding).divider.setBackgroundColor(Color.WHITE);
+                    try
+                    {
+                        ((FactorLargeBinding) binding).tile.setupContent(factor);
                     }
-
-
-                    try {
-                        ((FactorLargeBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
-                    } catch (kotlin.UninitializedPropertyAccessException ex) {
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
                         factorManager.loadIcon(factor);
-                        ((FactorLargeBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
+                        ((FactorLargeBinding) binding).tile.setupContent(factor);
                     }
-
-                    ((FactorLargeBinding) binding).notificationCount.setText(factor.retrieveNotificationCount());
-                    ((FactorLargeBinding) binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
-                    ((FactorLargeBinding) binding).notificationContent.setText(factor.getUserApp().getNotificationText());
-                    ((FactorLargeBinding) binding).notificationCount.setVisibility(factor.getUserApp().visibilityNotificationCount());
-
-                    if (factor.retrieveNotificationCountInNumber() > 0)
-                        ((FactorLargeBinding) binding).notificationCount.setText(factor.retrieveNotificationCount());
-
-                    if (factor.getUserApp().hasShortcuts()) {
-                        ((FactorLargeBinding) binding).shortcutAvailability.setVisibility(View.INVISIBLE);
-                        List<ShortcutInfo> shortcuts = factorManager.getShortcutsFromFactor(factor);
-                        if (shortcuts.get(0) != null) {
-                            ShortcutInfo shortcut1 = shortcuts.get(0);
-                            ((FactorLargeBinding) binding).shortcut1.setVisibility(View.VISIBLE);
-                            Drawable icon1 = factorManager.launcherApps.getShortcutIconDrawable(shortcut1, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
-                            ((FactorLargeBinding) binding).shortcut1Icon.setImageDrawable(icon1);
-                            ((FactorLargeBinding) binding).shortcut1Label.setText(shortcut1.getShortLabel());
-
-                            ((FactorLargeBinding) binding).shortcut1.setOnClickListener(view -> startShortCut(shortcut1));
-                        } else
-                            ((FactorLargeBinding) binding).shortcut1.setVisibility(View.INVISIBLE);
-
-
-                        if (shortcuts.size() > 1 && shortcuts.get(1) != null) {
-                            ShortcutInfo shortcut2 = shortcuts.get(1);
-                            ((FactorLargeBinding) binding).shortcut2.setVisibility(View.VISIBLE);
-                            Drawable icon2 = factorManager.launcherApps.getShortcutIconDrawable(shortcut2, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
-                            ((FactorLargeBinding) binding).shortcut2Icon.setImageDrawable(icon2);
-                            ((FactorLargeBinding) binding).shortcut2Label.setText(shortcut2.getShortLabel());
-
-                            ((FactorLargeBinding) binding).shortcut2.setOnClickListener(view -> startShortCut(shortcut2));
-                        } else
-                            ((FactorLargeBinding) binding).shortcut2.setVisibility(View.INVISIBLE);
-
-                        if (shortcuts.size() > 2 && shortcuts.get(2) != null) {
-                            ShortcutInfo shortcut3 = shortcuts.get(2);
-                            ((FactorLargeBinding) binding).shortcut3.setVisibility(View.VISIBLE);
-                            Drawable icon3 = factorManager.launcherApps.getShortcutIconDrawable(shortcut3, itemView.getContext().getResources().getDisplayMetrics().densityDpi);
-                            ((FactorLargeBinding) binding).shortcut3Icon.setImageDrawable(icon3);
-                            ((FactorLargeBinding) binding).shortcut3Label.setText(shortcut3.getShortLabel());
-
-                            ((FactorLargeBinding) binding).shortcut3.setOnClickListener(view -> startShortCut(shortcut3));
-                        } else
-                            ((FactorLargeBinding) binding).shortcut3.setVisibility(View.INVISIBLE);
-                    } else {
-                        ((FactorLargeBinding) binding).shortcut1.setVisibility(View.INVISIBLE);
-                        ((FactorLargeBinding) binding).shortcut2.setVisibility(View.INVISIBLE);
-                        ((FactorLargeBinding) binding).shortcut3.setVisibility(View.INVISIBLE);
-                        ((FactorLargeBinding) binding).shortcutAvailability.setVisibility(View.VISIBLE);
-                    }
-
-
-                    if (!isLiveWallpaper)
-                        ((FactorLargeBinding) binding).trans
-                                .setupWith(background)
-                                .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                                .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
-                                .setBlurRadius(appSettings.getBlurRadius())
-                                .setBlurAutoUpdate(false)
-                                .setHasFixedTransformationMatrix(false);
                     break;
             }
 
@@ -597,12 +458,5 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 return new Factor();
         }
 
-
-        //launch shortcut
-        @RequiresApi(api = Build.VERSION_CODES.N_MR1)
-        private void startShortCut(ShortcutInfo shortcutInfo)
-        {
-            factorManager.launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
-        }
     }
 }

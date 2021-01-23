@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
@@ -16,6 +18,7 @@ import androidx.lifecycle.ViewModel;
 import com.factor.launcher.adapters.FactorsAdapter;
 import com.factor.launcher.database.FactorsDatabase;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Payload;
@@ -281,22 +284,30 @@ public class FactorManager extends ViewModel
 
     //find shortcuts related to a factor
     @RequiresApi(api = Build.VERSION_CODES.N_MR1)
-    public List<ShortcutInfo> getShortcutsFromFactor(Factor factor)
+    public ArrayList<AppShortcut> getShortcutsFromFactor(Factor factor)
     {
+        ArrayList<AppShortcut> shortcuts = new ArrayList<>();
 
         if (launcherApps == null || !launcherApps.hasShortcutHostPermission())
-            return new ArrayList<>(0);
+            return shortcuts;
 
         shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
                 LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
                 LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
 
         shortcutQuery.setPackage(factor.getPackageName());
-        List<ShortcutInfo> shortcuts = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
-        if (shortcuts == null || shortcuts.isEmpty())
-            return new ArrayList<>(0);
-        else
-            return shortcuts;
+        List<ShortcutInfo> s = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+        if (s != null && !s.isEmpty())
+        {
+            for (ShortcutInfo info : s)
+            {
+                Drawable icon = launcherApps.getShortcutIconDrawable(info, adapter.activity.getResources().getDisplayMetrics().densityDpi);
+                View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
+                shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+            }
+        }
+        return shortcuts;
+
     }
 
 

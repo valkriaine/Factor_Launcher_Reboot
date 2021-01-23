@@ -35,21 +35,21 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_v1"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".28"/>
+                app:layout_constraintGuide_percent=".27"/>
 
         <androidx.constraintlayout.widget.Guideline
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_v2"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".72"/>
+                app:layout_constraintGuide_percent=".73"/>
 
         <androidx.constraintlayout.widget.Guideline
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_h1"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".28"/>
+                app:layout_constraintGuide_percent=".27"/>
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_h2"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".72"/>
+                app:layout_constraintGuide_percent=".73"/>
 
 
         <!--app icon-->

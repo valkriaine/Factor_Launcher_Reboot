@@ -14,6 +14,7 @@
             android:layout_height="match_parent"
             android:tag="background"
             app:cardCornerRadius="5dp">
+
         <eightbitlab.com.blurview.BlurView
                 android:id="@+id/trans"
                 app:blurOverlayColor="#99FFFFFF"
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_label_v2"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".6"/>
+                app:layout_constraintGuide_percent="0.95"/>
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -49,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_label_h1"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".80"/>
+                app:layout_constraintGuide_percent=".9"/>
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -57,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_label_h2"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".95"/>
+                app:layout_constraintGuide_percent=".975"/>
 
 
         <!--app label-->
@@ -76,6 +77,8 @@
                 app:layout_constraintEnd_toEndOf="@id/guideline_label_v2"/>
 
 
+
+
         <androidx.constraintlayout.widget.Guideline
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,14 +91,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_v2"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".35"/>
+                app:layout_constraintGuide_percent=".36"/>
 
         <androidx.constraintlayout.widget.Guideline
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_h1"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".27"/>
+                app:layout_constraintGuide_percent=".13"/>
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -103,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_icon_h2"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".73"/>
+                app:layout_constraintGuide_percent=".36"/>
 
 
 
@@ -124,14 +127,13 @@
                 app:layout_constraintBottom_toBottomOf="@id/guideline_icon_h2"/>
 
 
-        <!--guidelines-->
 
         <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.50"/>
+                app:layout_constraintGuide_percent="0.25"/>
 
 
 
@@ -173,6 +175,15 @@
                 app:layout_constraintBottom_toBottomOf="@id/guideline_icon_h2"/>
 
 
+        <!--divider-->
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/divider"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -189,7 +200,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/guideline_notification_h1"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".05"/>
+                app:layout_constraintGuide_percent=".025"/>
 
 
 
@@ -204,6 +215,37 @@
                 app:layout_constraintEnd_toEndOf="@id/guideline_notification_v1"
                 app:layout_constraintTop_toTopOf="@id/guideline_notification_h1"/>
 
+
+
+
+        <!--shortcuts-->
+
+        <com.factor.bouncy.BouncyRecyclerView
+                android:id="@+id/shortcut_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:recyclerview_overscroll_animation_size="0"
+                app:recyclerview_fling_animation_size="0"
+                android:scrollbars="horizontal"
+                android:scrollbarSize="0dp"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintBottom_toBottomOf="@+id/guideline_label_h1"/>
+
+
+
+        <!--if no shortcuts are available, display this-->
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/shortcut_availability"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:translationZ="-100dp"
+                android:textColor="@android:color/black"
+                android:layout_marginVertical="20dp"
+                app:layout_constraintStart_toStartOf="@id/guideline_label_v1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_label_v2"
+                android:text="@string/no_shortcuts_available_for_this_app"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_label_h1"
+                app:layout_constraintTop_toBottomOf="@id/divider"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

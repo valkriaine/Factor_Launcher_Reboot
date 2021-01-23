@@ -1,6 +1,5 @@
 package com.factor.launcher.models
 
-import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.ColumnInfo
@@ -36,7 +35,7 @@ class UserApp
     var isBeingEdited : Boolean = false
 
     @Ignore
-    var shortCuts : List<ShortcutInfo> = ArrayList()
+    var shortCuts : ArrayList<AppShortcut> = ArrayList()
 
     @Ignore
     val currentNotifications : ArrayList<NotificationHolder> = ArrayList()

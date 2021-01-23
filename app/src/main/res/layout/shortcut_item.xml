@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/shortcut_base"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:gravity="center_horizontal">
+
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_icon_h1"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_icon_h2"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.55"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/shortcut_card"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:cardElevation="10dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideline_icon_h1"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_icon_h2">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/shortcut_icon"
+                    android:scaleType="centerInside"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/shortcut_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:lines="1"
+            android:padding="5dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:ellipsize="end" tools:layout_editor_absoluteX="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline_icon_h2"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.factor.launcher;
+package com.factor.launcher.exceptions;
 
 public class EmptyActivityException extends Exception
 {

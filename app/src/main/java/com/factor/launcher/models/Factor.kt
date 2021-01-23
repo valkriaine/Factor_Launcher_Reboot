@@ -1,8 +1,6 @@
 package com.factor.launcher.models
 
-import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
-import android.view.View
 import androidx.room.*
 
 @Entity
@@ -32,22 +30,8 @@ class Factor
     //get notification count
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
 
-    //get notification count
-    fun retrieveNotificationCountInNumber() : Int = userApp.currentNotifications.size
 
-    //for data binding, only return VISIBLE if notification count is greater than 0 and the app is not being edited
-    fun visibilityNotificationCount() : Int
-    {
-        return if (userApp.currentNotifications.size > 0) View.VISIBLE
-        else View.GONE
-    }
-
-    fun resetNotifications()
-    {
-        this.userApp.currentNotifications.clear()
-    }
-
-    fun setShortcuts(shortcuts : List<ShortcutInfo>)
+    fun setShortcuts(shortcuts : ArrayList<AppShortcut>)
     {
         this.userApp.shortCuts = shortcuts
     }

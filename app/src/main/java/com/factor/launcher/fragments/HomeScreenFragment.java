@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
-import com.factor.launcher.EmptyActivityException;
+import com.factor.launcher.exceptions.EmptyActivityException;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
