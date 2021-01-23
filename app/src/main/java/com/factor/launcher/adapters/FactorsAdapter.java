@@ -138,16 +138,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         //check blur enabled
         if (isLiveWallpaper || !appSettings.isBlurred())
         {
-            if (binding instanceof FactorSmallBinding)
-            {
-                ((FactorSmallBinding) binding).trans.setVisibility(View.INVISIBLE);
-                ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
-            }
-            if (binding instanceof FactorMediumBinding)
-            {
-                ((FactorMediumBinding) binding).trans.setVisibility(View.INVISIBLE);
-                ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
-            }
             if (binding instanceof FactorLargeBinding)
             {
                 ((FactorLargeBinding) binding).trans.setVisibility(View.INVISIBLE);
@@ -156,16 +146,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         }
         else
         {
-            if (binding instanceof FactorSmallBinding)
-            {
-                ((FactorSmallBinding) binding).trans.setVisibility(View.VISIBLE);
-                ((FactorSmallBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
-            }
-            if (binding instanceof FactorMediumBinding)
-            {
-                ((FactorMediumBinding) binding).trans.setVisibility(View.VISIBLE);
-                ((FactorMediumBinding) binding).card.setCardBackgroundColor(Color.TRANSPARENT);
-            }
+
             if (binding instanceof FactorLargeBinding)
             {
                 ((FactorLargeBinding) binding).trans.setVisibility(View.VISIBLE);
@@ -176,23 +157,12 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         if (binding instanceof FactorSmallBinding)
         {
-            if (appSettings.getShowShadowAroundIcon())
-                ((FactorSmallBinding) binding).tileIcon.setElevationDp(50);
-            else
-                ((FactorSmallBinding) binding).tileIcon.setElevationDp(0);
-
-            ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
-            ((FactorSmallBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+            ((FactorSmallBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         if (binding instanceof FactorMediumBinding)
         {
-            if (appSettings.getShowShadowAroundIcon())
-                ((FactorMediumBinding) binding).tileIcon.setElevationDp(50);
-            else
-                ((FactorMediumBinding) binding).tileIcon.setElevationDp(0);
-
-            ((FactorMediumBinding) binding).card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), parent.getContext()));
+            ((FactorMediumBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         if (binding instanceof FactorLargeBinding)
@@ -301,22 +271,12 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 if (userFactors.get(position).getSize() == Factor.Size.small)
                 {
                     FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
-
-                    if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-
-                    tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
+                    tileBinding.tile.setupContent(factorToChange);
                 }
                 else if (userFactors.get(position).getSize() == Factor.Size.medium)
                 {
                     FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
-
-                    if (factorToChange.retrieveNotificationCountInNumber() > 0)
-                        tileBinding.notificationCount.setText(factorToChange.retrieveNotificationCount());
-
-                    tileBinding.notificationCount.setVisibility(factorToChange.visibilityNotificationCount());
-                    tileBinding.notificationTitle.setText(factorToChange.getUserApp().getNotificationTitle());
-                    tileBinding.notificationContent.setText(factorToChange.getUserApp().getNotificationText());
+                    tileBinding.tile.setupContent(factorToChange);
 
                 }
                 else if (userFactors.get(position).getSize() == Factor.Size.large)
@@ -481,77 +441,32 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
             switch (size)
             {
                 case Factor.Size.small:
+
                     ((FactorSmallBinding) binding).setFactor(factor);
-                    ((FactorSmallBinding) binding).tileLabel.setText(factor.getLabelNew());
-
-                    if (appSettings.isDarkText())
-                        ((FactorSmallBinding) binding).tileLabel.setTextColor(Color.BLACK);
-                    else
-                        ((FactorSmallBinding) binding).tileLabel.setTextColor(Color.WHITE);
-
-                    try {
-                        ((FactorSmallBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
-                    } catch (kotlin.UninitializedPropertyAccessException ex) {
-                        factorManager.loadIcon(factor);
-                        ((FactorSmallBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
+                    try
+                    {
+                        ((FactorSmallBinding) binding).tile.setupContent(factor);
                     }
-
-                    ((FactorSmallBinding) binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
-
-                    if (factor.retrieveNotificationCountInNumber() > 0)
-                        ((FactorSmallBinding) binding).notificationCount.setText(factor.retrieveNotificationCount());
-
-                    if (!isLiveWallpaper) {
-                        ((FactorSmallBinding) binding).trans
-                                .setupWith(background)
-                                .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                                .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
-                                .setBlurRadius(appSettings.getBlurRadius())
-                                .setBlurAutoUpdate(false)
-                                .setHasFixedTransformationMatrix(false);
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
+                        factorManager.loadIcon(factor);
+                        ((FactorSmallBinding) binding).tile.setupContent(factor);
                     }
                     break;
-
 
                 case Factor.Size.medium:
 
                     ((FactorMediumBinding) binding).setFactor(factor);
-                    ((FactorMediumBinding) binding).tileLabel.setText(factor.getLabelNew());
 
-                    if (appSettings.isDarkText()) {
-                        ((FactorMediumBinding) binding).tileLabel.setTextColor(Color.BLACK);
-                        ((FactorMediumBinding) binding).notificationTitle.setTextColor(Color.BLACK);
-                        ((FactorMediumBinding) binding).notificationContent.setTextColor(Color.BLACK);
-                    } else {
-                        ((FactorMediumBinding) binding).tileLabel.setTextColor(Color.WHITE);
-                        ((FactorMediumBinding) binding).notificationTitle.setTextColor(Color.WHITE);
-                        ((FactorMediumBinding) binding).notificationContent.setTextColor(Color.WHITE);
+                    try
+                    {
+                        ((FactorMediumBinding) binding).tile.setupContent(factor);
                     }
-
-
-                    try {
-                        ((FactorMediumBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
-                    } catch (kotlin.UninitializedPropertyAccessException ex) {
+                    catch (kotlin.UninitializedPropertyAccessException ex)
+                    {
                         factorManager.loadIcon(factor);
-                        ((FactorMediumBinding) binding).tileIcon.setImageDrawable(factor.getIcon());
+                        ((FactorMediumBinding) binding).tile.setupContent(factor);
                     }
-
-                    ((FactorMediumBinding) binding).notificationTitle.setText(factor.getUserApp().getNotificationTitle());
-                    ((FactorMediumBinding) binding).notificationContent.setText(factor.getUserApp().getNotificationText());
-
-                    ((FactorMediumBinding) binding).notificationCount.setVisibility(factor.visibilityNotificationCount());
-
-                    if (factor.retrieveNotificationCountInNumber() > 0)
-                        ((FactorMediumBinding) binding).notificationCount.setText(factor.retrieveNotificationCount());
-
-                    if (!isLiveWallpaper)
-                        ((FactorMediumBinding) binding).trans
-                                .setupWith(background)
-                                .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                                .setBlurAlgorithm(new RenderScriptBlur(itemView.getContext()))
-                                .setBlurRadius(appSettings.getBlurRadius())
-                                .setBlurAutoUpdate(false)
-                                .setHasFixedTransformationMatrix(false);
                     break;
 
 

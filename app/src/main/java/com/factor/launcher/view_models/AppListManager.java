@@ -20,6 +20,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+import com.factor.launcher.EmptyActivityException;
 import com.factor.launcher.adapters.AppListAdapter;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.fragments.HomeScreenFragment;
@@ -50,9 +51,9 @@ public class AppListManager extends ViewModel
 
     private final SharedPreferences factorSharedPreferences;
 
-    public final PackageManager packageManager;
+    public PackageManager packageManager;
 
-    public final LauncherApps launcherApps;
+    public LauncherApps launcherApps;
 
     private LauncherApps.ShortcutQuery shortcutQuery;
 
@@ -71,8 +72,13 @@ public class AppListManager extends ViewModel
     private final ActivityResultLauncher<Intent> widgetResultLauncher;
 
     //constructor
-    public AppListManager(HomeScreenFragment fragment, ViewGroup background, Boolean isLiveWallpaper)
+    public AppListManager(HomeScreenFragment fragment, ViewGroup background, Boolean isLiveWallpaper) throws EmptyActivityException
     {
+        if (fragment.getActivity() == null)
+        {
+            throw new EmptyActivityException("Not attached to activity");
+        }
+
         this.appWidgetManager = AppWidgetManager.getInstance(fragment.requireActivity());
         this.appWidgetHost = new AppWidgetHost(fragment.requireActivity(), WIDGET_HOST_ID);
 
@@ -80,21 +86,21 @@ public class AppListManager extends ViewModel
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
 
 
-        this.packageManager = fragment.requireActivity().getPackageManager();
+        this.packageManager = fragment.getActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
-        this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.requireActivity());
+        this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
         this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
 
         this.factorSharedPreferences = fragment.requireActivity().getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
-
-        loadApps(factorSharedPreferences.getBoolean("saved", false));
-
         widgetActivityResultContract = new WidgetActivityResultContract();
         widgetResultLauncher = fragment.registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
 
         appsMutableLiveData.setValue(userApps);
+
+
+        loadApps(factorSharedPreferences.getBoolean("saved", false));
     }
 
     //compare app label (new)
@@ -142,7 +148,6 @@ public class AppListManager extends ViewModel
                         if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                         {
                             UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
-                            //noinspection ConstantConditions
                             if (app == null) //package name does not exist in database
                             {
                                 app = new UserApp();
@@ -182,7 +187,8 @@ public class AppListManager extends ViewModel
                             }
                         }
                     }
-                    adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
+                    if (adapter.activity != null)
+                        adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
                 catch (PackageManager.NameNotFoundException ignored) {}
             }).start();
@@ -214,7 +220,9 @@ public class AppListManager extends ViewModel
 
                     daoReference.insertAll(userApps);
 
-                    adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
+                    if (adapter.activity != null)
+                        adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
+
                     editor.putBoolean("saved", true);
                     editor.apply();
 

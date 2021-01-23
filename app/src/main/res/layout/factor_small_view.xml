@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--background-->
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            android:translationZ="-20dp"
+            app:cardElevation="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tag="background"
+            app:cardCornerRadius="5dp">
+        <eightbitlab.com.blurview.BlurView
+                android:id="@+id/trans"
+                app:blurOverlayColor="#99FFFFFF"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <!--base-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/base"
+            android:translationZ="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_icon_v1"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".28"/>
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_icon_v2"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".72"/>
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_icon_h1"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".28"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_icon_h2"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".72"/>
+
+
+        <!--app icon-->
+        <com.factor.launcher.ui.ElevationImageView
+                android:id="@+id/tileIcon"
+                android:background="@android:color/transparent"
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:padding="10dp"
+                android:elevation="50dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="@id/guideline_icon_v1"
+                app:layout_constraintTop_toTopOf="@id/guideline_icon_h1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_icon_v2"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_icon_h2"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_label_v1"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".10"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_label_v2"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".90"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_label_h1"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".80"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_label_h2"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".95"/>
+
+
+        <!--app label-->
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tileLabel"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:textSize="14sp"
+                android:gravity="bottom"
+                android:textColor="#000000"
+                android:singleLine="true"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="@id/guideline_label_h1"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_label_h2"
+                app:layout_constraintStart_toStartOf="@id/guideline_label_v1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_label_v2"/>
+
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_notification_v1"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".95"/>
+
+
+
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_notification_h1"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".05"/>
+
+
+
+        <!--notification count-->
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/notification_count"
+                android:background="@drawable/round_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:textAlignment="gravity"
+                app:layout_constraintEnd_toEndOf="@id/guideline_notification_v1"
+                app:layout_constraintTop_toTopOf="@id/guideline_notification_h1"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

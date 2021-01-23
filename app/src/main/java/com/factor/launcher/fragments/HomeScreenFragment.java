@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
+import com.factor.launcher.EmptyActivityException;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
@@ -224,7 +225,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //initialize data manager
         //***************************************************************************************************************************************************
-        appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+        try
+        {
+            appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+        }
+        catch (EmptyActivityException ignored) {}
+
 
 
 

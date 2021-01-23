@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import com.factor.launcher.util.Constants;
 
 
@@ -71,6 +72,7 @@ public class NotificationListener extends NotificationListenerService
     private void getCurrentNotifications()
     {
         StatusBarNotification[] currentNotifications = getActiveNotifications();
+        Log.d("notification_setup", "notifications: " + currentNotifications.length);
         if (currentNotifications.length > 0)
             for (StatusBarNotification notification : currentNotifications)
                 onNotificationPosted(notification);
@@ -102,7 +104,10 @@ public class NotificationListener extends NotificationListenerService
                 {
                     listener.getCurrentNotifications();
                 }
-                catch (Exception ignored){}
+                catch (Exception e)
+                {
+                    Log.d("notification_setup", e.getMessage());
+                }
             }
         }
     }
