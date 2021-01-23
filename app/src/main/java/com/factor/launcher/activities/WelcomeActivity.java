@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -218,6 +219,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         editor.commit();
 
         Log.d("AllSet", "first run? " + isFirstTime());
+        view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         toHomeScreen();
     }
 

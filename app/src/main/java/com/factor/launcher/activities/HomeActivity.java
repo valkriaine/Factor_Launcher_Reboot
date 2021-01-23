@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
@@ -48,11 +49,13 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
 
-        //todo: transparent navigation bar on Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
             getWindow().setDecorFitsSystemWindows(false);
         }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+
 
         setContentView(binding.getRoot());
 

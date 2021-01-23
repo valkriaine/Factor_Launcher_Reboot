@@ -213,8 +213,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
-
-
         //tile list guideline position
         binding.guideline.setGuidelinePercent(appSettings.getTileListScale());
 

@@ -32,6 +32,7 @@
                 android:layout_height="match_parent">
             <HorizontalScrollView
                     android:id="@+id/scroller"
+                    android:contentDescription="@string/welcome_background_scroller_description"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scrollbars="none">
@@ -443,6 +444,7 @@
                 <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/arrow_to_home"
                         android:hapticFeedbackEnabled="true"
+                        android:contentDescription="@string/finish_setup"
                         android:src="@drawable/arrow"
                         android:layout_width="30dp"
                         android:layout_height="30dp"

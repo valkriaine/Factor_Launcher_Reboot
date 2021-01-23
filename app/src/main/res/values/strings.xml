@@ -64,5 +64,8 @@
     <string name="channel_name">factor_launcher_crash_report_channel</string>
     <string name="home_screen_width">Tile list width (% of home screen)</string>
     <string name="tile_margin">Tile padding</string>
+    <string name="arrow">arrow</string>
+    <string name="finish_setup">finish setup</string>
+    <string name="welcome_background_scroller_description">parallel background effect controller</string>
 
 </resources>

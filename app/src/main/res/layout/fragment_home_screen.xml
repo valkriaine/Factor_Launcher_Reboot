@@ -143,6 +143,7 @@
                             android:id="@+id/arrowButton"
                             android:src="@drawable/arrow"
                             android:layout_width="30dp"
+                            android:contentDescription="@string/arrow"
                             android:layout_height="30dp"
                             android:foregroundGravity="center"
                             android:background="@drawable/circle"
