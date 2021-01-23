@@ -1,5 +1,6 @@
 package com.factor.chips.chipslayoutmanager;
 
+import android.util.Log;
 import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.chips.chipslayoutmanager.anchor.AnchorViewState;
@@ -146,8 +147,18 @@ abstract class ScrollingController implements IScrollingController {
     }
 
     @Override
-    public final int scrollVerticallyBy(int d, RecyclerView.Recycler recycler, RecyclerView.State state) {
-        return canScrollVertically()? scrollBy(d, recycler, state) : 0;
+    public final int scrollVerticallyBy(int d, RecyclerView.Recycler recycler, RecyclerView.State state)
+    {
+        //test fix IllegalArgumentException on some devices
+        try
+        {
+            return canScrollVertically()? scrollBy(d, recycler, state) : 0;
+        }
+        catch (IllegalArgumentException exception)
+        {
+            Log.d("ScrollingController", "can scroll vertically?: " + canScrollVertically() + " " + exception.getMessage());
+            return 0;
+        }
     }
 
     private int scrollBy(int d, RecyclerView.Recycler recycler, RecyclerView.State state) {

@@ -170,7 +170,6 @@ public class AppListManager extends ViewModel
                             else {
                                 if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
-                                    app.resetNotifications();
                                     app.icon = r.activityInfo.loadIcon(packageManager);
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
@@ -181,7 +180,10 @@ public class AppListManager extends ViewModel
                                     {
                                         app.setPinned(factorManager.isAppPinned(app));
                                     }
-                                    catch(NullPointerException ignored) {}
+                                    catch(NullPointerException e)
+                                    {
+                                        Log.d("AppListManager", "setPinned() null pointer" + e.getMessage());
+                                    }
 
                                     Collections.sort(userApps, first_letter);
                                 }
