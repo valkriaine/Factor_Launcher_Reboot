@@ -229,10 +229,13 @@ public class FactorLargeView extends ConstraintLayout
 
             public void bind(AppShortcut shortcut)
             {
-                label.setText(shortcut.getLabel());
-                icon.setImageDrawable(shortcut.getIcon());
-
-                shortcutBase.setOnClickListener(shortcut.getLaunchEvent());
+                try
+                {
+                    label.setText(shortcut.getLabel());
+                    icon.setImageDrawable(shortcut.getIcon());
+                    shortcutBase.setOnClickListener(shortcut.getLaunchEvent());
+                }
+                catch (NullPointerException ignored){}
             }
         }
     }

@@ -91,6 +91,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/arrowButton"
+                        android:contentDescription="@string/to_next_page"
                         android:hapticFeedbackEnabled="true"
                         android:src="@drawable/arrow"
                         android:layout_width="30dp"
@@ -365,6 +366,7 @@
                         <!--notification count-->
                         <androidx.appcompat.widget.AppCompatButton
                                 android:id="@+id/notification_count"
+                                android:clickable="false"
                                 android:background="@drawable/round_button"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"

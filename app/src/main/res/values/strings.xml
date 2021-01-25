@@ -67,5 +67,6 @@
     <string name="arrow">arrow</string>
     <string name="finish_setup">finish setup</string>
     <string name="welcome_background_scroller_description">parallel background effect controller</string>
+    <string name="to_next_page">to next page</string>
 
 </resources>
