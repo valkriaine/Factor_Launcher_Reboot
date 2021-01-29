@@ -25,15 +25,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Newest Version: 0.52-beta
+# Newest Version: 0.57-beta
 
-Better first launch logic
-
-Resolved some stability issues
-
-Implemented bug report with ACRA
-
-***starting from this build, all future releases will be available through Play Store only
+Minor fixes
 
 <p>&nbsp;</p>
 
