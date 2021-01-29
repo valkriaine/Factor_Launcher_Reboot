@@ -6,7 +6,9 @@ Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor
 
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
 
-Updates will be released through Play Store only now. There will be fewer updates/builds, but each build will contain more features and fixes.
+Updates will be released through Play Store only. 
+
+Please uninstall the GitHub apk versions before downloading from the Play Store. (because the Play Store releases are signed)
 
 
 <a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
