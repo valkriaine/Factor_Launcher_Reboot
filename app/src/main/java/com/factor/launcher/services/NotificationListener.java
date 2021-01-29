@@ -71,11 +71,15 @@ public class NotificationListener extends NotificationListenerService
     //retrieve currently displayed notifications
     private void getCurrentNotifications()
     {
-        StatusBarNotification[] currentNotifications = getActiveNotifications();
-        Log.d("notification_setup", "notifications: " + currentNotifications.length);
-        if (currentNotifications.length > 0)
-            for (StatusBarNotification notification : currentNotifications)
-                onNotificationPosted(notification);
+        try
+        {
+            StatusBarNotification[] currentNotifications = getActiveNotifications();
+            if (currentNotifications.length > 0)
+                for (StatusBarNotification notification : currentNotifications)
+                    onNotificationPosted(notification);
+        }
+        catch (SecurityException ignored){}
+
     }
 
 

@@ -24,6 +24,7 @@ import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.FactorManager;
+import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -43,8 +44,16 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
     private FactorManager factorManager;
 
+    private RenderScriptBlur blur;
 
-    public FactorsAdapter(FactorManager factorManager, AppSettings appSettings, Activity activity, boolean isLiveWallpaper, ArrayList<Factor> userFactors, ViewGroup background)
+
+    public FactorsAdapter(FactorManager factorManager,
+                          AppSettings appSettings,
+                          Activity activity,
+                          boolean isLiveWallpaper,
+                          ArrayList<Factor> userFactors,
+                          ViewGroup background,
+                          RenderScriptBlur blur)
     {
         this.appSettings = appSettings;
         this.factorManager = factorManager;
@@ -52,6 +61,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         this.isLiveWallpaper = isLiveWallpaper;
         this.userFactors = userFactors;
         this.background = background;
+        this.blur = blur;
     }
 
     public void invalidate()
@@ -61,6 +71,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         this.factorManager = null;
         this.userFactors = null;
         this.appSettings = null;
+        this.blur = null;
     }
 
 
@@ -131,17 +142,17 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         if (binding instanceof FactorSmallBinding)
         {
-            ((FactorSmallBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
+            ((FactorSmallBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
         }
 
         if (binding instanceof FactorMediumBinding)
         {
-            ((FactorMediumBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
+            ((FactorMediumBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
         }
 
         if (binding instanceof FactorLargeBinding)
         {
-            ((FactorLargeBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
+            ((FactorLargeBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
         }
 
         //create context menu

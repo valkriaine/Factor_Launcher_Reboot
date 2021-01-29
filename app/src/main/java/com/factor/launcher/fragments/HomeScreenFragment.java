@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.EditText;
@@ -20,6 +22,10 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.renderscript.Allocation;
+import androidx.renderscript.Element;
+import androidx.renderscript.RenderScript;
+import androidx.renderscript.ScriptIntrinsicBlur;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
@@ -64,6 +70,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private NotificationBroadcastReceiver notificationBroadcastReceiver;
 
     private AppSettings appSettings;
+
+    private RenderScriptBlur blurAlg;
 
     private String selectedLetter = "";
 
@@ -168,6 +176,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             appListManager.clearAllNotifications();
             Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
             getContext().sendBroadcast(intent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                appListManager.updateShortcuts();
         }
     }
 
@@ -207,6 +218,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+        blurAlg = new RenderScriptBlur(getContext());
+
+
+
 
         //initialize saved user settings
         appSettings = AppSettingsManager.getInstance(getActivity().getApplication()).getAppSettings();
@@ -225,9 +240,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //***************************************************************************************************************************************************
         try
         {
-            appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+            appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper, blurAlg);
         }
-        catch (EmptyActivityException ignored) {}
+        catch (EmptyActivityException e)
+        {
+            return;
+        }
 
 
 
@@ -286,7 +304,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
                 float xOffset = position + positionOffset;
-                binding.dim.setAlpha(xOffset);
+                //binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
                 binding.blur.setAlpha(xOffset / 0.5f);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
@@ -304,7 +322,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 if (position == 0)
                 {
                     binding.arrowButton.setRotation(180);
-                    binding.blur.setAlpha(0f);
+                    //binding.blur.setAlpha(0f);
                 }
             }
 
@@ -384,6 +402,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
         binding.tilesList.setItemViewCacheSize(20);
+        binding.tilesList.setOrientation(1);
 
 
 
@@ -495,6 +514,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //todo: add this in a drop down menu or in the app drawer
         binding.addWidgetButton.setOnClickListener(view -> appListManager.launchPickWidgetIntent());
 
+
+        //go to app drawer on click
+        binding.arrowButton.setOnClickListener(view -> binding.homePager.setCurrentItem(1, true));
+
     }
 
 
@@ -513,19 +536,36 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         {
             isLiveWallpaper = false;
 
+
+            new Thread(() ->
+            {
+                Bitmap m = Util.INSTANCE.toBitmap(wm.getFastDrawable());
+
+                RenderScript rs = RenderScript.create(context);
+
+                for (int i = 0; i < 10; i++)
+                {
+                    final Allocation input = Allocation.createFromBitmap(rs, m);
+                    final Allocation output = Allocation.createTyped(rs, input.getType());
+                    final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+
+                    script.setRadius(25F);
+                    script.setInput(input);
+                    script.forEach(output);
+                    output.copyTo(m);
+                }
+
+
+                binding.blur.setImageBitmap(m);
+            }).start();
+
+
             binding.backgroundImage.setImageDrawable(wm.getDrawable());
-            binding.blur.setupWith(binding.backgroundHost)
-                    .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
-                    .setBlurRadius(15f)
-                    .setBlurAutoUpdate(false)
-                    .setHasFixedTransformationMatrix(true)
-                    .setBlurEnabled(true);
 
             binding.searchBlur.setupWith(binding.rootContent)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getSearchBarColor()))
                     .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
+                    .setBlurAlgorithm(blurAlg)
                     .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
                     .setHasFixedTransformationMatrix(false)
@@ -534,9 +574,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else //live wallpaper
         {
             isLiveWallpaper = true;
-            binding.blur.setBlurEnabled(false);
+            //binding.blur.setBlurEnabled(false);
             binding.searchBlur.setBlurEnabled(false);
-            binding.blur.setBlurEnabled(false);
         }
     }
 

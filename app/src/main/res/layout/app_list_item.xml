@@ -12,6 +12,24 @@
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
+
+        <androidx.constraintlayout.widget.Guideline
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_touch_zone"
+                app:layout_constraintGuide_percent="0.9"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/touch_zone"
+                android:translationZ="100dp"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_touch_zone"
+                android:layout_height="match_parent"/>
+
+
         <androidx.cardview.widget.CardView
                 android:id="@+id/item_background"
                 app:cardBackgroundColor="#66000000"
@@ -79,10 +97,10 @@
                 android:id="@+id/edit_button_group"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="40dp"
+                android:layout_marginEnd="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_touch_zone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -119,9 +137,9 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:textAlignment="gravity"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_touch_zone"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="40dp"
+                android:layout_marginEnd="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 

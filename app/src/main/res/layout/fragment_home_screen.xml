@@ -79,10 +79,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <!--blurred wallpaper-->
-            <eightbitlab.com.blurview.BlurView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/blur"
+                    android:tint="#99000000"
                     android:translationZ="-10dp"
                     android:alpha="0"
+                    android:scaleType="matrix"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             <!--wallpaper-->
@@ -142,6 +144,7 @@
                     <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/arrowButton"
                             android:src="@drawable/arrow"
+                            android:translationZ="100dp"
                             android:layout_width="30dp"
                             android:contentDescription="@string/arrow"
                             android:layout_height="30dp"
@@ -185,14 +188,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
+
+                    <androidx.constraintlayout.widget.Guideline
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/guideline_scroller"
+                            app:layout_constraintGuide_percent="0.9"/>
+
                     <com.reddit.indicatorfastscroll.FastScrollerView
                             android:id="@+id/scroll_bar"
+                            android:translationZ="100dp"
                             android:layout_marginTop="80dp"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/guideline_scroller"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             android:layout_marginEnd="10dp"
-                            android:layout_width="20dp"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent"/>
 
 

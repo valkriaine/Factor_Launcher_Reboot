@@ -30,6 +30,7 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.WidgetActivityResultContract;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.text.Collator;
 import java.util.*;
@@ -75,7 +76,10 @@ public class AppListManager extends ViewModel
     private final ActivityResultLauncher<Intent> widgetResultLauncher;
 
     //constructor
-    public AppListManager(HomeScreenFragment fragment, ViewGroup background, Boolean isLiveWallpaper) throws EmptyActivityException
+    public AppListManager(HomeScreenFragment fragment,
+                          ViewGroup background,
+                          Boolean isLiveWallpaper,
+                          RenderScriptBlur blur) throws EmptyActivityException
     {
         if (fragment.getActivity() == null)
         {
@@ -92,7 +96,7 @@ public class AppListManager extends ViewModel
         this.packageManager = fragment.getActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
-        this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
+        this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper, blur);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
 
@@ -560,6 +564,16 @@ public class AppListManager extends ViewModel
         adapter.clearAllNotifications();
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
+    public void updateShortcuts()
+    {
+        ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
+        for (UserApp app : copyApps)
+        {
+            userApps.get(userApps.indexOf(app)).setShortCuts(getShortcutsFromApp(app));
+        }
+    }
 
 
     //return the app at a given position (not the array position)

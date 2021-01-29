@@ -61,7 +61,7 @@ object Util
     private fun Bitmap.doRecycle() {
         if (!isRecycled) recycle()
     }
-    private fun <T : Drawable> T.toBitmap(): Bitmap {
+    fun <T : Drawable> T.toBitmap(): Bitmap {
         if (this is BitmapDrawable) return bitmap
 
         val drawable: Drawable = this

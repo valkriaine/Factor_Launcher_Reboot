@@ -66,7 +66,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_RENAME);
         intent.putExtra(Constants.RENAME_KEY, position);
-        activity.getApplicationContext().sendBroadcast(intent);
+        activity.sendBroadcast(intent);
     }
 
 
@@ -169,13 +169,13 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
         View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
 
-        activity.registerForContextMenu(view);
 
         AppListViewHolder holder =  new AppListViewHolder(view, this);
 
         assert holder.binding != null;
         if (holder.binding instanceof AppListItemBinding)
         {
+            activity.registerForContextMenu(((AppListItemBinding)holder.binding).touchZone);
             ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus)
                     activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -226,7 +226,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             });
 
 
-            view.setOnTouchListener((v, event) ->
+            ((AppListItemBinding)holder.binding).touchZone.setOnTouchListener((v, event) ->
             {
                 switch(event.getAction())
                 {
@@ -431,19 +431,28 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
         private void setOnClickListener(UserApp app)
         {
-            itemView.setOnClickListener(v ->
+            if (binding instanceof AppListItemBinding)
             {
+                ((AppListItemBinding)binding).touchZone.setVisibility(View.VISIBLE);
+                ((AppListItemBinding)binding).touchZone.setOnClickListener(v ->
+                {
 
-                Intent intent = appListAdapter.appListManager.packageManager.getLaunchIntentForPackage(app.getPackageName());
-                if (intent != null)
-                    itemView.getContext().startActivity(intent,
-                            ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
-            });
+                    Intent intent = appListAdapter.appListManager.packageManager.getLaunchIntentForPackage(app.getPackageName());
+                    if (intent != null)
+                        itemView.getContext().startActivity(intent,
+                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                });
+            }
+
         }
 
         private void removeOnClickListener()
         {
-            itemView.setOnClickListener(v ->{});
+            if (binding instanceof AppListItemBinding)
+            {
+                ((AppListItemBinding)binding).touchZone.setOnClickListener(v ->{});
+                ((AppListItemBinding)binding).touchZone.setVisibility(View.GONE);
+            }
         }
 
 

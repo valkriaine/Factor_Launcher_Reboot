@@ -11,8 +11,8 @@ android {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 11
-        versionName "0.57-beta"
+        versionCode 12
+        versionName "0.58-beta"
 
         renderscriptTargetApi 30
         renderscriptSupportModeEnabled true
@@ -90,7 +90,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //my library
-    implementation 'com.factor:bouncy:1.61'
+    implementation 'com.factor:bouncy:1.8'
 
     //other libraries
 

@@ -22,6 +22,7 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Payload;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +53,15 @@ public class FactorManager extends ViewModel
                          PackageManager pm,
                          LauncherApps launcherApps,
                          LauncherApps.ShortcutQuery shortcutQuery,
-                         Boolean isLiveWallpaper)
+                         Boolean isLiveWallpaper,
+                         RenderScriptBlur blur)
     {
         this.packageManager = pm;
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
         this.appSettings = AppSettingsManager.getInstance(activity.getApplication()).getAppSettings();
 
-        adapter = new FactorsAdapter(this, appSettings, activity, isLiveWallpaper, userFactors, background);
+        adapter = new FactorsAdapter(this, appSettings, activity, isLiveWallpaper, userFactors, background, blur);
         daoReference = FactorsDatabase.Companion.getInstance(activity.getApplicationContext()).factorsDao();
         loadFactors();
 
@@ -178,18 +180,20 @@ public class FactorManager extends ViewModel
     public void updateFactor(UserApp app)
     {
         ArrayList<Factor> factorsToUpdate = getFactorsByPackage(app);
-        Log.d("updateFactor", "size: " + factorsToUpdate.size());
         for (Factor f : factorsToUpdate)
         {
-            loadIcon(f);
-            f.setLabelOld(app.getLabelOld());
-            f.setLabelNew(app.getLabelNew());
-            f.setUserApp(app);
-            new Thread(()->
+            if (userFactors.contains(f))
             {
-                daoReference.updateFactorInfo(f);
-                adapter.activity.runOnUiThread(() -> adapter.notifyItemChanged(userFactors.indexOf(f)));
-            }).start();
+                loadIcon(f);
+                f.setLabelOld(app.getLabelOld());
+                f.setLabelNew(app.getLabelNew());
+                f.setUserApp(app);
+                new Thread(()->
+                {
+                    daoReference.updateFactorInfo(f);
+                    adapter.activity.runOnUiThread(() -> adapter.notifyItemChanged(userFactors.indexOf(f)));
+                }).start();
+            }
         }
 
     }
