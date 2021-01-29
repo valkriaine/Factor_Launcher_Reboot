@@ -240,7 +240,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //***************************************************************************************************************************************************
         try
         {
-            appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper, blurAlg);
+            appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
         }
         catch (EmptyActivityException e)
         {
@@ -304,9 +304,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
                 float xOffset = position + positionOffset;
-                //binding.dim.setAlpha(xOffset);
                 binding.arrowButton.setRotation(+180 * xOffset - 180);
-                binding.blur.setAlpha(xOffset / 0.5f);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
 
@@ -322,7 +320,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 if (position == 0)
                 {
                     binding.arrowButton.setRotation(180);
-                    //binding.blur.setAlpha(0f);
+                    binding.blur.animate().alpha(0f);
+                    binding.dim.animate().alpha(0f);
+                }
+                if (position == 1)
+                {
+                    binding.blur.animate().alpha(1f);
+                    binding.dim.animate().alpha(1f);
                 }
             }
 
@@ -525,7 +529,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private void checkLiveWallpaper()
     {
 
-        if (getContext() == null)
+        if (getContext() == null || getActivity() == null)
             return;
 
         binding.searchCard.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
@@ -555,8 +559,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     output.copyTo(m);
                 }
 
-
-                binding.blur.setImageBitmap(m);
+                getActivity().runOnUiThread(() -> binding.blur.setImageBitmap(m));
             }).start();
 
 

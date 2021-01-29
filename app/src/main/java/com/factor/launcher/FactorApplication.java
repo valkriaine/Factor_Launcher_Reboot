@@ -12,7 +12,7 @@ import org.acra.data.StringFormat;
 
 import static org.acra.ReportField.*;
 
-@AcraCore(reportFormat= StringFormat.KEY_VALUE_LIST,  reportContent = {ANDROID_VERSION, PHONE_MODEL, STACK_TRACE, LOGCAT})
+@AcraCore(reportFormat= StringFormat.KEY_VALUE_LIST,  reportContent = {APP_VERSION_CODE, ANDROID_VERSION, PHONE_MODEL, STACK_TRACE, LOGCAT})
 @AcraNotification(
         resText = R.string.crash_text,
         resTitle = R.string.crash_report,

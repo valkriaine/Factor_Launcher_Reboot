@@ -95,7 +95,7 @@ public class FactorLargeView extends ConstraintLayout
         notificationCount.setText(count);
     }
 
-    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background, RenderScriptBlur blur)
+    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background)
     {
         //label color
         this.settings = appSettings;
@@ -120,7 +120,7 @@ public class FactorLargeView extends ConstraintLayout
 
             trans.setupWith(background)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                    .setBlurAlgorithm(blur)
+                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(appSettings.getBlurRadius())
                     .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(false);

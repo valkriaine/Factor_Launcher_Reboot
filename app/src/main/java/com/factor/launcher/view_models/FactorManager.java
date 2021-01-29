@@ -53,15 +53,14 @@ public class FactorManager extends ViewModel
                          PackageManager pm,
                          LauncherApps launcherApps,
                          LauncherApps.ShortcutQuery shortcutQuery,
-                         Boolean isLiveWallpaper,
-                         RenderScriptBlur blur)
+                         Boolean isLiveWallpaper)
     {
         this.packageManager = pm;
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
         this.appSettings = AppSettingsManager.getInstance(activity.getApplication()).getAppSettings();
 
-        adapter = new FactorsAdapter(this, appSettings, activity, isLiveWallpaper, userFactors, background, blur);
+        adapter = new FactorsAdapter(this, appSettings, activity, isLiveWallpaper, userFactors, background);
         daoReference = FactorsDatabase.Companion.getInstance(activity.getApplicationContext()).factorsDao();
         loadFactors();
 

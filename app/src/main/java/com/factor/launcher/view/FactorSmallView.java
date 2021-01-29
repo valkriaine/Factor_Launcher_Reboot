@@ -64,7 +64,7 @@ public class FactorSmallView extends ConstraintLayout
         notificationCount.setText(count);
     }
 
-    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background, RenderScriptBlur blurAlg)
+    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background)
     {
         //label color
         tileLabel.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
@@ -82,7 +82,7 @@ public class FactorSmallView extends ConstraintLayout
 
             trans.setupWith(background)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                    .setBlurAlgorithm(blurAlg)
+                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(appSettings.getBlurRadius())
                     .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(false);

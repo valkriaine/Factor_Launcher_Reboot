@@ -44,16 +44,13 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
     private FactorManager factorManager;
 
-    private RenderScriptBlur blur;
-
 
     public FactorsAdapter(FactorManager factorManager,
                           AppSettings appSettings,
                           Activity activity,
                           boolean isLiveWallpaper,
                           ArrayList<Factor> userFactors,
-                          ViewGroup background,
-                          RenderScriptBlur blur)
+                          ViewGroup background)
     {
         this.appSettings = appSettings;
         this.factorManager = factorManager;
@@ -61,7 +58,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         this.isLiveWallpaper = isLiveWallpaper;
         this.userFactors = userFactors;
         this.background = background;
-        this.blur = blur;
     }
 
     public void invalidate()
@@ -71,7 +67,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         this.factorManager = null;
         this.userFactors = null;
         this.appSettings = null;
-        this.blur = null;
     }
 
 
@@ -81,7 +76,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_REMOVE);
         intent.putExtra(Constants.REMOVE_KEY, factor.getPackageName());
-        activity.getApplicationContext().sendBroadcast(intent);
+        activity.sendBroadcast(intent);
         factorManager.removeFromHome(factor);
         return true;
     }
@@ -142,17 +137,17 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         if (binding instanceof FactorSmallBinding)
         {
-            ((FactorSmallBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
+            ((FactorSmallBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         if (binding instanceof FactorMediumBinding)
         {
-            ((FactorMediumBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
+            ((FactorMediumBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         if (binding instanceof FactorLargeBinding)
         {
-            ((FactorLargeBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background, blur);
+            ((FactorLargeBinding) binding).tile.setupTile(appSettings, isLiveWallpaper, background);
         }
 
         //create context menu
@@ -322,7 +317,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_ACTION_ADD);
         intent.putExtra(Constants.ADD_KEY, position);
-        activity.getApplicationContext().sendBroadcast(intent);
+        activity.sendBroadcast(intent);
     }
 
 
