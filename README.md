@@ -8,9 +8,7 @@ Updates will be released through Play Store only.
 
 Please uninstall the GitHub apk versions before downloading from the Play Store. (because the Play Store releases are signed)
 
-
-<a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
-<img src="https://i1.wp.com/www.altitude-games.com/wp-content/uploads/2014/04/get-it-on-google-play.jpg?w=516&ssl=1" width="200"></a>
+<a href='https://play.google.com/store/apps/details?id=com.factor.launcher&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
 
 Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
