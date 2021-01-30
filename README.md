@@ -25,9 +25,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Newest Version: 0.57-beta
+# Newest Version: 0.59-beta
 
-Minor fixes
+Optimized performance
 
 <p>&nbsp;</p>
 
