@@ -4,8 +4,6 @@ Factor Launcher is an upcoming Android Launcher inspired by the original Windows
 
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
 
-Updates will be released through Play Store only. 
-
 Please uninstall the GitHub apk versions before downloading from the Play Store. (because the Play Store releases are signed)
 
 <a href='https://play.google.com/store/apps/details?id=com.factor.launcher&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
