@@ -10,7 +10,7 @@ Please uninstall the GitHub apk versions before downloading from the Play Store.
 
 
 <a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
-<img src="https://raw.githubusercontent.com/Ramotion/react-native-circle-menu/master/google_play@2x.png" width="200" height="60"></a>
+<img src="https://i1.wp.com/www.altitude-games.com/wp-content/uploads/2014/04/get-it-on-google-play.jpg?w=516&ssl=1" width="200"></a>
 
 Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
