@@ -47,6 +47,8 @@ Bug fixes
 
 Initial early access release on Play Store
 
+Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor_Launcher_Reboot/issues/44).
+
 # Version: 0.4.8-alpha
 
 Finished the app settings screen, including the options to change tile colours
