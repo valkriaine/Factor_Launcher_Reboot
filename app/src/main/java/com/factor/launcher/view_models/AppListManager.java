@@ -610,7 +610,7 @@ public class AppListManager extends ViewModel
             else
                 return new UserApp();
         }
-        catch (ConcurrentModificationException e)
+        catch (ConcurrentModificationException | NullPointerException e)
         {
             return new UserApp();
         }
