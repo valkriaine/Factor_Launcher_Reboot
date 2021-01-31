@@ -78,8 +78,7 @@ public class AppListManager extends ViewModel
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
-                          Boolean isLiveWallpaper,
-                          RenderScriptBlur blur) throws EmptyActivityException
+                          Boolean isLiveWallpaper) throws EmptyActivityException
     {
         if (fragment.getActivity() == null)
         {
@@ -96,7 +95,7 @@ public class AppListManager extends ViewModel
         this.packageManager = fragment.getActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
-        this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper, blur);
+        this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
 
@@ -625,7 +624,7 @@ public class AppListManager extends ViewModel
         Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
         pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
-        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity.getApplicationContext(), pickIntent));
+        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity, pickIntent));
     }
 
 
@@ -661,7 +660,7 @@ public class AppListManager extends ViewModel
             createIntent.setComponent(appWidgetInfo.configure);
             createIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
-            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity.getApplicationContext(), createIntent));
+            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity, createIntent));
         }
         else {
             createWidget(data);
@@ -676,7 +675,7 @@ public class AppListManager extends ViewModel
         int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
         AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
         requestBindWidget(appWidgetId, appWidgetInfo);
-        AppWidgetHostView hostView = appWidgetHost.createView(adapter.activity.getApplicationContext(), appWidgetId, appWidgetInfo);
+        AppWidgetHostView hostView = appWidgetHost.createView(adapter.activity, appWidgetId, appWidgetInfo);
         hostView.setAppWidget(appWidgetId, appWidgetInfo);
         factorManager.addWidget(hostView);
     }

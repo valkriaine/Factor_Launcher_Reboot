@@ -1,3 +1,53 @@
+# Version 0.58-beta
+
+Optimized touch area in the app drawer
+
+# Version 0.57-beta
+
+handle loading app shortcuts with no valid icon
+
+# Version 0.56-beta
+
+fixed some stability issues 
+
+# Version 0.55-beta
+
+Adjusted tile element sizes based on percentage 
+
+Scroll to access more shortcuts on large tiles
+
+Minor bug fixes
+
+Better MVVM logic
+
+# Version 0.54-beta
+
+Better MVVM architecture
+
+Minor layout adjustments
+
+Bug fixes
+
+# Version 0.52-beta
+
+Bug fixes
+
+
+# Version 0.52-alpha
+
+Better first launch logic
+
+Resolved an issue that causes the app the crash when opening the options menu on Android 8.0 devices 
+
+# Version 0.51
+
+Bug fixes
+
+# Version 0.5
+
+Initial early access release on Play Store
+
+Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor_Launcher_Reboot/issues/44).
 
 # Version: 0.4.8-alpha
 

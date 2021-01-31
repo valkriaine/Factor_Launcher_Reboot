@@ -81,7 +81,6 @@
             <!--blurred wallpaper-->
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/blur"
-                    android:tint="#99000000"
                     android:translationZ="-10dp"
                     android:alpha="0"
                     android:scaleType="matrix"

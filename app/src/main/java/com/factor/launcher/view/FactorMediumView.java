@@ -70,7 +70,7 @@ public class FactorMediumView extends ConstraintLayout
         notificationCount.setText(count);
     }
 
-    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background, RenderScriptBlur blur)
+    public void setupTile(AppSettings appSettings, boolean isLiveWallpaper, ViewGroup background)
     {
         //label color
         tileLabel.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
@@ -90,7 +90,7 @@ public class FactorMediumView extends ConstraintLayout
 
             trans.setupWith(background)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                    .setBlurAlgorithm(blur)
+                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                     .setBlurRadius(appSettings.getBlurRadius())
                     .setBlurAutoUpdate(false)
                     .setHasFixedTransformationMatrix(false);

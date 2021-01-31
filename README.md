@@ -2,17 +2,11 @@
 
 Factor Launcher is an upcoming Android Launcher inspired by the original Windows Phone 7 design, supporting Android 6.0 to 11 
 
-Dropped support for 5.0 due to [this issue](https://github.com/Valkriaine/Factor_Launcher_Reboot/issues/44).
-
 (App shortcuts are not supported on devices running Android 7.0 and below since shortcuts were introduced in Android 7.1)
-
-Updates will be released through Play Store only. 
 
 Please uninstall the GitHub apk versions before downloading from the Play Store. (because the Play Store releases are signed)
 
-
-<a href="https://play.google.com/store/apps/details?id=com.factor.launcher" >
-<img src="https://raw.githubusercontent.com/Ramotion/react-native-circle-menu/master/google_play@2x.png" width="200" height="60"></a>
+<a href='https://play.google.com/store/apps/details?id=com.factor.launcher&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
 
 Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
@@ -25,9 +19,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Newest Version: 0.57-beta
+# Newest Version: 0.59-beta
 
-Minor fixes
+Optimized performance
 
 <p>&nbsp;</p>
 
