@@ -1,6 +1,7 @@
 package com.factor.chips.chipslayoutmanager.layouter;
 
 import android.graphics.Rect;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import androidx.annotation.CallSuper;
@@ -244,12 +245,20 @@ public abstract class AbstractLayouter implements ILayouter, IBorder {
             Rect viewRect = rowViewRectPair.first;
             View view = rowViewRectPair.second;
 
-            viewRect = applyChildGravity(view, viewRect);
-            //add view to layout
-            placer.addView(view);
+            try
+            {
+                viewRect = applyChildGravity(view, viewRect);
+                //add view to layout
+                placer.addView(view);
 
-            //layout whole views in a row
-            layoutManager.layoutDecorated(view, viewRect.left, viewRect.top, viewRect.right, viewRect.bottom);
+                //layout whole views in a row
+                layoutManager.layoutDecorated(view, viewRect.left, viewRect.top, viewRect.right, viewRect.bottom);
+            }
+            catch (IllegalArgumentException ex)
+            {
+                Log.d("layout_illegal", ex.getMessage());
+            }
+
         }
 
         onAfterLayout();
