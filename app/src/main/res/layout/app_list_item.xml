@@ -21,7 +21,7 @@
                 app:layout_constraintGuide_percent="0.9"/>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
                 android:id="@+id/touch_zone"
                 android:translationZ="100dp"
                 android:layout_width="0dp"
@@ -106,6 +106,7 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/confirm_edit_button"
+                    android:contentDescription="@string/confirm_app_edit"
                     android:src="@drawable/icon_confirm"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
@@ -114,6 +115,7 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/reset_edit_button"
+                    android:contentDescription="@string/reset_app_edit"
                     android:src="@drawable/icon_reset"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"
@@ -122,6 +124,7 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/cancel_edit_button"
+                    android:contentDescription="@string/cancel_app_edit"
                     android:src="@drawable/icon_cancel"
                     android:background="@android:color/transparent"
                     android:layout_width="50dp"

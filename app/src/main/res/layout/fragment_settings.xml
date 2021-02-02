@@ -73,6 +73,7 @@
                                 android:imeOptions="actionDone"/>
                         <androidx.appcompat.widget.AppCompatImageButton
                                 android:id="@+id/menu_button"
+                                android:contentDescription="@string/options"
                                 android:layout_width="50dp"
                                 android:src="@drawable/icon_menu"
                                 android:background="@android:color/transparent"

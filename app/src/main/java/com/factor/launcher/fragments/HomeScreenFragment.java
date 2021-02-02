@@ -17,6 +17,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -340,9 +341,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 (position) ->
                 {
                     UserApp item = appListManager.getUserApp(position);
+                    char cap = 0;
                     if (item.getPackageName().isEmpty())
                         return new FastScrollItemIndicator.Text("");
-                    char cap =  item.getLabelNew().toUpperCase().charAt(0);
+                    if (item.getLabelNew().toUpperCase().length() != 0)
+                        cap =  item.getLabelNew().toUpperCase().charAt(0);
                     String capString = item.getLabelNew().toUpperCase().substring(0, 1);
                     try
                     {
@@ -535,7 +538,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.searchCard.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
 
         //static wallpaper
-        if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 wm.getWallpaperInfo() == null && appSettings.isBlurred())
         {
             isLiveWallpaper = false;

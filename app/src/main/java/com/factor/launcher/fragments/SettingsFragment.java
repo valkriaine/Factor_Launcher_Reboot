@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
@@ -450,7 +451,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? getString(R.string.granted) : getString(R.string.request));
 
         if (getContext() != null)
-            if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                 binding.storageAccessButton.setText(getString(R.string.granted));
                 binding.blurToggleLabel.setText(R.string.blur_effect);

@@ -68,5 +68,9 @@
     <string name="finish_setup">finish setup</string>
     <string name="welcome_background_scroller_description">parallel background effect controller</string>
     <string name="to_next_page">to next page</string>
+    <string name="cancel_app_edit">cancel app edit</string>
+    <string name="reset_app_edit">reset app edit</string>
+    <string name="confirm_app_edit">confirm app edit</string>
+    <string name="home_screen">home screen</string>
 
 </resources>
