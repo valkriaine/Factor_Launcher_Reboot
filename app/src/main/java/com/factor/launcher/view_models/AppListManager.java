@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.*;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import com.factor.launcher.exceptions.EmptyActivityException;
 import com.factor.launcher.adapters.AppListAdapter;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.fragments.HomeScreenFragment;
@@ -30,7 +30,6 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.WidgetActivityResultContract;
-import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.text.Collator;
 import java.util.*;
@@ -78,13 +77,8 @@ public class AppListManager extends ViewModel
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
-                          Boolean isLiveWallpaper) throws EmptyActivityException
+                          Boolean isLiveWallpaper)
     {
-        if (fragment.getActivity() == null)
-        {
-            throw new EmptyActivityException("Not attached to activity");
-        }
-
         this.appWidgetManager = AppWidgetManager.getInstance(fragment.requireActivity());
         this.appWidgetHost = new AppWidgetHost(fragment.requireActivity(), WIDGET_HOST_ID);
 
@@ -92,7 +86,7 @@ public class AppListManager extends ViewModel
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
 
 
-        this.packageManager = fragment.getActivity().getPackageManager();
+        this.packageManager = fragment.requireActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
         this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
@@ -112,10 +106,16 @@ public class AppListManager extends ViewModel
     //compare app label (new)
     private final Comparator<UserApp> first_letter = new Comparator<UserApp>()
     {
-        private final Collator sCollator = Collator.getInstance();
+        private Collator sCollator = Collator.getInstance();
         @Override
         public int compare(UserApp app1, UserApp app2)
         {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            {
+                sCollator = Collator.getInstance(Resources.getSystem().getConfiguration().getLocales().get(0));
+            }
+
+            sCollator.setStrength(Collator.PRIMARY);
             return sCollator.compare(app1.getLabelNew(), app2.getLabelNew());
         }
     };
@@ -160,12 +160,11 @@ public class AppListManager extends ViewModel
                                 app.setLabelOld((String) r.loadLabel(packageManager));
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
-                                app.resetNotifications();
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                     app.setShortCuts(getShortcutsFromApp(app));
 
 
-                                app.icon = r.activityInfo.loadIcon(packageManager);
+                                app.setIcon(r.activityInfo.loadIcon(packageManager));
 
                                 userApps.add(app);
                                 daoReference.insert(app);
@@ -173,20 +172,12 @@ public class AppListManager extends ViewModel
                             else {
                                 if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
-                                    app.icon = r.activityInfo.loadIcon(packageManager);
+                                    app.setIcon(r.activityInfo.loadIcon(packageManager));
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                         app.setShortCuts(getShortcutsFromApp(app));
 
-                                    userApps.add(app);
-                                    try
-                                    {
-                                        app.setPinned(factorManager.isAppPinned(app));
-                                    }
-                                    catch(NullPointerException e)
-                                    {
-                                        Log.d("AppListManager", "setPinned() null pointer" + e.getMessage());
-                                    }
+                                    app.setPinned(factorManager.isAppPinned(app));
 
                                     Collections.sort(userApps, first_letter);
                                 }
@@ -198,7 +189,10 @@ public class AppListManager extends ViewModel
                     if (adapter.activity != null)
                         adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
                 }
-                catch (PackageManager.NameNotFoundException ignored) {}
+                catch (PackageManager.NameNotFoundException | NullPointerException ex)
+                {
+                    Log.d("AppListManager", ex.getMessage());
+                }
             }).start();
         }
         else //if the app drawer is loading for the first time, load all apps with default configuration
@@ -220,7 +214,7 @@ public class AppListManager extends ViewModel
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                 app.setShortCuts(getShortcutsFromApp(app));
 
-                            app.icon = r.activityInfo.loadIcon(packageManager);
+                            app.setIcon(r.activityInfo.loadIcon(packageManager));
                             userApps.add(app);
                         }
                     }
@@ -235,7 +229,10 @@ public class AppListManager extends ViewModel
                     editor.apply();
 
                 }
-                catch (PackageManager.NameNotFoundException ignored){}
+                catch (PackageManager.NameNotFoundException | NullPointerException ex)
+                {
+                    Log.d("AppListManager", ex.getMessage());
+                }
             }).start();
         }
     }

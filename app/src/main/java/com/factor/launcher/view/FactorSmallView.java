@@ -96,6 +96,7 @@ public class FactorSmallView extends ConstraintLayout
     {
         tileLabel.setText(factor.getLabelNew());
         setUpNotificationCount(factor.retrieveNotificationCount());
-        tileIcon.setImageDrawable(factor.getIcon());
+        if (factor.getIcon() != null)
+            tileIcon.setImageDrawable(factor.getIcon());
     }
 }

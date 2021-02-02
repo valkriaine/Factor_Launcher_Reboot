@@ -22,7 +22,6 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Payload;
-import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class FactorManager extends ViewModel
                 {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
-                        f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
+                        //f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                             f.setShortcuts(getShortcutsFromFactor(f));
                     }
@@ -248,7 +247,7 @@ public class FactorManager extends ViewModel
             if (packageManager.getApplicationInfo(factor.getPackageName(), 0).enabled)
                 factor.setIcon(packageManager.getApplicationIcon(factor.getPackageName()));
         }
-        catch (Exception e)
+        catch (PackageManager.NameNotFoundException | NullPointerException e)
         {
             e.printStackTrace();
             new Thread(() -> daoReference.delete(factor)).start();

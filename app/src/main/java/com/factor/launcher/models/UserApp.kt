@@ -41,7 +41,7 @@ class UserApp
     val currentNotifications : ArrayList<NotificationHolder> = ArrayList()
 
     @Ignore
-    lateinit var icon: Drawable
+    var icon: Drawable? = null
 
 
     //... other attributes

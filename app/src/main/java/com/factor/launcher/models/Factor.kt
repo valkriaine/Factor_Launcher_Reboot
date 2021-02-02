@@ -36,7 +36,7 @@ class Factor
         this.userApp.shortCuts = shortcuts
     }
 
-    fun getIcon() : Drawable = this.userApp.icon
+    fun getIcon() : Drawable? = this.userApp.icon
 
     fun setIcon(icon : Drawable)
     {

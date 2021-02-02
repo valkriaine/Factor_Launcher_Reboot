@@ -24,7 +24,6 @@ import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
 import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.FactorManager;
-import eightbitlab.com.blurview.RenderScriptBlur;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -394,45 +393,26 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 case Factor.Size.small:
 
                     ((FactorSmallBinding) binding).setFactor(factor);
-                    try
-                    {
-                        ((FactorSmallBinding) binding).tile.setupContent(factor);
-                    }
-                    catch (kotlin.UninitializedPropertyAccessException ex)
-                    {
+                    if (factor.getIcon() == null)
                         factorManager.loadIcon(factor);
-                        ((FactorSmallBinding) binding).tile.setupContent(factor);
-                    }
+                    ((FactorSmallBinding) binding).tile.setupContent(factor);
                     break;
 
                 case Factor.Size.medium:
 
                     ((FactorMediumBinding) binding).setFactor(factor);
-
-                    try
-                    {
-                        ((FactorMediumBinding) binding).tile.setupContent(factor);
-                    }
-                    catch (kotlin.UninitializedPropertyAccessException ex)
-                    {
+                    if (factor.getIcon() == null)
                         factorManager.loadIcon(factor);
-                        ((FactorMediumBinding) binding).tile.setupContent(factor);
-                    }
+                    ((FactorMediumBinding) binding).tile.setupContent(factor);
                     break;
 
 
                 case Factor.Size.large:
 
                     ((FactorLargeBinding) binding).setFactor(factor);
-                    try
-                    {
-                        ((FactorLargeBinding) binding).tile.setupContent(factor);
-                    }
-                    catch (kotlin.UninitializedPropertyAccessException ex)
-                    {
+                    if (factor.getIcon() == null)
                         factorManager.loadIcon(factor);
-                        ((FactorLargeBinding) binding).tile.setupContent(factor);
-                    }
+                    ((FactorLargeBinding) binding).tile.setupContent(factor);
                     break;
             }
 
