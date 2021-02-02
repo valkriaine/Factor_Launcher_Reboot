@@ -341,7 +341,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 (position) ->
                 {
                     UserApp item = appListManager.getUserApp(position);
-                    char cap = 0;
+                    char cap = '#';
                     if (item.getPackageName().isEmpty())
                         return new FastScrollItemIndicator.Text("");
                     if (item.getLabelNew().toUpperCase().length() != 0)
