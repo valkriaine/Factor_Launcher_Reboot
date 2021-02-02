@@ -324,16 +324,15 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 AppListItemBinding appBinding = (AppListItemBinding)binding;
                 appBinding.setUserApp(app);
                 appBinding.labelEdit.setText(app.getLabelNew());
-                try
-                {
-                    appBinding.icon.setImageDrawable(app.getIcon());
-                }
-                catch (kotlin.UninitializedPropertyAccessException ex)
-                {
-                    loadIcon(app);
-                    appBinding.icon.setImageDrawable(app.getIcon());
-                }
 
+                if (app.getIcon() == null)
+                {
+                    if (loadIcon(app))
+                        appBinding.icon.setImageDrawable(app.getIcon());
+                    else return;
+                }
+                else
+                    appBinding.icon.setImageDrawable(app.getIcon());
 
                 appBinding.label.setVisibility(app.visibilityLabel());
                 appBinding.labelEdit.setVisibility(app.visibilityEditing());
@@ -458,16 +457,23 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
 
         //load icon for the app
-        private void loadIcon(UserApp app)
+        private boolean loadIcon(UserApp app)
         {
             try {
                 if (appListAdapter.appListManager.packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+                {
                     app.setIcon(appListAdapter.appListManager.packageManager.getApplicationIcon(app.getPackageName()));
+                    return true;
+                }
+                else
+                    return false;
+
             }
             catch (PackageManager.NameNotFoundException e)
             {
                 //app package cannot be found
                appListAdapter.appListManager.removeAppFromDB(app);
+               return false;
             }
         }
 
