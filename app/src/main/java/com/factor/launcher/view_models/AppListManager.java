@@ -139,57 +139,61 @@ public class AppListManager extends ViewModel
         {
             new Thread(() ->
             {
-                try {
+
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
                     for (ResolveInfo r : availableApps)
                     {
-                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
+                        try
                         {
-                            UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
-                            if (app == null) //package name does not exist in database
+                            if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                             {
-                                app = new UserApp();
-                                app.setLabelOld((String) r.loadLabel(packageManager));
-                                app.setLabelNew(app.getLabelOld());
-                                app.setPackageName(r.activityInfo.packageName);
-                                app.resetNotifications();
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                    app.setShortCuts(getShortcutsFromApp(app));
-
-
-                                app.setIcon(r.activityInfo.loadIcon(packageManager));
-
-                                userApps.add(app);
-                                daoReference.insert(app);
-                            }
-                            else {
-                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+                                UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
+                                if (app == null) //package name does not exist in database
                                 {
-                                    app.setIcon(r.activityInfo.loadIcon(packageManager));
-
+                                    app = new UserApp();
+                                    app.setLabelOld((String) r.loadLabel(packageManager));
+                                    app.setLabelNew(app.getLabelOld());
+                                    app.setPackageName(r.activityInfo.packageName);
+                                    app.resetNotifications();
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                         app.setShortCuts(getShortcutsFromApp(app));
 
+
+                                    app.setIcon(r.activityInfo.loadIcon(packageManager));
+
                                     userApps.add(app);
-
-                                    app.setPinned(factorManager.isAppPinned(app));
-
-                                    Collections.sort(userApps, first_letter);
+                                    daoReference.insert(app);
                                 }
-                                else
-                                    daoReference.delete(app);
+                                else {
+                                    if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+                                    {
+                                        app.setIcon(r.activityInfo.loadIcon(packageManager));
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                            app.setShortCuts(getShortcutsFromApp(app));
+
+                                        userApps.add(app);
+
+                                        app.setPinned(factorManager.isAppPinned(app));
+
+                                        Collections.sort(userApps, first_letter);
+                                    }
+                                    else
+                                        daoReference.delete(app);
+                                }
                             }
                         }
+                        catch (NullPointerException | PackageManager.NameNotFoundException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+
                     }
                     if (adapter.activity != null)
                         adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
-                }
-                catch (PackageManager.NameNotFoundException | NullPointerException ex)
-                {
-                    Log.d("AppListManager", ex.getMessage());
-                }
+
             }).start();
         }
         else //if the app drawer is loading for the first time, load all apps with default configuration
@@ -197,23 +201,32 @@ public class AppListManager extends ViewModel
             editor = factorSharedPreferences.edit();
             new Thread(() ->
             {
-                try {
+
                     Intent i = new Intent(Intent.ACTION_MAIN, null);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : availableApps) {
-                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled) {
-                            UserApp app = new UserApp();
-                            app.setLabelOld((String) r.loadLabel(packageManager));
-                            app.setLabelNew(app.getLabelOld());
-                            app.setPackageName(r.activityInfo.packageName);
+                    for (ResolveInfo r : availableApps)
+                    {
+                        try
+                        {
+                            if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && packageManager.getApplicationInfo(r.activityInfo.packageName, 0).enabled) {
+                                UserApp app = new UserApp();
+                                app.setLabelOld((String) r.loadLabel(packageManager));
+                                app.setLabelNew(app.getLabelOld());
+                                app.setPackageName(r.activityInfo.packageName);
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                app.setShortCuts(getShortcutsFromApp(app));
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                    app.setShortCuts(getShortcutsFromApp(app));
 
-                            app.setIcon(r.activityInfo.loadIcon(packageManager));
-                            userApps.add(app);
+                                app.setIcon(r.activityInfo.loadIcon(packageManager));
+                                userApps.add(app);
+                            }
                         }
+                        catch (PackageManager.NameNotFoundException | NullPointerException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+
                     }
                     Collections.sort(userApps, first_letter);
 
@@ -225,8 +238,7 @@ public class AppListManager extends ViewModel
                     editor.putBoolean("saved", true);
                     editor.apply();
 
-                }
-                catch (PackageManager.NameNotFoundException ignored){}
+
             }).start();
         }
     }
