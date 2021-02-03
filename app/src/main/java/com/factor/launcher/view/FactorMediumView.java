@@ -109,6 +109,7 @@ public class FactorMediumView extends ConstraintLayout
         notificationContent.setText(factor.getUserApp().getNotificationText());
 
         tileLabel.setText(factor.getLabelNew());
+        if (factor.getIcon() != null)
         tileIcon.setImageDrawable(factor.getIcon());
     }
 }

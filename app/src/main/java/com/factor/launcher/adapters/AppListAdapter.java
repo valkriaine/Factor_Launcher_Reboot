@@ -326,12 +326,9 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 appBinding.labelEdit.setText(app.getLabelNew());
 
                 if (app.getIcon() == null)
-                {
-                    if (loadIcon(app))
-                        appBinding.icon.setImageDrawable(app.getIcon());
-                    else return;
-                }
-                else
+                    loadIcon(app);
+
+                if (app.getIcon() != null)
                     appBinding.icon.setImageDrawable(app.getIcon());
 
                 appBinding.label.setVisibility(app.visibilityLabel());
@@ -457,23 +454,17 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
 
         //load icon for the app
-        private boolean loadIcon(UserApp app)
+        private void loadIcon(UserApp app)
         {
-            try {
+            try
+            {
                 if (appListAdapter.appListManager.packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
-                {
                     app.setIcon(appListAdapter.appListManager.packageManager.getApplicationIcon(app.getPackageName()));
-                    return true;
-                }
-                else
-                    return false;
-
             }
             catch (PackageManager.NameNotFoundException e)
             {
                 //app package cannot be found
                appListAdapter.appListManager.removeAppFromDB(app);
-               return false;
             }
         }
 
