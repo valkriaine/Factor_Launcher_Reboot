@@ -393,17 +393,21 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 case Factor.Size.small:
 
                     ((FactorSmallBinding) binding).setFactor(factor);
+
                     if (factor.getIcon() == null)
                         factorManager.loadIcon(factor);
                     ((FactorSmallBinding) binding).tile.setupContent(factor);
+
                     break;
 
                 case Factor.Size.medium:
 
                     ((FactorMediumBinding) binding).setFactor(factor);
+
                     if (factor.getIcon() == null)
                         factorManager.loadIcon(factor);
                     ((FactorMediumBinding) binding).tile.setupContent(factor);
+
                     break;
 
 

@@ -83,7 +83,7 @@ public class FactorManager extends ViewModel
                 {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
-                        //f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
+                        f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                             f.setShortcuts(getShortcutsFromFactor(f));
                     }
@@ -247,7 +247,7 @@ public class FactorManager extends ViewModel
             if (packageManager.getApplicationInfo(factor.getPackageName(), 0).enabled)
                 factor.setIcon(packageManager.getApplicationIcon(factor.getPackageName()));
         }
-        catch (PackageManager.NameNotFoundException | NullPointerException e)
+        catch (Exception e)
         {
             e.printStackTrace();
             new Thread(() -> daoReference.delete(factor)).start();

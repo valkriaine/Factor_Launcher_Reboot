@@ -238,8 +238,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //initialize data manager
         //***************************************************************************************************************************************************
-
         appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+
 
 
 
