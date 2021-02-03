@@ -157,9 +157,9 @@ public class AppListManager extends ViewModel
                                     app.setLabelNew(app.getLabelOld());
                                     app.setPackageName(r.activityInfo.packageName);
                                     app.resetNotifications();
+
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                         app.setShortCuts(getShortcutsFromApp(app));
-
 
                                     app.setIcon(r.activityInfo.loadIcon(packageManager));
 

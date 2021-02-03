@@ -79,8 +79,7 @@ public class FactorManager extends ViewModel
             userFactors.addAll(daoReference.getAll());
             for (Factor f: userFactors)
             {
-                try
-                {
+                try {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
                         f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
@@ -88,10 +87,9 @@ public class FactorManager extends ViewModel
                             f.setShortcuts(getShortcutsFromFactor(f));
                     }
 
-                }
-                catch (Exception e)
+                } catch (PackageManager.NameNotFoundException | NullPointerException e)
                 {
-                    Log.d("icon", "failed to load icon for " + f.getPackageName() + " " +  e.getMessage());
+                    Log.d("icon", "failed to load icon for " + f.getPackageName() + " " + e.getMessage());
                     daoReference.delete(f);
                 }
             }
