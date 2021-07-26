@@ -719,7 +719,11 @@ public class ChipsLayoutManager extends RecyclerView.LayoutManager implements IC
             //we should layout disappearing views left somewhere, just continue layout them in current layouter
             for (int i = 0; i< disappearingViews.getForwardViews().size(); i++) {
                 int position = disappearingViews.getForwardViews().keyAt(i);
-                downLayouter.placeView(recycler.getViewForPosition(position));
+                try
+                {
+                    downLayouter.placeView(recycler.getViewForPosition(position));
+                }
+                catch (IndexOutOfBoundsException ignored){}
             }
             //layout last row
             downLayouter.layoutRow();
@@ -728,7 +732,11 @@ public class ChipsLayoutManager extends RecyclerView.LayoutManager implements IC
             //we should layout disappearing views left somewhere, just continue layout them in current layouter
             for (int i = 0; i< disappearingViews.getBackwardViews().size(); i++) {
                 int position = disappearingViews.getBackwardViews().keyAt(i);
-                upLayouter.placeView(recycler.getViewForPosition(position));
+                try
+                {
+                    upLayouter.placeView(recycler.getViewForPosition(position));
+                }
+                catch (IndexOutOfBoundsException ignored){}
             }
 
             //layout last row

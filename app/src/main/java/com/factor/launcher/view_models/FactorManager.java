@@ -111,7 +111,7 @@ public class FactorManager extends ViewModel
         {
             Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
             Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
-            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts().toString());
+            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts());
             daoReference.insert(factor);
             adapter.addFactorBroadcast(userFactors.indexOf(factor));
             adapter.activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));

@@ -144,18 +144,21 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             wm = WallpaperManager.getInstance(this);
 
         //if storage permission is not granted, fall back to live wallpaper
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            //live wallpaper
-            if (wm.getWallpaperInfo() != null)
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             {
-                isWallpaperChanged = wallpaper != null;
-                wallpaper = null;
-            }
-            else //static wallpaper
-            {
-                isWallpaperChanged = wallpaper == null || !Util.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
-                wallpaper = wm.getFastDrawable();
+                //live wallpaper
+                if (wm.getWallpaperInfo() != null)
+                {
+                    isWallpaperChanged = wallpaper != null;
+                    wallpaper = null;
+                }
+                else //static wallpaper
+                {
+                    isWallpaperChanged = wallpaper == null || !Util.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
+                    wallpaper = wm.getFastDrawable();
+                }
             }
         }
     }

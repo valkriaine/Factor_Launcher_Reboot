@@ -2,7 +2,6 @@ package com.factor.launcher.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
@@ -14,6 +13,7 @@ import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
@@ -435,8 +435,11 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
                     Intent intent = appListAdapter.appListManager.packageManager.getLaunchIntentForPackage(app.getPackageName());
                     if (intent != null)
+                    {
+
                         itemView.getContext().startActivity(intent,
-                                ActivityOptions.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                                ActivityOptionsCompat.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                    }
                 });
             }
 

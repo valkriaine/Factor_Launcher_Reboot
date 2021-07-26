@@ -308,6 +308,8 @@ public class AppListManager extends ViewModel
     {
         if (!doesPackageExist(app))
         {
+            while (userApps.contains(app))
+            {
                 new Thread(() ->
                 {
                     int position = userApps.indexOf(app);
@@ -316,7 +318,7 @@ public class AppListManager extends ViewModel
                     adapter.activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
                 }).start();
                 factorManager.remove(app);
-
+            }
         }
     }
 
@@ -612,7 +614,7 @@ public class AppListManager extends ViewModel
             else
                 return new UserApp();
         }
-        catch (ConcurrentModificationException | NullPointerException e)
+        catch (ConcurrentModificationException | IndexOutOfBoundsException | NullPointerException e)
         {
             return new UserApp();
         }

@@ -9,6 +9,7 @@
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/card"
             android:translationZ="-20dp"
+            android:clickable="false"
             app:cardElevation="0dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,6 +26,7 @@
     <!--base-->
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/base"
+            android:clickable="false"
             android:translationZ="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -64,6 +66,7 @@
         <com.factor.launcher.ui.ElevationImageView
                 android:id="@+id/tileIcon"
                 android:background="@android:color/transparent"
+                android:clickable="false"
                 android:layout_height="0dp"
                 android:layout_width="0dp"
                 android:gravity="center"
@@ -111,6 +114,7 @@
         <!--app label-->
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tileLabel"
+                android:clickable="false"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:textSize="14sp"

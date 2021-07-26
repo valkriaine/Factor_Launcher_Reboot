@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -217,10 +218,13 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         SharedPreferences preferences = getApplicationContext().getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PACKAGE_NAME + "_RanBefore", true);
-        editor.commit();
+        editor.apply();
 
         Log.d("AllSet", "first run? " + isFirstTime());
-        view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        }
         toHomeScreen();
     }
 

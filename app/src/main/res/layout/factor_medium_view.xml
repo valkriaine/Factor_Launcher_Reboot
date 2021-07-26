@@ -8,6 +8,7 @@
     <!--background-->
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/card"
+            android:clickable="false"
             android:translationZ="-20dp"
             app:cardElevation="0dp"
             android:layout_width="match_parent"
@@ -25,6 +26,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/base"
             android:translationZ="20dp"
+            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -65,6 +67,7 @@
                 android:id="@+id/tileLabel"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:clickable="false"
                 android:textSize="14sp"
                 android:gravity="bottom"
                 android:textColor="#000000"
@@ -112,6 +115,7 @@
         <com.factor.launcher.ui.ElevationImageView
                 android:id="@+id/tileIcon"
                 android:background="@android:color/transparent"
+                android:clickable="false"
                 android:layout_height="0dp"
                 android:layout_width="0dp"
                 android:gravity="center"
@@ -149,6 +153,7 @@
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/notification_title"
                 android:layout_width="0dp"
+                android:clickable="false"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:singleLine="true"
@@ -163,6 +168,7 @@
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/notification_content"
                 android:layout_width="0dp"
+                android:clickable="false"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:lines="1"

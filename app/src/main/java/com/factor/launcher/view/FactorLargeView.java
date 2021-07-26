@@ -181,7 +181,6 @@ public class FactorLargeView extends ConstraintLayout
             layoutParams.width = scale/3;
             view.setLayoutParams(layoutParams);
 
-
             return new ShortcutViewHolder(view, settings, layoutParams.width);
         }
 

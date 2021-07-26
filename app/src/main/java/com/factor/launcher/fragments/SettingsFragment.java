@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -208,28 +209,36 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.blurToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
         });
 
         binding.darkTextToggle.setChecked(settings.isDarkText());
         binding.darkTextToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
         });
 
         binding.iconShadowToggle.setChecked(settings.getShowShadowAroundIcon());
         binding.iconShadowToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
         });
 
         binding.darkIconToggle.setChecked(settings.isDarkIcon());
         binding.darkIconToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
         });
 
         binding.blurRadiusSlider.setValue(settings.getBlurRadius());
@@ -239,25 +248,33 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
         binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
             setUpDemoTile();
         });
 
         binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
             setUpDemoTile();
         });
 
         binding.tileListScaleSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
             setUpDemoTile();
         });
 
         binding.tileMarginSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
             setUpDemoTile();
         });
 
