@@ -32,7 +32,6 @@ public class NotificationListener extends NotificationListenerService
         if (componentsSetupReceiver != null)
         {
             unregisterReceiver(componentsSetupReceiver);
-            componentsSetupReceiver.invalidate();
             componentsSetupReceiver = null;
         }
     }
@@ -94,11 +93,6 @@ public class NotificationListener extends NotificationListenerService
             this.listener = listener;
         }
 
-        public void invalidate()
-        {
-            listener = null;
-        }
-
         @Override
         public void onReceive(Context context, Intent intent)
         {
@@ -107,6 +101,7 @@ public class NotificationListener extends NotificationListenerService
                 try
                 {
                     listener.getCurrentNotifications();
+                    listener = null;
                 }
                 catch (Exception e)
                 {

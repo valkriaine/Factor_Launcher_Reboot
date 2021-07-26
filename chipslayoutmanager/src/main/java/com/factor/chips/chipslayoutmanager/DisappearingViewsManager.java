@@ -52,10 +52,10 @@ class DisappearingViewsManager implements IDisappearingViewsManager {
             final View child = holder.itemView;
             final RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) child.getLayoutParams();
             if (!lp.isItemRemoved()) {
-                if (lp.getViewAdapterPosition() < canvas.getMinPositionOnScreen()) {
-                    container.backwardViews.put(lp.getViewAdapterPosition(), child);
-                } else if (lp.getViewAdapterPosition() > canvas.getMaxPositionOnScreen()) {
-                    container.forwardViews.put(lp.getViewAdapterPosition(), child);
+                if (lp.getAbsoluteAdapterPosition() < canvas.getMinPositionOnScreen()) {
+                    container.backwardViews.put(lp.getAbsoluteAdapterPosition(), child);
+                } else if (lp.getAbsoluteAdapterPosition() > canvas.getMaxPositionOnScreen()) {
+                    container.forwardViews.put(lp.getAbsoluteAdapterPosition(), child);
                 }
             }
         }

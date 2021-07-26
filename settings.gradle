@@ -1,3 +1,6 @@
+include ':bouncy'
+include ':bouncy'
+include ':bouncy'
 include ':chipslayoutmanager'
 include ':app'
 rootProject.name = "Factor Launcher"

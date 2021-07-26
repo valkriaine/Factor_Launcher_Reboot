@@ -154,7 +154,7 @@ class UserApp
     //return search reference consisting of package name, labelNew, and labelOld
     fun getSearchReference() : String
     {
-        return (packageName + labelNew + labelOld).trim('.', '_', ' ','-').toLowerCase(Locale.ROOT)
+        return (packageName + labelNew + labelOld).trim('.', '_', ' ','-').lowercase(Locale.ROOT)
     }
 
     fun hasShortcuts() : Boolean = shortCuts.isNotEmpty()
