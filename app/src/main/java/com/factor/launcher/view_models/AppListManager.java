@@ -105,7 +105,7 @@ public class AppListManager extends ViewModel
 
         loadApps(factorSharedPreferences.getBoolean("saved", false));
 
-        this.recentAppsHost = new RecentAppsHost(packageManager, fragment.requireActivity(), this);
+        this.recentAppsHost = new RecentAppsHost(packageManager);
     }
 
     //compare app label (new)

@@ -1,6 +1,5 @@
 package com.factor.launcher.view_models;
 
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -19,7 +18,7 @@ public class RecentAppsHost extends ViewModel
 
     private final RecentAppsAdapter adapter;
 
-    public RecentAppsHost(PackageManager packageManager, Activity activity, AppListManager appListManager)
+    public RecentAppsHost(PackageManager packageManager)
     {
         adapter = new RecentAppsAdapter(recentApps, packageManager);
         recentAppsMutableLiveData.setValue(recentApps);
@@ -54,10 +53,10 @@ public class RecentAppsHost extends ViewModel
         else //app not in list
         {
             if (recentApps.size() >= MAX_SIZE)
-                recentApps.removeFirst();
+                recentApps.removeLast();
         }
 
-        recentApps.addLast(app);
+        recentApps.addFirst(app);
         adapter.notifyDataSetChanged();
     }
 
