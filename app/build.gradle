@@ -11,8 +11,8 @@ android {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 18
-        versionName "0.59.5-beta"
+        versionCode 19
+        versionName "0.60-beta"
 
         renderscriptTargetApi 30
         renderscriptSupportModeEnabled true
@@ -23,6 +23,10 @@ android {
             annotationProcessorOptions {
                 arguments = ["room.incremental":"true"]
             }
+        }
+
+        ndk{
+            debugSymbolLevel = 'FULL'
         }
     }
 
@@ -57,7 +61,6 @@ android {
         viewBinding = true
     }
 }
-
 
 
 dependencies {
