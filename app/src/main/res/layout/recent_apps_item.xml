@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<data>
+    <variable name="app"
+              type="com.factor.launcher.models.UserApp"/>
+</data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/recent_icon"
+                android:gravity="center"
+                android:elevation="50dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="10dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

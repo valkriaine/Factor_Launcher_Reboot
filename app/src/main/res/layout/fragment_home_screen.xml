@@ -138,6 +138,12 @@
                             android:orientation="horizontal"
                             app:layout_constraintGuide_percent=".2"/>
 
+                    <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline_recent_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintGuide_percent=".92"/>
 
                     <!--arrow-->
                     <androidx.appcompat.widget.AppCompatImageButton
@@ -155,6 +161,23 @@
                             app:layout_constraintTop_toBottomOf="@id/guideline_arrow_horizontal"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/guideline"/>
+
+
+                    <!--recent apps-->
+
+                        <com.factor.bouncy.BouncyRecyclerView
+                                android:translationZ="100dp"
+                                android:contentDescription="@string/recently_used_apps"
+                                app:layout_constraintStart_toStartOf="@id/guideline"
+                                app:layout_constraintBottom_toBottomOf="@id/guideline_recent_horizontal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:recyclerview_overscroll_animation_size="0.05"
+                                app:recyclerview_fling_animation_size="0.05"
+                                android:id="@+id/recent_apps_list"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"/>
+
+
 
 
                     <!--todo: enable customization-->

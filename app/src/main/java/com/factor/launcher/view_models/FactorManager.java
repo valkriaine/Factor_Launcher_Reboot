@@ -43,18 +43,21 @@ public class FactorManager extends ViewModel
 
     public final LauncherApps launcherApps;
 
-
     private AppSettings appSettings;
+
+    private final AppListManager appListManager;
 
     //constructor
     public FactorManager(Activity activity,
                          ViewGroup background,
+                         AppListManager appListManager,
                          PackageManager pm,
                          LauncherApps launcherApps,
                          LauncherApps.ShortcutQuery shortcutQuery,
                          Boolean isLiveWallpaper)
     {
         this.packageManager = pm;
+        this.appListManager = appListManager;
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
         this.appSettings = AppSettingsManager.getInstance(activity.getApplication()).getAppSettings();
@@ -95,6 +98,19 @@ public class FactorManager extends ViewModel
             }
             adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
         }).start();
+    }
+
+    //add recently used app
+    public void addToRecent(UserApp app)
+    {
+        Log.d("recent", "called");
+        if (!app.isHidden())
+           appListManager.recentAppsHost.add(app);
+    }
+
+    public UserApp findAppByPackage(String name)
+    {
+        return appListManager.findAppByPackage(name);
     }
 
     //add new app to home

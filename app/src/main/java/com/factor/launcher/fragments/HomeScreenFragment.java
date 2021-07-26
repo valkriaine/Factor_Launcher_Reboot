@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.renderscript.Allocation;
@@ -49,6 +50,7 @@ import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
@@ -264,8 +266,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
-
-
         //app drawer
         //***************************************************************************************************************************************************
         if (paddingTop == paddingTop105)
@@ -287,7 +287,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
+        Observer<LinkedList<UserApp>> recentObserver = userRecent ->
+        {
+            LinearLayoutManager recentManager = new LinearLayoutManager(getContext());
+            recentManager.setReverseLayout(true);
+            binding.recentAppsList.setLayoutManager(recentManager);
+            binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
+        };
 
+        appListManager.recentAppsHost.getRecentAppsMutableLiveData().observe(getViewLifecycleOwner(), recentObserver);
 
 
         //home pager on scroll

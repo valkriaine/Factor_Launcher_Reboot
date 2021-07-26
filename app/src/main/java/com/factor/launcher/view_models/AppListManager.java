@@ -73,14 +73,17 @@ public class AppListManager extends ViewModel
 
     private final ActivityResultLauncher<Intent> widgetResultLauncher;
 
+    public final RecentAppsHost recentAppsHost;
+
+
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
                           Boolean isLiveWallpaper)
     {
-
         this.appWidgetManager = AppWidgetManager.getInstance(fragment.requireActivity());
         this.appWidgetHost = new AppWidgetHost(fragment.requireActivity(), WIDGET_HOST_ID);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
@@ -89,7 +92,7 @@ public class AppListManager extends ViewModel
         this.packageManager = fragment.requireActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
         this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
-        this.factorManager = new FactorManager(fragment.requireActivity(), background, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
+        this.factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
 
@@ -101,6 +104,8 @@ public class AppListManager extends ViewModel
 
 
         loadApps(factorSharedPreferences.getBoolean("saved", false));
+
+        this.recentAppsHost = new RecentAppsHost(packageManager);
     }
 
     //compare app label (new)
@@ -115,6 +120,17 @@ public class AppListManager extends ViewModel
     };
 
 
+    public UserApp findAppByPackage(String name)
+    {
+        for (UserApp app : userApps)
+        {
+            if (app.getPackageName().equals(name))
+                return app;
+        }
+        return new UserApp();
+    }
+
+
     public MutableLiveData<ArrayList<UserApp>> getAppsMutableLiveData()
     {
         return appsMutableLiveData;
@@ -125,6 +141,14 @@ public class AppListManager extends ViewModel
     {
         return this.adapter.activity;
     }
+
+    //add recently used app
+    public void addToRecent(UserApp app)
+    {
+        if (!app.isHidden())
+            recentAppsHost.add(app);
+    }
+
 
     //return factor manager
     public FactorManager getFactorManager()
@@ -318,6 +342,7 @@ public class AppListManager extends ViewModel
                     adapter.activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
                 }).start();
                 factorManager.remove(app);
+                recentAppsHost.remove(app);
             }
         }
     }
@@ -412,6 +437,7 @@ public class AppListManager extends ViewModel
                             adapter.activity.runOnUiThread(() ->
                             {
 
+                                recentAppsHost.update(userApps.get(position));
                                 if (position != newPosition) //the app's position is changed
                                 {
                                     adapter.notifyItemRemoved(position);
@@ -442,7 +468,10 @@ public class AppListManager extends ViewModel
             {
                 //the package might exist, but it's disabled by the user
                 if (userApps.contains(app))
+                {
                     removeApp(app); //remove it from the app drawer if it's disabled
+                    recentAppsHost.remove(app);
+                }
             }
         }
         catch (PackageManager.NameNotFoundException e)
@@ -509,8 +538,6 @@ public class AppListManager extends ViewModel
         if (this.factorManager != null)
             this.factorManager.invalidate();
 
-        if (this.adapter != null)
-            this.adapter.invalidate();
         this.adapter = null;
         this.factorManager = null;
     }

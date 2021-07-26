@@ -34,11 +34,11 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 {
     public Activity activity;
 
-    private ArrayList<UserApp> userApps;
+    private final ArrayList<UserApp> userApps;
 
     private final boolean displayHidden;
 
-    private AppListManager appListManager;
+    private final AppListManager appListManager;
 
 
     public AppListAdapter(AppListManager appListManager, ArrayList<UserApp> userApps, boolean displayHidden, Activity activity)
@@ -48,16 +48,6 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
         this.appListManager = appListManager;
         this.displayHidden = displayHidden;
     }
-
-
-    //not needed anymore
-    public void invalidate()
-    {
-        this.activity = null;
-        this.appListManager = null;
-        this.userApps = null;
-    }
-
 
 
     //broadcast when app is renamed to scroll to new position
@@ -436,7 +426,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                     Intent intent = appListAdapter.appListManager.packageManager.getLaunchIntentForPackage(app.getPackageName());
                     if (intent != null)
                     {
-
+                        appListAdapter.appListManager.addToRecent(app);
                         itemView.getContext().startActivity(intent,
                                 ActivityOptionsCompat.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
                     }
