@@ -1,11 +1,12 @@
 package com.factor.launcher.view_models;
 
+import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.factor.launcher.adapters.RecentAppsAdapter;
 import com.factor.launcher.models.UserApp;
+
 import java.util.LinkedList;
 
 public class RecentAppsHost extends ViewModel
@@ -18,7 +19,7 @@ public class RecentAppsHost extends ViewModel
 
     private final RecentAppsAdapter adapter;
 
-    public RecentAppsHost(PackageManager packageManager)
+    public RecentAppsHost(PackageManager packageManager, Activity activity, AppListManager appListManager)
     {
         adapter = new RecentAppsAdapter(recentApps, packageManager);
         recentAppsMutableLiveData.setValue(recentApps);
@@ -29,14 +30,14 @@ public class RecentAppsHost extends ViewModel
         return this.adapter;
     }
 
-    private UserApp contains(UserApp a)
+    private boolean contains(UserApp a)
     {
         for (UserApp app : recentApps)
         {
             if (app.getPackageName().equals(a.getPackageName()))
-                return app;
+                return true;
         }
-        return new UserApp();
+        return false;
     }
 
     public void add(UserApp app)
@@ -46,9 +47,9 @@ public class RecentAppsHost extends ViewModel
 
 
         //if app already in recent apps, move it to the last
-        if (contains(app).getPackageName().equals(app.getPackageName()))
+        if (contains(app))
         {
-            recentApps.remove(contains(app));
+            recentApps.remove(app);
         }
         else //app not in list
         {
@@ -58,8 +59,6 @@ public class RecentAppsHost extends ViewModel
 
         recentApps.addLast(app);
         adapter.notifyDataSetChanged();
-        Log.d("recent", "package name: " + app.getPackageName());
-        logText();
     }
 
     public void remove(UserApp app)
@@ -83,10 +82,6 @@ public class RecentAppsHost extends ViewModel
         }
     }
 
-    private void logText()
-    {
-        Log.d("recent", "size: " + recentApps.size());
-    }
 
     public MutableLiveData<LinkedList<UserApp>> getRecentAppsMutableLiveData()
     {

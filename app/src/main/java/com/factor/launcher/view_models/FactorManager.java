@@ -143,8 +143,8 @@ public class FactorManager extends ViewModel
             int position = userFactors.indexOf(factor);
             userFactors.remove(factor);
             daoReference.delete(factor);
-            updateOrders();
             adapter.activity.runOnUiThread(()->adapter.notifyItemRemoved(position));
+            updateOrders();
         }).start();
     }
 
