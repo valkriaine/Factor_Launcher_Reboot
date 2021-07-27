@@ -336,10 +336,10 @@ public class AppListManager extends ViewModel
     {
         if (!doesPackageExist(app))
         {
-
+            ArrayList<UserApp> copy = new ArrayList<>(userApps);
             new Thread(() ->
             {
-                for (UserApp a : userApps)
+                for (UserApp a : copy)
                 {
                     if (a.getPackageName().equals(app.getPackageName()))
                     {

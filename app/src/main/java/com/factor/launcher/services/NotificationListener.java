@@ -57,7 +57,6 @@ public class NotificationListener extends NotificationListenerService
                 for (StatusBarNotification notification : currentNotifications)
                     onNotificationPosted(notification);
         }
-        catch (SecurityException ignored){}
-
+        catch (SecurityException | NullPointerException ignored){}
     }
 }
