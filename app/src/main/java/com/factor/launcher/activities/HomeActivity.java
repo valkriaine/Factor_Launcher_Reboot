@@ -119,7 +119,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             areSettingsChanged = false;
             reloadFragment();
         }
-
     }
 
     //set isVisible to false when activity is no longer visible

@@ -29,6 +29,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.FirstCharUtil;
 import com.factor.launcher.util.WidgetActivityResultContract;
 
 import java.text.Collator;
@@ -119,7 +120,7 @@ public class AppListManager extends ViewModel
         @Override
         public int compare(UserApp app1, UserApp app2)
         {
-            return sCollator.compare(app1.getLabelNew(), app2.getLabelNew());
+            return sCollator.compare(FirstCharUtil.first(app1.getLabelNew()), FirstCharUtil.first(app2.getLabelNew()));
         }
     };
 

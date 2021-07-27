@@ -34,6 +34,7 @@ import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.services.NotificationListener;
+import com.factor.launcher.util.FirstCharUtil;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
@@ -336,16 +337,17 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                         return new FastScrollItemIndicator.Text("");
                     if (item.getLabelNew().toUpperCase().length() != 0)
                         cap =  item.getLabelNew().toUpperCase().charAt(0);
-                    String capString = item.getLabelNew().toUpperCase().substring(0, 1);
+                    String capString;
                     try
                     {
+                        // if first letter is a number, return #
                         Integer.parseInt(String.valueOf(cap));
                         capString = "#";
                     }
                     catch (NumberFormatException ignored)
                     {
-                        //todo: convert chinese to pinyin
-                        //return new FastScrollItemIndicator.Icon("some drawable");
+                        // not number
+                        capString = FirstCharUtil.first(item.getLabelNew()).toUpperCase();
                     }
                     return new FastScrollItemIndicator.Text(capString);
                 }
