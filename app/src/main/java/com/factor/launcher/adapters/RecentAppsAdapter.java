@@ -1,7 +1,6 @@
 package com.factor.launcher.adapters;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,9 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
 
     private final LinkedList<UserApp> apps;
 
-    private final PackageManager packageManager;
-
-    public RecentAppsAdapter(LinkedList<UserApp> apps, PackageManager packageManager)
+    public RecentAppsAdapter(LinkedList<UserApp> apps)
     {
         this.apps = apps;
-        this.packageManager = packageManager;
     }
 
     @NonNull
@@ -39,7 +35,7 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
     @Override
     public void onBindViewHolder(@NonNull RecentAppViewHolder holder, int position)
     {
-        holder.bind(apps.get(position), packageManager);
+        holder.bind(apps.get(position));
         if (holder.binding != null) {
             holder.binding.recentIcon.setOnLongClickListener(v ->
             {
@@ -68,14 +64,14 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
             binding = DataBindingUtil.bind(itemView);
         }
 
-        public void bind(UserApp app, PackageManager packageManager)
+        public void bind(UserApp app)
         {
             binding.setApp(app);
             binding.recentIcon.setImageDrawable(app.getIcon());
 
             binding.recentIcon.setOnClickListener(v ->
             {
-                Intent intent = packageManager.getLaunchIntentForPackage(app.getPackageName());
+                Intent intent = itemView.getContext().getPackageManager().getLaunchIntentForPackage(app.getPackageName());
                 if (intent != null)
                 {
                     binding.recentIcon.getContext().startActivity(intent,

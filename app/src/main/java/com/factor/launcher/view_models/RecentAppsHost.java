@@ -1,6 +1,5 @@
 package com.factor.launcher.view_models;
 
-import android.content.pm.PackageManager;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.factor.launcher.adapters.RecentAppsAdapter;
@@ -18,9 +17,9 @@ public class RecentAppsHost extends ViewModel
 
     private final RecentAppsAdapter adapter;
 
-    public RecentAppsHost(PackageManager packageManager)
+    public RecentAppsHost()
     {
-        adapter = new RecentAppsAdapter(recentApps, packageManager);
+        adapter = new RecentAppsAdapter(recentApps);
         recentAppsMutableLiveData.setValue(recentApps);
     }
 

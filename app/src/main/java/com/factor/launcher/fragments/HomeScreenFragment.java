@@ -3,7 +3,6 @@ package com.factor.launcher.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -34,6 +33,7 @@ import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
+import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
@@ -63,8 +63,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private AppListManager appListManager;
 
-    private Context context;
-
     private AppActionReceiver appActionReceiver;
 
     private PackageActionsReceiver packageActionsReceiver;
@@ -74,8 +72,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private AppSettings appSettings;
 
     private RenderScriptBlur blurAlg;
-
-    private String selectedLetter = "";
 
 
 
@@ -91,12 +87,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         wm = WallpaperManager.getInstance(getContext());
     }
 
-    @Override
-    public void onAttach(@NonNull Context context)
-    {
-        super.onAttach(context);
-        this.context = context;
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -146,24 +136,24 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     public void onDestroyView()
     {
         super.onDestroyView();
-        if (context != null)
+        if (getContext() != null)
         {
             if (appActionReceiver != null)
             {
                 appActionReceiver.invalidate();
-                context.unregisterReceiver(appActionReceiver);
+                getContext().unregisterReceiver(appActionReceiver);
             }
 
             if (notificationBroadcastReceiver != null)
             {
                 notificationBroadcastReceiver.invalidate();
-                context.unregisterReceiver(notificationBroadcastReceiver);
+                getContext().unregisterReceiver(notificationBroadcastReceiver);
             }
 
             if (packageActionsReceiver != null)
             {
                 packageActionsReceiver.invalidate();
-                context.unregisterReceiver(packageActionsReceiver);
+                getContext().unregisterReceiver(packageActionsReceiver);
             }
         }
     }
@@ -176,8 +166,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getContext()!= null)
         {
             appListManager.clearAllNotifications();
-            Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
-            getContext().sendBroadcast(intent);
+            Intent intent = new Intent(getActivity(), NotificationListener.class);
+            getContext().startService(intent);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                 appListManager.updateShortcuts();
@@ -240,7 +230,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //initialize data manager
         //***************************************************************************************************************************************************
-        appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper);
+        appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper, appSettings);
 
 
 
@@ -378,7 +368,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     smoothScroller.setTargetPosition(itemPosition);
                     if (binding.appsList.getLayoutManager() != null)
                     binding.appsList.getLayoutManager().startSmoothScroll(smoothScroller);
-                    selectedLetter = indicator.toString();
+
+                    // String selectedLetter = indicator.toString();
 
                     //todo: add touch event callback here
                     //key down while selectedLetter is not empty -> show list of apps
@@ -548,7 +539,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
                 Bitmap m = Util.INSTANCE.toBitmap(wm.getFastDrawable());
 
-                RenderScript rs = RenderScript.create(context);
+                RenderScript rs = RenderScript.create(getContext());
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -619,8 +610,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
 
 
-        Intent intent = new  Intent(Constants.NOTIFICATION_INTENT_ACTION_SETUP);
-        getContext().sendBroadcast(intent);
+        Intent intent = new Intent(getActivity(), NotificationListener.class);
+        getContext().startService(intent);
     }
 
 }

@@ -1,40 +1,14 @@
 package com.factor.launcher.services;
 
 import android.app.Notification;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.util.Log;
 import com.factor.launcher.util.Constants;
 
 
 public class NotificationListener extends NotificationListenerService
 {
-    private ComponentsSetupReceiver componentsSetupReceiver;
-
-    //register components setup receiver when notification listener is created
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        componentsSetupReceiver = new ComponentsSetupReceiver(this);
-        registerReceiver(componentsSetupReceiver, new IntentFilter(Constants.NOTIFICATION_INTENT_ACTION_SETUP));
-    }
-
-    //unregister components setup receiver on destroy
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        if (componentsSetupReceiver != null)
-        {
-            unregisterReceiver(componentsSetupReceiver);
-            componentsSetupReceiver = null;
-        }
-    }
 
     //send a broadcast to NotificationBroadcastReceiver when a new notification has arrived
     @Override
@@ -66,6 +40,12 @@ public class NotificationListener extends NotificationListenerService
         sendBroadcast(intent);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        getCurrentNotifications();
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     //retrieve currently displayed notifications
     private void getCurrentNotifications()
@@ -80,35 +60,4 @@ public class NotificationListener extends NotificationListenerService
         catch (SecurityException ignored){}
 
     }
-
-
-    //receive broadcast when app has successfully registered all other receivers
-    private static class ComponentsSetupReceiver extends BroadcastReceiver
-    {
-
-        private NotificationListener listener;
-
-        public ComponentsSetupReceiver(NotificationListener listener)
-        {
-            this.listener = listener;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            if (intent.getAction().equals(Constants.NOTIFICATION_INTENT_ACTION_SETUP))
-            {
-                try
-                {
-                    listener.getCurrentNotifications();
-                    listener = null;
-                }
-                catch (Exception e)
-                {
-                    Log.d("notification_setup", e.getMessage());
-                }
-            }
-        }
-    }
-
 }

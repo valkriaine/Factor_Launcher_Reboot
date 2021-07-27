@@ -19,12 +19,12 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.AppListItemBinding;
+import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Payload;
-
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -40,13 +40,16 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
     private final AppListManager appListManager;
 
+    private final AppSettings settings;
 
-    public AppListAdapter(AppListManager appListManager, ArrayList<UserApp> userApps, boolean displayHidden, Activity activity)
+
+    public AppListAdapter(AppListManager appListManager, ArrayList<UserApp> userApps, boolean displayHidden, Activity activity, AppSettings settings)
     {
         this.userApps = userApps;
         this.activity = activity;
         this.appListManager = appListManager;
         this.displayHidden = displayHidden;
+        this.settings = settings;
     }
 
 
@@ -165,8 +168,10 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
         assert holder.binding != null;
         if (holder.binding instanceof AppListItemBinding)
         {
+            ((AppListItemBinding) holder.binding).itemBackground.setRadius(settings.getCornerRadius());
             activity.registerForContextMenu(((AppListItemBinding)holder.binding).touchZone);
-            ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) -> {
+            ((AppListItemBinding)holder.binding).labelEdit.setOnFocusChangeListener((v, hasFocus) ->
+            {
                 if (hasFocus)
                     activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
                 else

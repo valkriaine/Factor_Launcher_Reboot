@@ -70,7 +70,9 @@
         <service
                 android:name=".services.NotificationListener"
                 android:label="@string/notification_service_description"
-                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+                android:stopWithTask="true"
+                android:exported="false">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>

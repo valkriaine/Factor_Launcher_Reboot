@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.adapters.AppListAdapter;
 import com.factor.launcher.database.AppListDatabase;
 import com.factor.launcher.fragments.HomeScreenFragment;
+import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
@@ -75,12 +76,15 @@ public class AppListManager extends ViewModel
 
     public final RecentAppsHost recentAppsHost;
 
+    private final AppSettings settings;
 
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
-                          Boolean isLiveWallpaper)
+                          Boolean isLiveWallpaper,
+                          AppSettings settings)
     {
+        this.settings = settings;
         this.appWidgetManager = AppWidgetManager.getInstance(fragment.requireActivity());
         this.appWidgetHost = new AppWidgetHost(fragment.requireActivity(), WIDGET_HOST_ID);
 
@@ -91,7 +95,7 @@ public class AppListManager extends ViewModel
 
         this.packageManager = fragment.requireActivity().getPackageManager();
         this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
-        this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity());
+        this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity(), settings);
         this.factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
@@ -105,7 +109,7 @@ public class AppListManager extends ViewModel
 
         loadApps(factorSharedPreferences.getBoolean("saved", false));
 
-        this.recentAppsHost = new RecentAppsHost(packageManager);
+        this.recentAppsHost = new RecentAppsHost();
     }
 
     //compare app label (new)
@@ -332,18 +336,23 @@ public class AppListManager extends ViewModel
     {
         if (!doesPackageExist(app))
         {
-            while (userApps.contains(app))
+
+            new Thread(() ->
             {
-                new Thread(() ->
+                for (UserApp a : userApps)
                 {
-                    int position = userApps.indexOf(app);
-                    userApps.remove(app);
-                    daoReference.delete(app);
-                    adapter.activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
-                }).start();
-                factorManager.remove(app);
-                recentAppsHost.remove(app);
-            }
+                    if (a.getPackageName().equals(app.getPackageName()))
+                    {
+                        int position = userApps.indexOf(a);
+                        userApps.remove(app);
+                        daoReference.delete(app);
+                        adapter.activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
+                    }
+                }
+
+            }).start();
+            factorManager.remove(app);
+            recentAppsHost.remove(app);
         }
     }
 
@@ -527,7 +536,7 @@ public class AppListManager extends ViewModel
     {
         this.displayHidden = displayHidden;
         Activity activity = adapter.activity;
-        this.adapter = new AppListAdapter(this, userApps, displayHidden, activity);
+        this.adapter = new AppListAdapter(this, userApps, displayHidden, activity, settings);
         return adapter;
     }
 
