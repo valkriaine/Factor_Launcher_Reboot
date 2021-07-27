@@ -92,6 +92,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+
+    //system ui 
+    implementation project(path: ':sysui_shared')
+
     //bouncy
     implementation project(path: ':bouncy')
 

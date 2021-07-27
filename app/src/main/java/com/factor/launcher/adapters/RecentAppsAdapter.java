@@ -1,6 +1,7 @@
 package com.factor.launcher.adapters;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,8 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
     public void onBindViewHolder(@NonNull RecentAppViewHolder holder, int position)
     {
         holder.bind(apps.get(position));
-        if (holder.binding != null) {
+        if (holder.binding != null)
+        {
             holder.binding.recentIcon.setOnLongClickListener(v ->
             {
                 UserApp app = holder.binding.getApp();

@@ -7,21 +7,21 @@
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="50dp"
+            android:layout_height="50dp">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.factor.launcher.ui.ElevationImageView
                 android:id="@+id/recent_icon"
                 android:gravity="center"
-                android:elevation="50dp"
+                android:elevation="30dp"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_margin="10dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"/>
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
