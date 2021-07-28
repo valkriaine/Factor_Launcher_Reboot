@@ -63,6 +63,12 @@ public class AppActionReceiver extends BroadcastReceiver
                         .smoothScrollToPosition(binding.appsList, new RecyclerView.State(), intent.getIntExtra(Constants.RENAME_KEY, 0));
                 break;
 
+            //an app has been added to the recent-apps list
+            case Constants.BROADCAST_ACTION_RECENT:
+                if (binding.recentAppsList.getLayoutManager() != null)
+                    binding.recentAppsList.smoothScrollToPosition(0);
+                break;
+
             //the home button has been pressed
             case Intent.ACTION_CLOSE_SYSTEM_DIALOGS:
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);

@@ -2,8 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <data>
-    <variable name="app"
-              type="com.factor.launcher.models.UserApp"/>
+    <variable name="package_name"
+              type="String"/>
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

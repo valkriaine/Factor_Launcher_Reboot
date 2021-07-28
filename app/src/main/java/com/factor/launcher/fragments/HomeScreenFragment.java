@@ -49,9 +49,7 @@ import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
 import eightbitlab.com.blurview.RenderScriptBlur;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
@@ -132,6 +130,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             return true;
     }
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        appListManager.saveRecentApps();
+    }
 
     @Override
     public void onDestroyView()
@@ -169,6 +173,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             appListManager.clearAllNotifications();
             Intent intent = new Intent(getActivity(), NotificationListener.class);
             getContext().startService(intent);
+
+            binding.recentAppsList.smoothScrollToPosition(0);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                 appListManager.updateShortcuts();
@@ -278,15 +284,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
 
-        Observer<LinkedList<UserApp>> recentObserver = userRecent ->
-        {
-            LinearLayoutManager recentManager = new LinearLayoutManager(getContext());
-            recentManager.setReverseLayout(true);
-            binding.recentAppsList.setLayoutManager(recentManager);
-            binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
-        };
 
-        appListManager.recentAppsHost.getRecentAppsMutableLiveData().observe(getViewLifecycleOwner(), recentObserver);
+        LinearLayoutManager recentManager = new LinearLayoutManager(getContext());
+        recentManager.setReverseLayout(true);
+        binding.recentAppsList.setLayoutManager(recentManager);
+        binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
 
 
         //home pager on scroll

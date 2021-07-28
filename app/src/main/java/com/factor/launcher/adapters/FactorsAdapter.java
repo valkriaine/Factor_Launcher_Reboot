@@ -425,7 +425,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 Intent intent = factorManager.packageManager.getLaunchIntentForPackage(factor.getPackageName());
                 if (intent != null)
                 {
-                    Log.d("recent", "clicked: " + factor.getUserApp().getPackageName());
                     factorManager.addToRecent(factorManager.findAppByPackage(factor.getPackageName()));
                     itemView.getContext().startActivity(intent,
                             ActivityOptionsCompat.makeClipRevealAnimation(itemView, 0,0,itemView.getWidth(), itemView.getHeight()).toBundle());

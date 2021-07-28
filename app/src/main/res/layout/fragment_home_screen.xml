@@ -171,11 +171,11 @@
                                 app:layout_constraintStart_toStartOf="@id/guideline"
                                 app:layout_constraintBottom_toBottomOf="@id/guideline_recent_horizontal"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:recyclerview_overscroll_animation_size="0.05"
-                                app:recyclerview_fling_animation_size="0.05"
+                                app:recyclerview_overscroll_animation_size="0.1"
+                                app:recyclerview_fling_animation_size="0.1"
                                 android:id="@+id/recent_apps_list"
                                 android:layout_width="50dp"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="150dp"/>
 
 
 

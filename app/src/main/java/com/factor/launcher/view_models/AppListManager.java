@@ -110,7 +110,7 @@ public class AppListManager extends ViewModel
 
         loadApps(factorSharedPreferences.getBoolean("saved", false));
 
-        this.recentAppsHost = new RecentAppsHost();
+        this.recentAppsHost = new RecentAppsHost(this);
     }
 
     //compare app label (new)
@@ -120,11 +120,26 @@ public class AppListManager extends ViewModel
         @Override
         public int compare(UserApp app1, UserApp app2)
         {
-            return sCollator.compare(FirstCharUtil.first(app1.getLabelNew()), FirstCharUtil.first(app2.getLabelNew()));
+            for (int i = 0; i < app1.getLabelNew().length() && i < app2.getLabelNew().length(); i++)
+            {
+                String a = FirstCharUtil.first("" + app1.getLabelNew().charAt(i));
+                String b = FirstCharUtil.first("" + app2.getLabelNew().charAt(i));
+                if (!a.equals(b))
+                    return sCollator.compare(a, b);
+            }
+            return 1;
         }
     };
 
 
+    //save recent apps
+    public void saveRecentApps()
+    {
+        recentAppsHost.save();
+    }
+
+
+    //find app by package name
     public UserApp findAppByPackage(String name)
     {
         for (UserApp app : userApps)
