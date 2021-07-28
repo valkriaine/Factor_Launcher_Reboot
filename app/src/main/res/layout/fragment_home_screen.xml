@@ -164,8 +164,7 @@
 
 
                     <!--recent apps-->
-
-                        <com.factor.bouncy.BouncyRecyclerView
+                    <com.factor.bouncy.BouncyRecyclerView
                                 android:translationZ="100dp"
                                 android:contentDescription="@string/recently_used_apps"
                                 app:layout_constraintStart_toStartOf="@id/guideline"
@@ -178,21 +177,24 @@
                                 android:layout_height="150dp"/>
 
 
-
-
-                    <!--todo: enable customization-->
-
-
-
-                    <com.factor.bouncy.BouncyRecyclerView
-                            android:id="@+id/tiles_list"
-                            android:contentDescription="@string/home_screen"
+                    <com.factor.launcher.ui.InvisibleRefreshLayout
+                            android:id="@+id/swipe_refresh_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:recyclerview_fling_animation_size="0.3"
-                            app:recyclerview_overscroll_animation_size="0.3"
-                            android:clipToPadding="false"
-                            app:allow_drag_reorder="true"/>
+                            android:layout_height="match_parent">
+
+                        <com.factor.bouncy.BouncyRecyclerView
+                                android:id="@+id/tiles_list"
+                                android:contentDescription="@string/home_screen"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:recyclerview_fling_animation_size="0.3"
+                                app:recyclerview_overscroll_animation_size="0.3"
+                                android:clipToPadding="false"
+                                app:allow_drag_reorder="true"/>
+
+                    </com.factor.launcher.ui.InvisibleRefreshLayout>
+
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

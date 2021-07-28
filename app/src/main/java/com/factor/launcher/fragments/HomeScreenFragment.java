@@ -34,21 +34,22 @@ import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
-import com.factor.launcher.services.NotificationListener;
-import com.factor.launcher.util.FirstCharUtil;
-import com.factor.launcher.view_models.AppListManager;
-import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
+import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
 import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.FirstCharUtil;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
+import com.factor.launcher.view_models.AppListManager;
+import com.factor.launcher.view_models.AppSettingsManager;
 import eightbitlab.com.blurview.RenderScriptBlur;
+
 import java.util.ArrayList;
 
 
@@ -515,6 +516,17 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //go to app drawer on click
         binding.arrowButton.setOnClickListener(view -> binding.homePager.setCurrentItem(1, true));
 
+
+        //todo: completely hide progress arrow, pass overscroll event to recyclerview
+        binding.swipeRefreshLayout.setOnRefreshListener(() ->
+        {
+            if (binding.arrowButton.getRotation() == -90)
+                binding.arrowButton.animate().rotation(-180);
+            else
+                binding.arrowButton.animate().rotation(-90);
+
+            binding.swipeRefreshLayout.setRefreshing(false);
+        });
     }
 
 
