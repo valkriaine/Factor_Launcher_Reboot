@@ -14,7 +14,8 @@ public class RecentAppsHost extends ViewModel
 
     private static final String STRING_KEY = "RECENT_APPS_HOST_KEY";
 
-    private static final int MAX_SIZE = 6;
+    //todo: enable customization in a future build
+    private static final int MAX_SIZE = 5;
 
     private final LinkedList<String> recentApps = new LinkedList<>();
 
