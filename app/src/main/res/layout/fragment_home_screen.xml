@@ -181,18 +181,7 @@
 
 
                     <!--todo: enable customization-->
-                    <!--signature-->
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/add_widget_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:layout_marginTop="100dp"
-                            android:textSize="16sp"
-                            android:rotation="-90"
-                            app:layout_constraintTop_toBottomOf="@id/arrowButton"
-                            app:layout_constraintStart_toEndOf="@id/guideline"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+
 
 
                     <com.factor.bouncy.BouncyRecyclerView
@@ -200,8 +189,8 @@
                             android:contentDescription="@string/home_screen"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            app:recyclerview_fling_animation_size="0.25"
-                            app:recyclerview_overscroll_animation_size="0.25"
+                            app:recyclerview_fling_animation_size="0.3"
+                            app:recyclerview_overscroll_animation_size="0.3"
                             android:clipToPadding="false"
                             app:allow_drag_reorder="true"/>
 
@@ -247,8 +236,8 @@
                         <com.factor.bouncy.BouncyRecyclerView
                                 android:id="@+id/apps_list"
                                 android:translationZ="-20dp"
-                                app:recyclerview_fling_animation_size="0.25"
-                                app:recyclerview_overscroll_animation_size="0.25"
+                                app:recyclerview_fling_animation_size="0.3"
+                                app:recyclerview_overscroll_animation_size="0.3"
                                 android:nestedScrollingEnabled="false"
                                 app:layout_constraintTop_toTopOf="parent"
                                 android:layout_width="match_parent"
