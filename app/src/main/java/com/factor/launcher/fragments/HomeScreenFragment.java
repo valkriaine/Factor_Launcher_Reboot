@@ -30,6 +30,7 @@ import androidx.renderscript.ScriptIntrinsicBlur;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
+import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
@@ -47,7 +48,6 @@ import com.factor.launcher.ui.FixedLinearLayoutManager;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
-import com.reddit.indicatorfastscroll.FastScrollItemIndicator;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
@@ -508,11 +508,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
             });
         });
-
-
-        //test button to launch pick widget screen
-        //todo: add this in a drop down menu or in the app drawer
-        binding.addWidgetButton.setOnClickListener(view -> appListManager.launchPickWidgetIntent());
 
 
         //go to app drawer on click

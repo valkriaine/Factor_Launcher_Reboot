@@ -210,7 +210,7 @@
                             android:id="@+id/guideline_scroller"
                             app:layout_constraintGuide_percent="0.9"/>
 
-                    <com.reddit.indicatorfastscroll.FastScrollerView
+                    <com.factor.indicator_fast_scroll.FastScrollerView
                             android:id="@+id/scroll_bar"
                             android:translationZ="100dp"
                             android:layout_marginTop="80dp"
@@ -223,10 +223,9 @@
                             android:layout_height="match_parent"/>
 
 
-                    <com.reddit.indicatorfastscroll.FastScrollerThumbView
+                    <com.factor.indicator_fast_scroll.FastScrollerThumbView
                             android:id="@+id/thumb"
                             android:layout_marginTop="80dp"
-                            app:thumbColor="@android:color/white"
                             android:layout_width="50dp"
                             android:layout_marginEnd="10dp"
                             android:layout_height="match_parent"

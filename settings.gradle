@@ -1,3 +1,4 @@
+include ':indicator-fast-scroll'
 include ':sysui_shared'
 include ':bouncy'
 include ':bouncy'

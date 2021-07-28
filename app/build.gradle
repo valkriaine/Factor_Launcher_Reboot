@@ -93,25 +93,29 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
 
-    //system ui 
+    // system ui
     implementation project(path: ':sysui_shared')
 
-    //bouncy
+    // bouncy
     implementation project(path: ':bouncy')
 
-    //ChipsLayoutManager
+    // ChipsLayoutManager
+    // https://github.com/BelooS/ChipsLayoutManager
     implementation project(path: ':chipslayoutmanager')
 
-    //Color picker
+    // app list fast scroller
+    // https://github.com/reddit/IndicatorFastScroll
+    implementation project(path: ':indicator-fast-scroll')
+
+    // Color picker
+    // https://github.com/skydoves/ColorPickerView
     implementation "com.github.skydoves:colorpickerview:2.2.3"
 
-    //blur
+    // blur
+    // https://github.com/Dimezis/BlurView
     implementation 'com.github.Dimezis:BlurView:version-1.6.6'
 
-    //app list fast scroller
-    implementation 'com.reddit:indicator-fast-scroll:1.4.0'
-
-    //memory leak detection
+    // memory leak detection
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     //crash report
