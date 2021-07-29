@@ -28,8 +28,8 @@ import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
+import com.factor.launcher.util.ChineseHelper;
 import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.FirstCharUtil;
 import com.factor.launcher.util.WidgetActivityResultContract;
 
 import java.text.Collator;
@@ -120,14 +120,11 @@ public class AppListManager extends ViewModel
         @Override
         public int compare(UserApp app1, UserApp app2)
         {
-            for (int i = 0; i < app1.getLabelNew().length() && i < app2.getLabelNew().length(); i++)
-            {
-                String a = FirstCharUtil.first("" + app1.getLabelNew().charAt(i));
-                String b = FirstCharUtil.first("" + app2.getLabelNew().charAt(i));
-                if (!a.equals(b))
-                    return sCollator.compare(a, b);
-            }
-            return 1;
+
+            return sCollator.compare(
+                    ChineseHelper.INSTANCE.getStringPinYin(app1.getLabelNew()),
+                    ChineseHelper.INSTANCE.getStringPinYin(app2.getLabelNew()));
+
         }
     };
 

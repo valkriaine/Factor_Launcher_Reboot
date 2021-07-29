@@ -41,10 +41,7 @@ import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
-import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.FirstCharUtil;
-import com.factor.launcher.util.OnBackPressedCallBack;
-import com.factor.launcher.util.Util;
+import com.factor.launcher.util.*;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -349,7 +346,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     catch (NumberFormatException ignored)
                     {
                         // not number
-                        capString = FirstCharUtil.first(item.getLabelNew()).toUpperCase();
+                        capString = "" + ChineseHelper.INSTANCE.getStringPinYin(item.getLabelNew()).toUpperCase().charAt(0);
                     }
                     return new FastScrollItemIndicator.Text(capString);
                 }

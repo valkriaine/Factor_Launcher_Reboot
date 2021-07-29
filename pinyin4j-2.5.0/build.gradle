@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('pinyin4j-2.5.0.jar'))
