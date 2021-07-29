@@ -14,6 +14,7 @@ import com.factor.bouncy.util.*
 
 class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(context, attrs)
 {
+
     private lateinit var callBack: DragDropCallBack
 
     var onOverPullListener: OnOverPullListener? = null
@@ -76,6 +77,20 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                 .setStiffness(stiffness)
         )
 
+    //**********************************************************************
+    //todo: implement with pull to refresh
+    //set translationY
+    fun springTranslationY(distance : Float)
+    {
+        this.translationY = distance * overscrollAnimationSize
+        spring.cancel()
+    }
+
+    //manually release spring
+    fun release()
+    {
+        spring.start()
+    }
 
     override fun setAdapter(adapter: RecyclerView.Adapter<*>?)
     {

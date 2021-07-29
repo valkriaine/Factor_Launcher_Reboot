@@ -1,6 +1,5 @@
-package com.factor.launcher.ui;
+package com.factor.launcher.ui.invisible_refresh_layout;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
@@ -38,6 +37,7 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ListViewCompat;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+import com.factor.bouncy.BouncyRecyclerView;
 
 /**
  * The SwipeRefreshLayout should be used whenever the user can refresh the
@@ -60,7 +60,13 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
  * refresh of the content wherever this gesture is used.
  * </p>
  */
-@SuppressWarnings({"unused", "FieldCanBeLocal", "FieldMayBeFinal", "JavaDoc", "NullableProblems"})
+
+/*
+Modified to hide the refresh animation, and animate tile list with spring animation instead
+ */
+
+
+@SuppressWarnings("ALL")
 public class InvisibleRefreshLayout extends ViewGroup implements NestedScrollingParent3,
         NestedScrollingParent2, NestedScrollingChild3, NestedScrollingChild2, NestedScrollingParent,
         NestedScrollingChild {
@@ -78,8 +84,8 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
 
     private static final String LOG_TAG = InvisibleRefreshLayout.class.getSimpleName();
 
-    private static final int MAX_ALPHA = 255;
-    private static final int STARTING_PROGRESS_ALPHA = (int) (.3f * MAX_ALPHA);
+    private static final int MAX_ALPHA = 0;
+    private static final int STARTING_PROGRESS_ALPHA = 0;
 
     private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
     private static final int INVALID_POINTER = -1;
@@ -104,7 +110,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     InvisibleRefreshLayout.OnRefreshListener mListener;
     boolean mRefreshing = false;
     private int mTouchSlop;
-    private float mTotalDragDistance;
+    private float mTotalDragDistance = -1;
 
     // If nested scrolling is enabled, the total amount that needed to be
     // consumed by this as the nested scrolling parent is used in place of the
@@ -170,7 +176,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     // Whether the client has set a custom starting position;
     boolean mUsingCustomStart;
 
-    private OnChildScrollUpCallback mChildScrollUpCallback;
+    private InvisibleRefreshLayout.OnChildScrollUpCallback mChildScrollUpCallback;
 
     /** @see #setLegacyRequestDisallowInterceptTouchEventEnabled */
     private boolean mEnableLegacyRequestDisallowInterceptTouch;
@@ -228,6 +234,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         final boolean mRefreshing;
 
         /**
+         * Constructor called from {@link #onSaveInstanceState()}
          */
         SavedState(Parcelable superState, boolean refreshing) {
             super(superState);
@@ -270,7 +277,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-       SavedState savedState = (SavedState) state;
+        SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setRefreshing(savedState.mRefreshing);
     }
@@ -281,7 +288,6 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         reset();
     }
 
-    @SuppressWarnings("SameParameterValue")
     private void setColorViewAlpha(int targetAlpha) {
         mCircleView.getBackground().setAlpha(targetAlpha);
         mProgress.setAlpha(0);
@@ -468,12 +474,11 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
      *
      * @param refreshing Whether or not the view should show refresh progress.
      */
-    @SuppressWarnings("ConstantConditions")
     public void setRefreshing(boolean refreshing) {
         if (refreshing && mRefreshing != refreshing) {
             // scale and show
-            mRefreshing = true;
-            int endTarget;
+            mRefreshing = refreshing;
+            int endTarget = 0;
             if (!mUsingCustomStart) {
                 endTarget = mSpinnerOffsetEnd + mOriginalOffsetTop;
             } else {
@@ -488,7 +493,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     }
 
     private void startScaleUpAnimation(AnimationListener listener) {
-        mCircleView.setVisibility(View.VISIBLE);
+        //mCircleView.setVisibility(View.VISIBLE);
         mProgress.setAlpha(0);
         mScaleAnimation = new Animation() {
             @Override
@@ -729,8 +734,12 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         return mTarget.canScrollVertically(-1);
     }
 
-
-    public void setOnChildScrollUpCallback(@Nullable OnChildScrollUpCallback callback) {
+    /**
+     * Set a callback to override {@link InvisibleRefreshLayout#canChildScrollUp()} method. Non-null
+     * callback will return the value provided by the callback and ignore all internal logic.
+     * @param callback Callback that should be called when canChildScrollUp() is called.
+     */
+    public void setOnChildScrollUpCallback(@Nullable InvisibleRefreshLayout.OnChildScrollUpCallback callback) {
         mChildScrollUpCallback = callback;
     }
 
@@ -789,7 +798,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                 break;
         }
 
-        return false;
+        return mIsBeingDragged;
     }
 
     /**
@@ -823,16 +832,17 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         // if this is a List < L or another view that doesn't support nested
         // scrolling, ignore this request so that the vertical scroll event
         // isn't stolen
-        if ((mTarget instanceof AbsListView)
+        if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
                 || (mTarget != null && !ViewCompat.isNestedScrollingEnabled(mTarget))) {
-            if (!mEnableLegacyRequestDisallowInterceptTouch) {
+            if (mEnableLegacyRequestDisallowInterceptTouch) {
+                // Nope.
+            } else {
                 // Ignore here, but pass it up to our parent
                 ViewParent parent = getParent();
                 if (parent != null) {
                     parent.requestDisallowInterceptTouchEvent(b);
                 }
             }
-
         } else {
             super.requestDisallowInterceptTouchEvent(b);
         }
@@ -880,6 +890,8 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         if (remainingDistanceToScroll < 0 && !canChildScrollUp()) {
             mTotalUnconsumed += Math.abs(remainingDistanceToScroll);
             moveSpinner(mTotalUnconsumed);
+            if (mTarget instanceof BouncyRecyclerView)
+                ((BouncyRecyclerView) mTarget).springTranslationY(mTotalUnconsumed);
 
             // If we've gotten here, we need to consume whatever is left to consume, which at this
             // point is either equal to 0, or remainingDistanceToScroll.
@@ -963,6 +975,8 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                 consumed[1] = dy;
             }
             moveSpinner(mTotalUnconsumed);
+            if (mTarget instanceof BouncyRecyclerView)
+                ((BouncyRecyclerView) mTarget).springTranslationY(mTotalUnconsumed);
         }
 
         // If a client layout is using a custom start position for the circle
@@ -1116,11 +1130,17 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     }
 
     private boolean isAnimationRunning(Animation animation) {
-        return animation == null || !animation.hasStarted() || animation.hasEnded();
+        return animation != null && animation.hasStarted() && !animation.hasEnded();
     }
 
     private void moveSpinner(float overscrollTop) {
         mProgress.setArrowEnabled(false);
+
+        /*
+        if (mTarget.getTranslationY() < 200 && overscrollTop > 0)
+            mTarget.setTranslationY(overscrollTop);
+         */
+
         float originalDragPercent = overscrollTop / mTotalDragDistance;
 
         float dragPercent = Math.min(1f, Math.abs(originalDragPercent));
@@ -1139,9 +1159,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
 
         int targetY = mOriginalOffsetTop + (int) ((slingshotDist * dragPercent) + extraMove);
         // where 1.0f is a full circle
-        if (mCircleView.getVisibility() != View.VISIBLE) {
-            mCircleView.setVisibility(View.VISIBLE);
-        }
+
         if (!mScale) {
             mCircleView.setScaleX(1f);
             mCircleView.setScaleY(1f);
@@ -1152,12 +1170,12 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         }
         if (overscrollTop < mTotalDragDistance) {
             if (mProgress.getAlpha() > STARTING_PROGRESS_ALPHA
-                    && isAnimationRunning(mAlphaStartAnimation)) {
+                    && !isAnimationRunning(mAlphaStartAnimation)) {
                 // Animate the alpha
                 startProgressAlphaStartAnimation();
             }
         } else {
-            if (mProgress.getAlpha() < MAX_ALPHA && isAnimationRunning(mAlphaMaxAnimation)) {
+            if (mProgress.getAlpha() < MAX_ALPHA && !isAnimationRunning(mAlphaMaxAnimation)) {
                 // Animate the alpha
                 startProgressAlphaMaxAnimation();
             }
@@ -1204,11 +1222,11 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         final int action = ev.getActionMasked();
-        int pointerIndex;
+        int pointerIndex = -1;
 
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
@@ -1234,15 +1252,19 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                 }
 
                 final float y = ev.getY(pointerIndex);
+                final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
+                //rc.setTranslationY(overscrollTop);
+
                 startDragging(y);
 
                 if (mIsBeingDragged) {
-                    final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     if (overscrollTop > 0) {
                         // While the spinner is being dragged down, our parent shouldn't try
                         // to intercept touch events. It will stop the drag gesture abruptly.
                         getParent().requestDisallowInterceptTouchEvent(true);
                         moveSpinner(overscrollTop);
+                        if (mTarget instanceof BouncyRecyclerView)
+                            ((BouncyRecyclerView) mTarget).springTranslationY(mTotalUnconsumed);
                     } else {
                         return false;
                     }
@@ -1265,6 +1287,9 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                 break;
 
             case MotionEvent.ACTION_UP: {
+                if (mTarget instanceof BouncyRecyclerView)
+                    ((BouncyRecyclerView) mTarget).release();
+
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_UP event but don't have an active pointer id.");
@@ -1276,6 +1301,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragged = false;
                     finishSpinner(overscrollTop);
+
                 }
                 mActivePointerId = INVALID_POINTER;
                 return false;
@@ -1284,7 +1310,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
                 return false;
         }
 
-        return false;
+        return true;
     }
 
     private void startDragging(float y) {
@@ -1403,12 +1429,12 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     }
 
     /**
-     * Classes that wish to override {@link androidx.swiperefreshlayout.widget.SwipeRefreshLayout#canChildScrollUp()} method
+     * Classes that wish to override {@link #canChildScrollUp()} method
      * behavior should implement this interface.
      */
     public interface OnChildScrollUpCallback {
         /**
-         * Callback that will be called when {@link androidx.swiperefreshlayout.widget.SwipeRefreshLayout#canChildScrollUp()} method
+         * Callback that will be called when {@link #canChildScrollUp()} method
          * is called to allow the implementer to override its behavior.
          *
          * @param parent SwipeRefreshLayout that this callback is overriding.

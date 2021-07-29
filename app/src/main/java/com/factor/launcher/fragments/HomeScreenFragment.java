@@ -28,7 +28,6 @@ import androidx.renderscript.Element;
 import androidx.renderscript.RenderScript;
 import androidx.renderscript.ScriptIntrinsicBlur;
 import androidx.viewpager.widget.ViewPager;
-import com.factor.bouncy.util.OnOverPullListener;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
 import com.factor.launcher.R;
@@ -299,7 +298,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
                 float xOffset = position + positionOffset;
-                binding.arrowButton.setRotation(+180 * xOffset - 180);
+                binding.arrowButton.setRotation(180 * xOffset - 180);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
 
@@ -407,25 +406,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.tilesList.setItemViewCacheSize(20);
         binding.tilesList.setOrientation(1);
 
-
-
-
-        binding.tilesList.setOnOverPullListener(new OnOverPullListener() {
-            @Override
-            public void onOverPulledTop(float v)
-            {
-                if (getContext()!= null && v >= 0.04)
-                    Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
-            }
-
-            @Override
-            public void onOverPulledBottom(float v) {}
-
-            @Override
-            public void onRelease() {}
-        });
-
-
         //search bar
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
@@ -516,16 +496,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //go to app drawer on click
         binding.arrowButton.setOnClickListener(view -> binding.homePager.setCurrentItem(1, true));
 
-
-        //todo: completely hide progress arrow, pass overscroll event to recyclerview
+        //implement notification panel gesture with pull-to-refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
-            if (binding.arrowButton.getRotation() == -90)
-                binding.arrowButton.animate().rotation(-180);
-            else
-                binding.arrowButton.animate().rotation(-90);
-
             binding.swipeRefreshLayout.setRefreshing(false);
+            Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
         });
     }
 

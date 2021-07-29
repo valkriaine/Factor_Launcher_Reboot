@@ -177,10 +177,12 @@
                                 android:layout_height="150dp"/>
 
 
-                    <com.factor.launcher.ui.InvisibleRefreshLayout
+                    <com.factor.launcher.ui.invisible_refresh_layout.InvisibleRefreshLayout
                             android:id="@+id/swipe_refresh_layout"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
+
 
                         <com.factor.bouncy.BouncyRecyclerView
                                 android:id="@+id/tiles_list"
@@ -192,7 +194,7 @@
                                 android:clipToPadding="false"
                                 app:allow_drag_reorder="true"/>
 
-                    </com.factor.launcher.ui.InvisibleRefreshLayout>
+                    </com.factor.launcher.ui.invisible_refresh_layout.InvisibleRefreshLayout>
 
 
 

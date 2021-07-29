@@ -1,4 +1,4 @@
-package com.factor.launcher.ui;
+package com.factor.launcher.ui.invisible_refresh_layout;
 
 import android.content.Context;
 import android.graphics.*;

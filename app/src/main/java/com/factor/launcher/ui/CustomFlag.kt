@@ -8,7 +8,9 @@ import com.skydoves.colorpickerview.AlphaTileView
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.flag.FlagView
 
-
+/*
+color picker custom flag
+ */
 @SuppressLint("ViewConstructor")
 class CustomFlag(context: Context?, layout: Int) : FlagView(context, layout)
 {
@@ -17,7 +19,7 @@ class CustomFlag(context: Context?, layout: Int) : FlagView(context, layout)
 
     override fun onRefresh(colorEnvelope: ColorEnvelope)
     {
-        textView.text = "#" + colorEnvelope.hexCode
+        textView.text = buildString{ append("#").append(colorEnvelope.hexCode) }
         alphaTileView.setPaintColor(colorEnvelope.color)
     }
 
