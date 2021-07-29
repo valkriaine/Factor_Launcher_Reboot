@@ -1,6 +1,8 @@
 package com.factor.launcher.fragments;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Intent;
@@ -43,7 +45,10 @@ import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
-import com.factor.launcher.util.*;
+import com.factor.launcher.util.ChineseHelper;
+import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.OnBackPressedCallBack;
+import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -301,6 +306,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
 
+                if (getContext() != null && binding.widgetBase.getTranslationY() != Util.INSTANCE.dpToPx(-400, getContext()))
+                {
+                    binding.widgetBase.animate().translationY(Util.INSTANCE.dpToPx(-400, getContext()));
+                }
+
                 if (paddingTop == paddingTop105)
                     binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
                 else
@@ -384,9 +394,32 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //tile list
         //***************************************************************************************************************************************************
+        binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-400, getContext()));
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
+        binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+            {
+                super.onScrolled(recyclerView, dx, dy);
+                if (getContext() != null)
+                binding.widgetBase.animate().translationY(Util.INSTANCE.dpToPx(-400, getContext())).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationCancel(Animator animation)
+                    {
+                        super.onAnimationCancel(animation);
+                        binding.arrowButton.setRotation(180);
+                    }
 
-
+                    @Override
+                    public void onAnimationEnd(Animator animation)
+                    {
+                        super.onAnimationEnd(animation);
+                        binding.arrowButton.setRotation(180);
+                    }
+                });
+            }
+        });
         Observer<ArrayList<Factor>> factorObserver = userArrayList ->
         {
             binding.tilesList
@@ -510,13 +543,26 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //go to app drawer on click
         binding.arrowButton.setOnClickListener(view -> binding.homePager.setCurrentItem(1, true));
 
+
         //implement notification panel gesture with pull-to-refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
+            binding.widgetBase.animate().translationY(0).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation)
+                {
+                    super.onAnimationEnd(animation);
+                    binding.arrowButton.animate().rotation(90);
+                }
+            });
+
+            if (getContext() != null)
+                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(200, getContext()));
+
 
             //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
-
 
         });
     }

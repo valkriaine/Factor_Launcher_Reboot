@@ -94,6 +94,18 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     }
 
+    fun springTranslateTo(distance: Float)
+    {
+        spring.cancel()
+        this.animate().translationY(distance)
+
+        if (connectedView != null)
+        {
+            connectedSpringTop?.cancel()
+            connectedView!!.animate().translationY(distance)
+        }
+    }
+
     //manually release spring
     fun release()
     {
@@ -105,7 +117,6 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     var connectedSpringTop : SpringAnimation? = null
 
     var connectedView : View? = null
-
 
     override fun setAdapter(adapter: RecyclerView.Adapter<*>?)
     {
@@ -133,8 +144,6 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             setupDirection(orientation)
         }
     }
-
-
 
     private fun setupDirection(orientation : Int?)
     {
