@@ -3,6 +3,7 @@ package com.factor.bouncy
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.View
 import android.widget.EdgeEffect
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -84,6 +85,13 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     {
         this.translationY = distance * overscrollAnimationSize
         spring.cancel()
+
+        if (connectedView != null)
+        {
+            connectedView!!.translationY = distance * overscrollAnimationSize
+            connectedSpringTop?.cancel()
+        }
+
     }
 
     //manually release spring
@@ -91,6 +99,13 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     {
         spring.start()
     }
+
+    var connectedSpringBottom : SpringAnimation? = null
+
+    var connectedSpringTop : SpringAnimation? = null
+
+    var connectedView : View? = null
+
 
     override fun setAdapter(adapter: RecyclerView.Adapter<*>?)
     {
@@ -211,6 +226,13 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                                     1 * recyclerView.width * deltaDistance * overscrollAnimationSize
 
                             rc.translationY += delta
+                            if (connectedView != null && direction == DIRECTION_TOP)
+                            {
+                                connectedView!!.translationY += delta
+                                connectedSpringTop?.cancel()
+                            }
+
+
                             spring.cancel()
                         }
                         else
@@ -233,6 +255,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                         super.onRelease()
                         onOverPullListener?.onRelease()
                         spring.start()
+                        connectedSpringTop?.start()
 
                         forEachVisibleHolder{holder: ViewHolder? -> if (holder is BouncyViewHolder)holder.onRelease()}
                     }
@@ -243,13 +266,21 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
                         if (orientation == VERTICAL)
                         {
-                            val v: Float = if (direction == DIRECTION_BOTTOM)
-                                -1 * velocity * flingAnimationSize
+                            val v: Float
+                            if (direction == DIRECTION_BOTTOM)
+                            {
+                                v = -1 * velocity * flingAnimationSize
+                                connectedSpringBottom?.skipToEnd()
+                                connectedSpringBottom?.setStartVelocity(-v * 0.3F)?.start()
+                            }
                             else
-                                1 * velocity * flingAnimationSize
-
+                            {
+                                v = 1 * velocity * flingAnimationSize
+                                connectedSpringTop?.setStartVelocity(v)?.start()
+                            }
 
                             spring.setStartVelocity(v).start()
+
                         }
                         else
                         {

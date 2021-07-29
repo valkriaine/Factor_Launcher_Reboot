@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
+import androidx.dynamicanimation.animation.SpringAnimation;
+import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -402,6 +404,21 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
         binding.tilesList.setItemViewCacheSize(20);
         binding.tilesList.setOrientation(1);
+        binding.tilesList.setConnectedView(binding.arrowButton);
+        binding.tilesList.setConnectedSpringBottom(
+                new SpringAnimation(binding.arrowButton, SpringAnimation.TRANSLATION_X)
+                        .setSpring(new SpringForce()
+                                        .setFinalPosition(0f)
+                                        .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY)
+                                        .setStiffness(SpringForce.STIFFNESS_LOW)));
+
+        binding.tilesList.setConnectedSpringTop(
+                new SpringAnimation(binding.arrowButton, SpringAnimation.TRANSLATION_Y)
+                        .setSpring(new SpringForce()
+                                .setFinalPosition(0f)
+                                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY)
+                                .setStiffness(SpringForce.STIFFNESS_LOW)));
+
 
         //search bar
         //***************************************************************************************************************************************************
@@ -497,7 +514,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
-            Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
+
+            //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
+
+
         });
     }
 
