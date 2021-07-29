@@ -4,11 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ShortcutInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Process;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.AppListItemBinding;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
@@ -182,11 +182,18 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             {
                 MenuInflater inflater = activity.getMenuInflater();
                 inflater.inflate(R.menu.app_list_item_menu, menu);
-                if (((AppListItemBinding)holder.binding).getUserApp().isPinned())
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    menu.setGroupDividerEnabled(true);
+                }
+
+                UserApp app = ((AppListItemBinding)holder.binding).getUserApp();
+
+                if (app.isPinned())
                     menu.getItem(0).setEnabled(false);
 
                 //add to home & remove from home
-                menu.getItem(0).setOnMenuItemClickListener(item -> appListManager.changePin(((AppListItemBinding)holder.binding).getUserApp()));
+                menu.getItem(0).setOnMenuItemClickListener(item -> appListManager.changePin(app));
 
                 //edit
                 SubMenu sub = menu.getItem(1).getSubMenu();
@@ -199,14 +206,14 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 });
                 //hide
                 MenuItem hide = sub.getItem(1);
-                hide.setTitle(((AppListItemBinding) holder.binding).getUserApp().isHidden() ? "Show" : "Hide");
-                hide.setOnMenuItemClickListener(item -> !((AppListItemBinding)holder.binding).getUserApp().isHidden() ?
-                        appListManager.hideApp(((AppListItemBinding)holder.binding).getUserApp()) : appListManager.showApp(((AppListItemBinding)holder.binding).getUserApp()));
+                hide.setTitle(app.isHidden() ? "Show" : "Hide");
+                hide.setOnMenuItemClickListener(item -> !app.isHidden() ?
+                        appListManager.hideApp(app) : appListManager.showApp(app));
                 //info
                 menu.getItem(2).setOnMenuItemClickListener(item ->
                 {
                     view.getContext().startActivity(
-                            new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                     Uri.parse("package:"+((AppListItemBinding)holder.binding).getUserApp().getPackageName())));
                     return true;
                 });
@@ -214,10 +221,31 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 //uninstall
                 menu.getItem(3).setOnMenuItemClickListener(item ->
                 {
-                    view.getContext().startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+((AppListItemBinding)holder.binding).getUserApp().getPackageName()))
+                    view.getContext().startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+app.getPackageName()))
                             .putExtra(Intent.EXTRA_RETURN_RESULT, true));
                     return true;
                 });
+
+
+                // add app shortcuts
+                if (app.hasShortcuts())
+                {
+                    for (AppShortcut shortcut : app.getShortCuts())
+                    {
+                        menu.add(1,app.getShortCuts().indexOf(shortcut), menu.size()-1, shortcut.getLabel()).setIcon(shortcut.getIcon()).setOnMenuItemClickListener(item ->
+                        {
+                            if (shortcut.getLaunchEvent() != null)
+                                shortcut.getLaunchEvent().onClick(item.getActionView());
+                            return true;
+                        });
+                    }
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+                    {
+                        // this is a divider lmao
+                        menu.add(1, menu.size()-1, menu.size()-1,  "_____________________").setEnabled(false);
+                    }
+                }
             });
 
 
@@ -488,15 +516,6 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             app.setLabelNew(app.getLabelOld());
             appListAdapter.appListManager.isAfterRename = true;
             appListAdapter.appListManager.updateApp(app);
-        }
-
-
-
-        //start app shortcut
-        private void startShortCut(ShortcutInfo shortcutInfo)
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                appListAdapter.appListManager.launcherApps.startShortcut(shortcutInfo.getPackage(), shortcutInfo.getId(), null, null, Process.myUserHandle());
         }
     }
 }
