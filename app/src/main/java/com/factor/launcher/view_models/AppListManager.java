@@ -219,7 +219,11 @@ public class AppListManager extends ViewModel
 
                                         app.setPinned(factorManager.isAppPinned(app));
 
-                                        Collections.sort(userApps, first_letter);
+                                        try
+                                        {
+                                            Collections.sort(userApps, first_letter);
+                                        }
+                                        catch (ConcurrentModificationException ignored){}
                                     }
                                     else
                                         daoReference.delete(app);
@@ -269,7 +273,12 @@ public class AppListManager extends ViewModel
                         }
 
                     }
-                    Collections.sort(userApps, first_letter);
+
+                    try
+                    {
+                        Collections.sort(userApps, first_letter);
+                    }catch (ConcurrentModificationException ignored){}
+
 
                     daoReference.insertAll(userApps);
 
@@ -404,7 +413,11 @@ public class AppListManager extends ViewModel
                     app.setLabelNew(app.getLabelOld());
                     daoReference.insert(app);
                     userApps.add(app);
-                    Collections.sort(userApps, first_letter);
+                    try
+                    {
+                        Collections.sort(userApps, first_letter);
+                    }catch (ConcurrentModificationException ignored){}
+
 
                     adapter.activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
                 }

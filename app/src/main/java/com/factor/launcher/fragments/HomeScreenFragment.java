@@ -593,13 +593,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
-            animatorExpand.start();
+            //animatorExpand.start();
 
             if (getContext() != null)
-                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(paddingTop, getContext()));
+                //binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(paddingTop, getContext()));
 
 
-            //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
+            Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
 
         });
     }
