@@ -611,24 +611,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.homePager.setCurrentItem(1, true);
         });
 
-        binding.arrowButton.setOnLongClickListener(v ->
-        {
-            if (appWidgetId != -1)
-            {
-                //remove widget
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                {
-                    removeWidget(appWidgetId);
-                    return true;
-                }
-            }
-            else
-                launchPickWidgetIntent();
-
-            return false;
-        });
-
-
         //pull to expand widget base
         binding.swipeRefreshLayout.setDistanceToTriggerSync(paddingTop*2);
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
@@ -657,6 +639,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             //add widget
             addWidgetView(appWidgetId);
         }
+
+        binding.addWidgetText.setOnClickListener(v -> launchPickWidgetIntent());
+        binding.arrowButton.setOnLongClickListener(v ->
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && appWidgetId != -1)
+            {
+                removeWidget(appWidgetId);
+            }
+            return true;
+        });
     }
 
 
@@ -850,6 +842,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 (int)Util.INSTANCE.dpToPx(10, getContext()));
         hostView.setLayoutParams(params);
         binding.widgetBase.addView(hostView);
+        hostView.setLongClickable(true);
         binding.widgetBaseShadow.setVisibility(View.GONE);
     }
 

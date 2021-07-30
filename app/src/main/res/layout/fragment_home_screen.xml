@@ -26,14 +26,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/widget_base_shadow"
                 android:background="@color/transparent"
-                android:translationZ="500dp"
+                android:translationZ="501dp"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="400dp" >
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/add_widget_text"
-                    android:text="Tap to add a widget"
+                    android:text="Tap to add a widget, \nlong press arrow button to remove the widget"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +46,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/widget_base"
                 android:clickable="true"
+                android:longClickable="true"
                 android:focusable="true"
                 android:background="@color/transparent"
                 android:translationZ="500dp"
