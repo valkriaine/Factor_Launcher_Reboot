@@ -1,3 +1,10 @@
+# Version 0.63-beta
+
+- show available shortcuts in app drawer context menu
+- recent apps now persist after reload
+- better Chinese pinyin indexing
+- better notification center gesture
+
 # Version 0.62-beta
 
 - added support for Chinese pinyin sorting in the app drawer
