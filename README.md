@@ -12,7 +12,7 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 [Development playlist](https://youtube.com/playlist?list=PLr2SUHRsQtUdnRM6PRxuPIfK48T5HyNsX)
 
-[Newest video demo](https://youtu.be/q3KTT-URb1M)
+[Newest video demo](https://youtu.be/AFXJ_Sbj8iU)
 
 <p>&nbsp;</p>
 
