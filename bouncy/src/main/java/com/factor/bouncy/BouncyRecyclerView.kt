@@ -110,6 +110,8 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     fun release()
     {
         spring.start()
+        connectedSpringTop?.start()
+        connectedSpringBottom?.start()
     }
 
     var connectedSpringBottom : SpringAnimation? = null

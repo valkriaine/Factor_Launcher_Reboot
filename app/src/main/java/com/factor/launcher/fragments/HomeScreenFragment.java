@@ -3,6 +3,7 @@ package com.factor.launcher.fragments;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Intent;
@@ -76,6 +77,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private RenderScriptBlur blurAlg;
 
+    private boolean isWidgetExpanded = false;
+
+    private ObjectAnimator animatorExpand;
+
+    private ObjectAnimator animatorCollapse;
 
 
     public HomeScreenFragment()
@@ -105,6 +111,13 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     @Override
     public boolean onBackPressed()
     {
+
+            if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
+            {
+                animatorCollapse.start();
+                return true;
+            }
+
         if (binding.homePager.getCurrentItem() == 1)
         {
             if (appListManager.isDisplayingHidden())
@@ -294,6 +307,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.recentAppsList.setLayoutManager(recentManager);
         binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
 
+        binding.homePager.setOnTouchListener((v, event) ->
+        {
+            if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
+            {
+                animatorCollapse.start();
+            }
+            return false;
+        });
 
         //home pager on scroll
         binding.homePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -305,11 +326,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.arrowButton.setRotation(180 * xOffset - 180);
                 binding.searchBase.setTranslationY(-500f + 500 * xOffset);
                 binding.searchView.clearFocus();
-
-                if (getContext() != null && binding.widgetBase.getTranslationY() != Util.INSTANCE.dpToPx(-400, getContext()))
-                {
-                    binding.widgetBase.animate().translationY(Util.INSTANCE.dpToPx(-400, getContext()));
-                }
 
                 if (paddingTop == paddingTop105)
                     binding.appsList.setPadding(0, appListPaddingTop100, 0, paddingBottom150);
@@ -396,28 +412,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //***************************************************************************************************************************************************
         binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-400, getContext()));
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
-        binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
+        binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
             {
                 super.onScrolled(recyclerView, dx, dy);
-                if (getContext() != null)
-                binding.widgetBase.animate().translationY(Util.INSTANCE.dpToPx(-400, getContext())).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationCancel(Animator animation)
-                    {
-                        super.onAnimationCancel(animation);
-                        binding.arrowButton.setRotation(180);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation)
-                    {
-                        super.onAnimationEnd(animation);
-                        binding.arrowButton.setRotation(180);
-                    }
-                });
+                if (isWidgetExpanded && !animatorCollapse.isStarted())
+                {
+                    animatorCollapse.start();
+                }
             }
         });
         Observer<ArrayList<Factor>> factorObserver = userArrayList ->
@@ -540,26 +543,60 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         });
 
 
-        //go to app drawer on click
-        binding.arrowButton.setOnClickListener(view -> binding.homePager.setCurrentItem(1, true));
+
+        // widget base animators
+        animatorExpand = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(0, getContext()));
+        animatorExpand.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                binding.arrowButton.animate().rotation(90);
+                isWidgetExpanded = true;
+            }
+        });
+        animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(-400, getContext()));
+        animatorCollapse.setDuration(80);
+        animatorCollapse.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                binding.arrowButton.animate().rotation(-180);
+                isWidgetExpanded = false;
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation)
+            {
+                super.onAnimationStart(animation);
+                binding.tilesList.release();
+            }
+        });
+
+        //go to app drawer on click, if widget base is expanded, collapse it instead
+        binding.arrowButton.setOnClickListener(v ->
+        {
+            if (isWidgetExpanded && !animatorCollapse.isStarted())
+            {
+                animatorCollapse.start();
+            }
+            else
+                binding.homePager.setCurrentItem(1, true);
+        });
 
 
-        //implement notification panel gesture with pull-to-refresh
+        //pull to expand widget base
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(paddingTop*2);
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
-            binding.widgetBase.animate().translationY(0).setListener(new AnimatorListenerAdapter()
-            {
-                @Override
-                public void onAnimationEnd(Animator animation)
-                {
-                    super.onAnimationEnd(animation);
-                    binding.arrowButton.animate().rotation(90);
-                }
-            });
+            animatorExpand.start();
 
             if (getContext() != null)
-                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(200, getContext()));
+                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(paddingTop, getContext()));
 
 
             //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);

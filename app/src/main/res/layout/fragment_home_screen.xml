@@ -9,16 +9,19 @@
 
     <!--main layout-->
     <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_base"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/widget_base"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@color/colorPrimary"
                 android:translationZ="500dp"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="200dp" >
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

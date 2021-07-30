@@ -454,7 +454,12 @@ public class AppListManager extends ViewModel
                                 userApps.get(position).setShortCuts(getShortcutsFromApp(app));
 
                             daoReference.updateAppInfo(appToUpdate);
-                            Collections.sort(userApps, first_letter);
+                            try
+                            {
+                                Collections.sort(userApps, first_letter);
+                            }
+                            catch (ConcurrentModificationException ignored){}
+
                             int newPosition = userApps.indexOf(app);
                             adapter.activity.runOnUiThread(() ->
                             {
