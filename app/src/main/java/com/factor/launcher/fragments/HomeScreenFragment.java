@@ -5,20 +5,30 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.WallpaperManager;
+import android.appwidget.AppWidgetHostView;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.EditText;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -35,6 +45,7 @@ import androidx.renderscript.ScriptIntrinsicBlur;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
+import com.factor.launcher.FactorApplication;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
@@ -46,15 +57,14 @@ import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.services.NotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
-import com.factor.launcher.util.ChineseHelper;
-import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.OnBackPressedCallBack;
-import com.factor.launcher.util.Util;
+import com.factor.launcher.util.*;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
+import static com.factor.launcher.util.Constants.REQUEST_CREATE_WIDGET;
+import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
 
 
 public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
@@ -83,6 +93,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private ObjectAnimator animatorCollapse;
 
+    private final WidgetActivityResultContract widgetActivityResultContract = new WidgetActivityResultContract();
+
+    private ActivityResultLauncher<Intent> widgetResultLauncher;
+
+    private int appWidgetId = -1;
 
     public HomeScreenFragment()
     {
@@ -147,12 +162,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             return true;
     }
 
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        appListManager.saveRecentApps();
-    }
 
     @Override
     public void onDestroyView()
@@ -307,6 +316,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.recentAppsList.setLayoutManager(recentManager);
         binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
 
+        binding.emptyBase.setOnClickListener(v ->
+        {
+            if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
+            {
+                animatorCollapse.start();
+            }
+        });
+
         binding.homePager.setOnTouchListener((v, event) ->
         {
             if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
@@ -410,7 +427,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //tile list
         //***************************************************************************************************************************************************
-        binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-400, getContext()));
+        binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-500, getContext()));
         binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
         binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -543,6 +560,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         });
 
 
+        binding.widgetBaseShadow.setTranslationY(-9999);
 
         // widget base animators
         animatorExpand = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(0, getContext()));
@@ -554,9 +572,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 super.onAnimationEnd(animation);
                 binding.arrowButton.animate().rotation(90);
                 isWidgetExpanded = true;
+                binding.emptyBase.setClickable(true);
+                binding.widgetBaseShadow.setTranslationY(0);
             }
         });
-        animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(-400, getContext()));
+        animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(-500, getContext()));
         animatorCollapse.setDuration(80);
         animatorCollapse.addListener(new AnimatorListenerAdapter()
         {
@@ -566,6 +586,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 super.onAnimationEnd(animation);
                 binding.arrowButton.animate().rotation(-180);
                 isWidgetExpanded = false;
+                binding.emptyBase.setClickable(false);
+                binding.widgetBaseShadow.setTranslationY(-9999);
             }
 
             @Override
@@ -573,9 +595,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
                 super.onAnimationStart(animation);
                 binding.tilesList.release();
+                binding.emptyBase.setClickable(false);
             }
         });
 
+        binding.emptyBase.setClickable(false);
         //go to app drawer on click, if widget base is expanded, collapse it instead
         binding.arrowButton.setOnClickListener(v ->
         {
@@ -587,21 +611,52 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 binding.homePager.setCurrentItem(1, true);
         });
 
+        binding.arrowButton.setOnLongClickListener(v ->
+        {
+            if (appWidgetId != -1)
+            {
+                //remove widget
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                {
+                    removeWidget(appWidgetId);
+                    return true;
+                }
+            }
+            else
+                launchPickWidgetIntent();
+
+            return false;
+        });
+
 
         //pull to expand widget base
         binding.swipeRefreshLayout.setDistanceToTriggerSync(paddingTop*2);
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
-            //animatorExpand.start();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                binding.emptyBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
+            animatorExpand.start();
 
             if (getContext() != null)
-                //binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(paddingTop, getContext()));
+                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(400 - paddingTop/4f, getContext()));
 
 
-            Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
+            //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
 
         });
+
+        widgetResultLauncher = registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
+
+        SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
+        appWidgetId = p.getInt("widget_key", -1);
+        if (appWidgetId != -1)
+        {
+            //add widget
+            addWidgetView(appWidgetId);
+        }
     }
 
 
@@ -696,8 +751,147 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
 
 
-        Intent intent = new Intent(getActivity(), NotificationListener.class);
-        getContext().startService(intent);
+        try
+        {
+            Intent intent = new Intent(getActivity(), NotificationListener.class);
+            getContext().startService(intent);
+        }catch (IllegalStateException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
+
+
+    //receive activity result from widget intent
+    private void handleWidgetResult(Intent intent)
+    {
+        if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_OK)
+        {
+            Log.d("widget", "result: ok");
+            if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_PICK_WIDGET)
+            {
+                try
+                {
+                    conFigureWidget(intent);
+                }
+                catch (SecurityException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+            else if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_CREATE_WIDGET)
+                createWidget(intent);
+        }
+        else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
+        {
+            appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+            if (appWidgetId != -1) FactorApplication.getAppWidgetHost().deleteAppWidgetId(appWidgetId);
+        }
+    }
+
+    //request to configure app widget
+    private void conFigureWidget(Intent data)
+    {
+        if (getContext() != null)
+        {
+            Bundle extras = data.getExtras();
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+            AppWidgetProviderInfo appWidgetInfo = FactorApplication.getAppWidgetManager().getAppWidgetInfo(appWidgetId);
+            //requestBindWidget(appWidgetId, appWidgetInfo);
+            if (appWidgetInfo.configure != null)
+            {
+                Log.d("widget", "configure");
+                Intent createIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
+                createIntent.setComponent(appWidgetInfo.configure);
+                createIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
+                widgetResultLauncher.launch(widgetActivityResultContract.createIntent(getContext(), createIntent));
+            }
+            else {
+                createWidget(data);
+            }
+        }
+    }
+
+    //create appWidgetView
+    private void createWidget(Intent data)
+    {
+        Log.d("widget", "create");
+        Bundle extras = data.getExtras();
+        appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+        addWidgetView(appWidgetId);
+        SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
+        p.edit().putInt("widget_key", appWidgetId).apply();
+    }
+
+    private void addWidgetView(int id)
+    {
+        if (getContext() == null)
+            return;
+
+        AppWidgetProviderInfo appWidgetInfo = FactorApplication.getAppWidgetManager().getAppWidgetInfo(id);
+        //requestBindWidget(appWidgetId, appWidgetInfo);
+        AppWidgetHostView hostView = FactorApplication
+                .getAppWidgetHost()
+                .createView(requireActivity().getApplicationContext(), id, appWidgetInfo);
+        hostView.setAppWidget(id, appWidgetInfo);
+        // add widget
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                ConstraintLayout.LayoutParams.MATCH_PARENT);
+
+        params.setMargins(
+                (int)Util.INSTANCE.dpToPx(10, getContext()),
+                (int)Util.INSTANCE.dpToPx(30, getContext()),
+                (int)Util.INSTANCE.dpToPx(10, getContext()),
+                (int)Util.INSTANCE.dpToPx(10, getContext()));
+        hostView.setLayoutParams(params);
+        binding.widgetBase.addView(hostView);
+        binding.widgetBaseShadow.setVisibility(View.GONE);
+    }
+
+    private void requestBindWidget(int appWidgetId, AppWidgetProviderInfo info)
+    {
+        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, info.configure);
+        widgetResultLauncher.launch(intent);
+    }
+
+
+    public void launchPickWidgetIntent()
+    {
+        if (getContext() != null)
+        {
+            appWidgetId = FactorApplication.getAppWidgetHost().allocateAppWidgetId();
+            Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+            pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
+            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(getContext(), pickIntent));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public void removeWidget(int id)
+    {
+        FactorApplication.getAppWidgetHost().deleteAppWidgetId(id);
+        binding.widgetBaseShadow.setVisibility(View.VISIBLE);
+        binding.widgetBase.removeAllViews();
+
+        appWidgetId = -1;
+        SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
+        p.edit().putInt("widget_key", appWidgetId).apply();
+    }
+
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        appListManager.saveRecentApps();
+    }
 }

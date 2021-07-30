@@ -1,7 +1,6 @@
 package com.factor.launcher.view_models;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetHostView;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -323,12 +322,5 @@ public class FactorManager extends ViewModel
         }
         return shortcuts;
 
-    }
-
-
-    //add widget to tiles list
-    public void addWidget(AppWidgetHostView appWidgetHostView)
-    {
-        //todo: add widget to tiles list
     }
 }

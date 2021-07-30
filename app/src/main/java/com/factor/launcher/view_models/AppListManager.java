@@ -1,22 +1,16 @@
 package com.factor.launcher.view_models;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetHostView;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.*;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -29,13 +23,11 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.ChineseHelper;
-import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.WidgetActivityResultContract;
 
 import java.text.Collator;
 import java.util.*;
 
-import static com.factor.launcher.util.Constants.*;
+import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 public class AppListManager extends ViewModel
 {
@@ -67,14 +59,6 @@ public class AppListManager extends ViewModel
 
     public AppListAdapter adapter;
 
-    private final AppWidgetManager appWidgetManager;
-
-    private final AppWidgetHost appWidgetHost;
-
-    private final WidgetActivityResultContract widgetActivityResultContract;
-
-    private final ActivityResultLauncher<Intent> widgetResultLauncher;
-
     public final RecentAppsHost recentAppsHost;
 
     private final AppSettings settings;
@@ -86,24 +70,20 @@ public class AppListManager extends ViewModel
                           AppSettings settings)
     {
         this.settings = settings;
-        this.appWidgetManager = AppWidgetManager.getInstance(fragment.requireActivity());
-        this.appWidgetHost = new AppWidgetHost(fragment.requireActivity(), WIDGET_HOST_ID);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
 
 
-        this.packageManager = fragment.requireActivity().getPackageManager();
-        this.launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
-        this.adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity(), settings);
-        this.factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
+        packageManager = fragment.requireActivity().getPackageManager();
+        launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity(), settings);
+        factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
+        factorSharedPreferences = fragment.requireActivity().getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
 
-        this.factorSharedPreferences = fragment.requireActivity().getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
-        widgetActivityResultContract = new WidgetActivityResultContract();
-        widgetResultLauncher = fragment.registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
+
 
         appsMutableLiveData.setValue(userApps);
 
@@ -687,82 +667,4 @@ public class AppListManager extends ViewModel
         }
 
     }
-
-
-    //launch pick widget intent
-    public void launchPickWidgetIntent()
-    {
-        int appWidgetId = appWidgetHost.allocateAppWidgetId();
-        Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
-        pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        pickIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_PICK_WIDGET);
-        widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity, pickIntent));
-    }
-
-
-    //receive activity result from widget intent
-    private void handleWidgetResult(Intent intent)
-    {
-        if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_OK)
-        {
-            Log.d("widget", "result: ok");
-            if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_PICK_WIDGET)
-                conFigureWidget(intent);
-            else if (intent.getIntExtra(Constants.WIDGET_KEY, -1) == REQUEST_CREATE_WIDGET)
-                createWidget(intent);
-        }
-        else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
-        {
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-            if (appWidgetId != -1) appWidgetHost.deleteAppWidgetId(appWidgetId);
-        }
-    }
-
-    //request to configure app widget
-    private void conFigureWidget(Intent data)
-    {
-        Bundle extras = data.getExtras();
-        int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-        AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
-        //requestBindWidget(appWidgetId, appWidgetInfo);
-        if (appWidgetInfo.configure != null)
-        {
-            Log.d("widget", "configure");
-            Intent createIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
-            createIntent.setComponent(appWidgetInfo.configure);
-            createIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
-            widgetResultLauncher.launch(widgetActivityResultContract.createIntent(adapter.activity, createIntent));
-        }
-        else {
-            createWidget(data);
-        }
-    }
-
-    //create appWidgetView
-    private void createWidget(Intent data)
-    {
-        Log.d("widget", "create");
-        Bundle extras = data.getExtras();
-        int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-        AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
-        requestBindWidget(appWidgetId, appWidgetInfo);
-        AppWidgetHostView hostView = appWidgetHost.createView(adapter.activity, appWidgetId, appWidgetInfo);
-        hostView.setAppWidget(appWidgetId, appWidgetInfo);
-        factorManager.addWidget(hostView);
-    }
-
-
-    //todo: doesn't work
-    public void requestBindWidget(int appWidgetId, AppWidgetProviderInfo info)
-    {
-        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
-        // This is the options bundle discussed above
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, info.configure);
-        adapter.activity.startActivityForResult(intent, REQUEST_BIND_WIDGET);
-    }
-
-
 }

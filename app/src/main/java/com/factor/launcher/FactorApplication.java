@@ -1,6 +1,9 @@
 package com.factor.launcher;
 
 import android.app.Application;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import com.factor.launcher.util.Constants;
 import com.factor.launcher.view_models.AppSettingsManager;
 import org.acra.ACRA;
 import org.acra.annotation.AcraCore;
@@ -21,7 +24,8 @@ import static org.acra.ReportField.*;
 @AcraLimiter
 public class FactorApplication extends Application
 {
-    //add other services here
+    private static AppWidgetHost appWidgetHost;
+    private static AppWidgetManager appWidgetManager;
 
     @Override
     public void onCreate()
@@ -31,5 +35,22 @@ public class FactorApplication extends Application
 
         //initialize settings
         AppSettingsManager.getInstance(this);
+
+        appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constants.WIDGET_HOST_ID);
+        appWidgetHost.startListening();
     }
+
+    @Override
+    public void onTerminate()
+    {
+        super.onTerminate();
+
+        appWidgetHost.stopListening();
+        appWidgetHost = null;
+    }
+
+    public static AppWidgetHost getAppWidgetHost() { return appWidgetHost; }
+
+    public static AppWidgetManager getAppWidgetManager() { return appWidgetManager; }
 }
