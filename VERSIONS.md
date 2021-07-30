@@ -1,3 +1,7 @@
+# Version 0.63.1-beta
+
+- handle concurrent sorting during app launch
+
 # Version 0.63-beta
 
 - show available shortcuts in app drawer context menu
