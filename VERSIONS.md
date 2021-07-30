@@ -1,3 +1,7 @@
+# Version 0.64-alpha
+
+- added a simple widget host for testing
+
 # Version 0.63.1-beta
 
 - handle concurrent sorting during app launch
