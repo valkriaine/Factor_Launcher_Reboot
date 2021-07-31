@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     public void onBackPressed()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) super.onBackPressed();
+        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) finishAfterTransition();
     }
 
     //if wallpaper is changed, reload fragment

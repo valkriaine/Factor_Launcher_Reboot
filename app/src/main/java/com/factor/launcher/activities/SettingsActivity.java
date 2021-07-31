@@ -89,4 +89,11 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
             if (reason != null && reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) activity.onBackPressed();
         }
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        //library leak fix
+        finishAfterTransition();
+    }
 }

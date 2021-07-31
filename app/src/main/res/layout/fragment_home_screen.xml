@@ -33,7 +33,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/add_widget_text"
-                    android:text="Tap to add a widget, \nlong press arrow button to remove the widget"
+                    android:text="Tap to add a widget"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

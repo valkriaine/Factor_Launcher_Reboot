@@ -25,7 +25,6 @@ import android.view.*;
 import android.widget.EditText;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -557,6 +556,12 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 startActivity(Intent.createChooser(intent, getString(R.string.select_wallpaper)));
                 return true;
             });
+
+            popup.getMenu().add("Remove Widget").setOnMenuItemClickListener(item ->
+            {
+                removeWidget(appWidgetId);
+                return true;
+            });
         });
 
 
@@ -643,10 +648,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.addWidgetText.setOnClickListener(v -> launchPickWidgetIntent());
         binding.arrowButton.setOnLongClickListener(v ->
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && appWidgetId != -1)
-            {
-                removeWidget(appWidgetId);
-            }
+
+            removeWidget(appWidgetId);
             return true;
         });
     }
@@ -780,7 +783,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else if (intent.getIntExtra(Constants.WIDGET_RESULT_KEY, -1) == Activity.RESULT_CANCELED)
         {
             appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-            if (appWidgetId != -1) FactorApplication.getAppWidgetHost().deleteAppWidgetId(appWidgetId);
+            if (appWidgetId != -1)
+            {
+                FactorApplication.getAppWidgetHost().deleteAppWidgetId(appWidgetId);
+            }
         }
     }
 
@@ -802,7 +808,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 createIntent.putExtra(Constants.WIDGET_KEY, Constants.REQUEST_CREATE_WIDGET);
                 widgetResultLauncher.launch(widgetActivityResultContract.createIntent(getContext(), createIntent));
             }
-            else {
+            else
+            {
                 createWidget(data);
             }
         }
@@ -825,7 +832,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             return;
 
         AppWidgetProviderInfo appWidgetInfo = FactorApplication.getAppWidgetManager().getAppWidgetInfo(id);
-        //requestBindWidget(appWidgetId, appWidgetInfo);
+        if (!FactorApplication.getAppWidgetManager().bindAppWidgetIdIfAllowed(appWidgetId, appWidgetInfo.provider))
+        {
+            //requestBindWidget(appWidgetId, appWidgetInfo);
+        }
         AppWidgetHostView hostView = FactorApplication
                 .getAppWidgetHost()
                 .createView(requireActivity().getApplicationContext(), id, appWidgetInfo);
@@ -842,13 +852,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 (int)Util.INSTANCE.dpToPx(10, getContext()));
         hostView.setLayoutParams(params);
         binding.widgetBase.addView(hostView);
-        hostView.setLongClickable(true);
         binding.widgetBaseShadow.setVisibility(View.GONE);
     }
 
+    //todo: this does not affect the binding process
     private void requestBindWidget(int appWidgetId, AppWidgetProviderInfo info)
     {
         Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
+        intent.putExtra("ACTION_BIND", AppWidgetManager.ACTION_APPWIDGET_BIND);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, info.configure);
@@ -868,13 +879,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     public void removeWidget(int id)
     {
         FactorApplication.getAppWidgetHost().deleteAppWidgetId(id);
         binding.widgetBaseShadow.setVisibility(View.VISIBLE);
         binding.widgetBase.removeAllViews();
-
         appWidgetId = -1;
         SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
         p.edit().putInt("widget_key", appWidgetId).apply();
