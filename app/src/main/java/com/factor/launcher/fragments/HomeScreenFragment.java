@@ -234,7 +234,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else
             paddingTop = height/8;
 
-        int paddingHorizontal = width / 20;
         int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, getContext());
         int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, getContext());
         int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, getContext());
@@ -253,6 +252,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
 
         //tile list guideline position
+
         binding.guideline.setGuidelinePercent(appSettings.getTileListScale());
 
         //get system wallpaper
@@ -427,7 +427,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //tile list
         //***************************************************************************************************************************************************
         binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-500, getContext()));
-        binding.tilesList.setPadding(paddingHorizontal, paddingTop, width/5, paddingBottom300);
+        int left = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.05)) - 1;
+        int right = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.2)) - 1;
+        binding.tilesList.setPadding(left, paddingTop, right, paddingBottom300);
         binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
