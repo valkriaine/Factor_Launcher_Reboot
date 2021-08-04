@@ -216,7 +216,7 @@ public class AppListManager extends ViewModel
                         }
 
                     }
-                    if (adapter.activity != null)
+                    if (adapter!=null && adapter.activity != null)
                         adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
 
             }).start();

@@ -185,6 +185,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 packageActionsReceiver.invalidate();
                 getContext().unregisterReceiver(packageActionsReceiver);
             }
+
+            FactorApplication.getAppWidgetHost().stopListening();
         }
     }
 
@@ -581,6 +583,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 isWidgetExpanded = true;
                 binding.emptyBase.setClickable(true);
                 binding.widgetBaseShadow.setTranslationY(0);
+                FactorApplication.getAppWidgetHost().startListening();
             }
         });
         animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(-500, getContext()));
@@ -595,6 +598,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 isWidgetExpanded = false;
                 binding.emptyBase.setClickable(false);
                 binding.widgetBaseShadow.setTranslationY(-9999);
+                FactorApplication.getAppWidgetHost().stopListening();
             }
 
             @Override
@@ -897,5 +901,14 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         super.onStop();
         appListManager.saveRecentApps();
+        FactorApplication.getAppWidgetHost().stopListening();
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        if (isWidgetExpanded)
+            FactorApplication.getAppWidgetHost().stopListening();
     }
 }
