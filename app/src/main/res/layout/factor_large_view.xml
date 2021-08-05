@@ -229,10 +229,11 @@
                 android:id="@+id/shortcut_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:recyclerview_overscroll_animation_size="0"
-                app:recyclerview_fling_animation_size="0"
+                app:recyclerview_overscroll_animation_size="0.2"
+                app:recyclerview_fling_animation_size="0.2"
                 android:scrollbars="horizontal"
-                android:scrollbarSize="0dp"
+                android:scrollbarSize="1dp"
+                android:scrollbarDefaultDelayBeforeFade="50"
                 app:layout_constraintTop_toBottomOf="@id/divider"
                 app:layout_constraintBottom_toBottomOf="@+id/guideline_label_h1"/>
 

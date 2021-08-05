@@ -21,7 +21,8 @@
             android:roundIcon="@mipmap/factor_icon_round"
             android:supportsRtl="false"
             android:taskAffinity=""
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:allowBackup="true">
 
         <activity
                 android:name=".activities.SettingsActivity"

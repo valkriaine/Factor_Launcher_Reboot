@@ -216,8 +216,8 @@ public class AppListManager extends ViewModel
                         }
 
                     }
-                    if (adapter!=null && adapter.activity != null)
-                        adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
+                    if (adapter!=null && getActivity() != null)
+                        getActivity().runOnUiThread(adapter::notifyDataSetChanged);
 
             }).start();
         }
@@ -262,8 +262,8 @@ public class AppListManager extends ViewModel
 
                     daoReference.insertAll(userApps);
 
-                    if (adapter.activity != null)
-                        adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
+                    if (adapter!=null && getActivity() != null)
+                        getActivity().runOnUiThread(adapter::notifyDataSetChanged);
 
                     editor.putBoolean("saved", true);
                     editor.apply();
@@ -283,7 +283,8 @@ public class AppListManager extends ViewModel
         new Thread(() ->
         {
             daoReference.updateAppInfo(userApp);
-            adapter.activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
+            if (adapter != null && getActivity()!=null)
+                getActivity().runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
 
         return userApps.contains(userApp);
@@ -298,7 +299,8 @@ public class AppListManager extends ViewModel
         new Thread(() ->
         {
             daoReference.updateAppInfo(userApp);
-            adapter.activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
+            if (adapter != null && getActivity()!=null)
+                getActivity().runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
         return true;
     }
@@ -312,7 +314,8 @@ public class AppListManager extends ViewModel
         new Thread(() ->
         {
             daoReference.updateAppInfo(userApp);
-            adapter.activity.runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
+            if (adapter != null && getActivity()!=null)
+                getActivity().runOnUiThread(() -> adapter.notifyItemChanged(userApps.indexOf(userApp)));
         }).start();
         return true;
     }
@@ -323,9 +326,10 @@ public class AppListManager extends ViewModel
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-        for (ResolveInfo r : availableApps) {
-            if (!r.activityInfo.packageName.equals(PACKAGE_NAME)
-                    && r.activityInfo.packageName.equals(a.getPackageName())) {
+        for (ResolveInfo r : availableApps)
+        {
+            if (!r.activityInfo.packageName.equals(PACKAGE_NAME) && r.activityInfo.packageName.equals(a.getPackageName()))
+            {
                 return true;
             }
         }
@@ -348,7 +352,8 @@ public class AppListManager extends ViewModel
                         int position = userApps.indexOf(a);
                         userApps.remove(app);
                         daoReference.delete(app);
-                        adapter.activity.runOnUiThread(() -> adapter.notifyItemRemoved(position));
+                        if (adapter != null && getActivity()!=null)
+                            getActivity().runOnUiThread(() -> adapter.notifyItemRemoved(position));
                     }
                 }
 
@@ -398,8 +403,8 @@ public class AppListManager extends ViewModel
                         Collections.sort(userApps, first_letter);
                     }catch (ConcurrentModificationException ignored){}
 
-
-                    adapter.activity.runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
+                    if (adapter != null && getActivity()!=null)
+                        getActivity().runOnUiThread(() -> adapter.notifyItemInserted(userApps.indexOf(app)));
                 }
                 catch (PackageManager.NameNotFoundException e)
                 {
@@ -454,7 +459,8 @@ public class AppListManager extends ViewModel
                             catch (ConcurrentModificationException ignored){}
 
                             int newPosition = userApps.indexOf(app);
-                            adapter.activity.runOnUiThread(() ->
+                            if (adapter != null && getActivity()!=null)
+                            getActivity().runOnUiThread(() ->
                             {
 
                                 recentAppsHost.update(userApps.get(position));
@@ -516,9 +522,9 @@ public class AppListManager extends ViewModel
     //search bar filter app list
     public void findPosition(RecyclerView rc, String newText)
     {
-        if (rc != null && rc.getLayoutManager() != null)
+        if (rc != null && rc.getLayoutManager() != null && adapter != null && getActivity() != null)
         {
-            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(adapter.activity)
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getActivity())
             {
                 @Override protected int getVerticalSnapPreference()
                 {

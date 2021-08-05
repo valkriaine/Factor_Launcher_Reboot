@@ -3,7 +3,6 @@ package com.factor.launcher.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
-import android.appwidget.AppWidgetHost;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,7 +25,6 @@ import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
-import static com.factor.launcher.util.Constants.WIDGET_HOST_ID;
 
 public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 {
@@ -34,8 +32,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     private Drawable wallpaper = null;
 
     private WallpaperManager wm;
-
-    private AppWidgetHost widgetHost;
 
     private boolean isWallpaperChanged = false;
 
@@ -70,8 +66,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
         }
 
-
-        widgetHost = new AppWidgetHost(getApplicationContext(), WIDGET_HOST_ID);
 
         if (savedInstanceState == null)
             getSupportFragmentManager()
@@ -119,7 +113,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 
         if(isWallpaperChanged || areSettingsChanged)
         {
-            Log.d("settings_changed", "resume");
             isWallpaperChanged = false;
             areSettingsChanged = false;
             reloadFragment();

@@ -13,8 +13,8 @@ android {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 26
-        versionName "0.64.2-alpha"
+        versionCode 27
+        versionName "0.64.3-alpha"
 
         renderscriptTargetApi 30
         renderscriptSupportModeEnabled true
@@ -61,6 +61,10 @@ android {
     buildFeatures{
         dataBinding = true
         viewBinding = true
+    }
+
+    aaptOptions {
+        noCompress 'db'
     }
 }
 
