@@ -186,7 +186,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 getContext().unregisterReceiver(packageActionsReceiver);
             }
 
-            FactorApplication.getAppWidgetHost().stopListening();
+            try
+            {
+                FactorApplication.getAppWidgetHost().stopListening();
+            }
+            catch (NullPointerException e)
+            {
+                removeWidget(appWidgetId);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -598,7 +606,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 isWidgetExpanded = false;
                 binding.emptyBase.setClickable(false);
                 binding.widgetBaseShadow.setTranslationY(-9999);
-                FactorApplication.getAppWidgetHost().stopListening();
+                try
+                {
+                    FactorApplication.getAppWidgetHost().stopListening();
+                }
+                catch (NullPointerException e)
+                {
+                    removeWidget(appWidgetId);
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -901,7 +918,16 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         super.onStop();
         appListManager.saveRecentApps();
-        FactorApplication.getAppWidgetHost().stopListening();
+        try
+        {
+            FactorApplication.getAppWidgetHost().stopListening();
+        }
+        catch (NullPointerException e)
+        {
+            removeWidget(appWidgetId);
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -909,6 +935,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     {
         super.onStart();
         if (isWidgetExpanded)
-            FactorApplication.getAppWidgetHost().stopListening();
+            FactorApplication.getAppWidgetHost().startListening();
     }
 }

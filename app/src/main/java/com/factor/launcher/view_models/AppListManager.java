@@ -577,20 +577,28 @@ public class AppListManager extends ViewModel
         if (launcherApps == null || !launcherApps.hasShortcutHostPermission())
             return shortcuts;
 
-        shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
-                LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
-                LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
-
-        shortcutQuery.setPackage(app.getPackageName());
-        List<ShortcutInfo> s = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
-        if (s != null && !s.isEmpty())
+        //security exception
+        try
         {
-            for (ShortcutInfo info : s)
+            shortcutQuery.setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC|
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST|
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED);
+
+            shortcutQuery.setPackage(app.getPackageName());
+            List<ShortcutInfo> s = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+            if (s != null && !s.isEmpty())
             {
-                Drawable icon = factorManager.launcherApps.getShortcutIconDrawable(info, getActivity().getResources().getDisplayMetrics().densityDpi);
-                View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
-                shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+                for (ShortcutInfo info : s)
+                {
+                    Drawable icon = factorManager.launcherApps.getShortcutIconDrawable(info, getActivity().getResources().getDisplayMetrics().densityDpi);
+                    View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
+                    shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+                }
             }
+        }
+        catch (SecurityException e)
+        {
+            e.printStackTrace();
         }
         return shortcuts;
 
