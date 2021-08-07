@@ -88,7 +88,7 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation "androidx.fragment:fragment-ktx:1.4.0-alpha05"
+    implementation "androidx.fragment:fragment-ktx:1.4.0-alpha06"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.core:core-ktx:1.6.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
