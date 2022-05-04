@@ -460,25 +460,25 @@ public class AppListManager extends ViewModel
 
                             int newPosition = userApps.indexOf(app);
                             if (adapter != null && getActivity()!=null)
-                            getActivity().runOnUiThread(() ->
-                            {
-
-                                recentAppsHost.update(userApps.get(position));
-                                if (position != newPosition) //the app's position is changed
+                                getActivity().runOnUiThread(() ->
                                 {
-                                    adapter.notifyItemRemoved(position);
-                                    adapter.notifyItemInserted(newPosition);
-                                }
-                                else
-                                    adapter.notifyItemChanged(newPosition); //the app's position is unchanged in the list
 
-                                //if updating app list after renaming an app, broadcast request to scroll to the app's new position
-                                if (isAfterRename)
-                                {
-                                    adapter.renameBroadCast(newPosition);
-                                    isAfterRename = false;
-                                }
-                            });
+                                    recentAppsHost.update(userApps.get(position));
+                                    if (position != newPosition) //the app's position is changed
+                                    {
+                                        adapter.notifyItemRemoved(position);
+                                        adapter.notifyItemInserted(newPosition);
+                                    }
+                                    else
+                                        adapter.notifyItemChanged(newPosition); //the app's position is unchanged in the list
+
+                                    //if updating app list after renaming an app, broadcast request to scroll to the app's new position
+                                    if (isAfterRename)
+                                    {
+                                        adapter.renameBroadCast(newPosition);
+                                        isAfterRename = false;
+                                    }
+                                });
                         }
                         catch (PackageManager.NameNotFoundException ignored) {}
                     }).start();
@@ -592,9 +592,10 @@ public class AppListManager extends ViewModel
                 {
                     Drawable icon = factorManager.launcherApps.getShortcutIconDrawable(info, getActivity().getResources().getDisplayMetrics().densityDpi);
                     View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
-                    shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+                    shortcuts.add(new AppShortcut(!info.isDynamic(), info.getRank(), info.getShortLabel(), icon, listener));
                 }
             }
+            Collections.sort(shortcuts);
         }
         catch (SecurityException e)
         {

@@ -23,6 +23,7 @@ import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Payload;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -168,8 +169,7 @@ public class FactorManager extends ViewModel
     {
         if (!userFactors.contains(factor))
             return false;
-
-        if (userFactors.contains(factor))
+        else
         {
             int position = userFactors.indexOf(factor);
             factor.setOrder(position);
@@ -317,9 +317,10 @@ public class FactorManager extends ViewModel
             {
                 Drawable icon = launcherApps.getShortcutIconDrawable(info, adapter.activity.getResources().getDisplayMetrics().densityDpi);
                 View.OnClickListener listener = v -> launcherApps.startShortcut(info.getPackage(), info.getId(), null, null, Process.myUserHandle());
-                shortcuts.add(new AppShortcut(info.getShortLabel(), icon, listener));
+                shortcuts.add(new AppShortcut(!info.isDynamic(), info.getRank(), info.getShortLabel(), icon, listener));
             }
         }
+        Collections.sort(shortcuts);
         return shortcuts;
 
     }

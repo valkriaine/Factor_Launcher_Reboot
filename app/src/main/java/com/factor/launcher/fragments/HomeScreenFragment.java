@@ -154,7 +154,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 return true;
 
             if (binding.tilesList.getLayoutManager() != null)
-            binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+                binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
             return true;
         }
         else
@@ -422,7 +422,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     binding.appsList.stopScroll();
                     smoothScroller.setTargetPosition(itemPosition);
                     if (binding.appsList.getLayoutManager() != null)
-                    binding.appsList.getLayoutManager().startSmoothScroll(smoothScroller);
+                        binding.appsList.getLayoutManager().startSmoothScroll(smoothScroller);
 
                     // String selectedLetter = indicator.toString();
 
