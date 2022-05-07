@@ -1,6 +1,7 @@
 package com.factor.launcher.view;
 
 import android.animation.ValueAnimator;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -436,7 +437,7 @@ public class FactorLargeView extends ConstraintLayout
                     icon.setImageDrawable(shortcut.getIcon());
                     shortcutBase.setOnClickListener(shortcut.getLaunchEvent());
                 }
-                catch (NullPointerException ignored){}
+                catch (NullPointerException | ActivityNotFoundException ignored){}
             }
         }
     }

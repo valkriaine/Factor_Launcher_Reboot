@@ -29,6 +29,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.Fragment;
@@ -207,7 +208,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         {
             appListManager.clearAllNotifications();
             Intent intent = new Intent(getActivity(), NotificationListener.class);
-            getContext().startService(intent);
+            ContextCompat.startForegroundService(getContext(), intent);
 
             binding.recentAppsList.smoothScrollToPosition(0);
 
@@ -390,7 +391,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                         return new FastScrollItemIndicator.Text("");
                     if (item.getLabelNew().toUpperCase().length() != 0)
                         cap =  item.getLabelNew().toUpperCase().charAt(0);
-                    String capString;
+                    String capString = "";
                     try
                     {
                         // if first letter is a number, return #
@@ -400,7 +401,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     catch (NumberFormatException ignored)
                     {
                         // not number
-                        capString = "" + ChineseHelper.INSTANCE.getStringPinYin(item.getLabelNew()).toUpperCase().charAt(0);
+                        if (item.getLabelNew().length() != 0)
+                            capString = "" + ChineseHelper.INSTANCE.getStringPinYin(item.getLabelNew()).toUpperCase().charAt(0);
                     }
                     return new FastScrollItemIndicator.Text(capString);
                 }
@@ -771,7 +773,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         try
         {
             Intent intent = new Intent(getActivity(), NotificationListener.class);
-            getContext().startService(intent);
+            ContextCompat.startForegroundService(getContext(), intent);
         }catch (IllegalStateException e)
         {
             e.printStackTrace();
