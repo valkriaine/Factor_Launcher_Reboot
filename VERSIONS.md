@@ -1,5 +1,12 @@
 # Version 0.64-alpha
 
+- medium and large tiles now display more notification content
+- fixed full screen display on devices running Android 11 and above
+- app shortcuts are now sorted based on functionality 
+- updated dependencies 
+
+# Version 0.64-alpha
+
 - added a simple widget host for testing
 
 # Version 0.63.1-beta
