@@ -1,11 +1,13 @@
 package com.factor.launcher.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -13,6 +15,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.bouncy.BouncyRecyclerView;
@@ -55,6 +58,14 @@ public class FactorLargeView extends ConstraintLayout
     private AppSettings settings;
 
 
+    private Guideline notificationStart;
+
+    private Guideline notificationEnd;
+
+    private Guideline notificationDivider;
+
+    private int notificationState = 0; //0 for no notification, 1 for otherwise
+
     public FactorLargeView(Context context) {
         super(context);
         init();
@@ -84,6 +95,9 @@ public class FactorLargeView extends ConstraintLayout
         divider = findViewById(R.id.divider);
         shortcutAvailability = findViewById(R.id.shortcut_availability);
         shortcut_list = findViewById(R.id.shortcut_list);
+        notificationDivider = findViewById(R.id.guideline_horizontal);
+        notificationStart = findViewById(R.id.guideline_notification_content_start);
+        notificationEnd = findViewById(R.id.guideline_notification_content_end);
 
         shortcut_list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
@@ -149,6 +163,7 @@ public class FactorLargeView extends ConstraintLayout
             tileIcon.setImageDrawable(factor.getIcon());
 
 
+        updateLayout(factor);
 
         ShortcutsAdapter adapter = new ShortcutsAdapter(factor.getUserApp().getShortCuts(), settings);
 
@@ -157,6 +172,105 @@ public class FactorLargeView extends ConstraintLayout
         shortcut_list.setAdapter(adapter);
     }
 
+    private void updateLayout(Factor factor)
+    {
+        int newCount = factor.getNotificationCount();
+        if (newCount != notificationState)
+        {
+
+            if (notificationState == 0)
+            {
+                // animate new notification arrived
+                ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.25f, 0.055f);
+                valueAnimator.setDuration(300);
+                valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(0.4f, 0.05f);
+                valueAnimator2.setDuration(300);
+                valueAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator2.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationStart.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationStart.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator3 = ValueAnimator.ofFloat(0.97f, 0.95f);
+                valueAnimator3.setDuration(300);
+                valueAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator3.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationEnd.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationEnd.setLayoutParams(lp);
+
+                });
+
+                valueAnimator.start();
+                valueAnimator2.start();
+                valueAnimator3.start();
+
+                tileIcon.animate().translationX(-500f).setDuration(400).start();
+
+                notificationContent.setLines(3);
+            }
+            else if (newCount == 0)
+            {
+                // animate back to normal layout
+                ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.055f, 0.25f);
+                valueAnimator.setDuration(300);
+                valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(0.05f, 0.4f);
+                valueAnimator2.setDuration(300);
+                valueAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator2.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationStart.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationStart.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator3 = ValueAnimator.ofFloat(0.95f, 0.97f);
+                valueAnimator3.setDuration(300);
+                valueAnimator3.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator3.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationEnd.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationEnd.setLayoutParams(lp);
+
+                });
+
+
+                valueAnimator.start();
+                valueAnimator2.start();
+                valueAnimator3.start();
+
+                tileIcon.animate().translationX(0f).setDuration(400).start();
+
+                notificationContent.setLines(1);
+            }
+
+            notificationState = newCount;
+        }
+    }
 
 
     protected static class ShortcutsAdapter extends RecyclerView.Adapter<ShortcutsAdapter.ShortcutViewHolder>

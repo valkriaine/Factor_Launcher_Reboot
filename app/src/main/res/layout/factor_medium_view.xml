@@ -149,6 +149,15 @@
 
 
 
+        <androidx.constraintlayout.widget.Guideline
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline_notification_content_end"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".975"/>
+
+
+
         <!--notification title-->
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/notification_title"
@@ -171,14 +180,12 @@
                 android:clickable="false"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                android:lines="1"
+                android:maxLines="5"
                 android:ellipsize="end"
                 app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
                 app:layout_constraintStart_toEndOf="@id/guideline_notification_content_start"
-                app:layout_constraintEnd_toEndOf="@id/guideline_notification_v1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_notification_content_end"
                 app:layout_constraintBottom_toBottomOf="@id/guideline_icon_h2"/>
-
-
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -209,7 +216,6 @@
                 android:textAlignment="gravity"
                 app:layout_constraintEnd_toEndOf="@id/guideline_notification_v1"
                 app:layout_constraintTop_toTopOf="@id/guideline_notification_h1"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

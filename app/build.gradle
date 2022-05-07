@@ -120,7 +120,7 @@ dependencies {
 
     // blur
     // https://github.com/Dimezis/BlurView
-    implementation 'com.github.Dimezis:BlurView:version-2.0.0'
+    implementation 'com.github.Dimezis:BlurView:version-1.6.6'
 
     // memory leak detection
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'

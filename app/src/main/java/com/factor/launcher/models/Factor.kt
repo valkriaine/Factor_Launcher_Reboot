@@ -27,9 +27,11 @@ class Factor
     @Ignore
     var userApp : UserApp = UserApp()
 
-    //get notification count
+    //get notification count in string form
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
 
+    //get notification count
+    fun getNotificationCount() : Int = userApp.currentNotifications.size
 
     fun setShortcuts(shortcuts : ArrayList<AppShortcut>)
     {
