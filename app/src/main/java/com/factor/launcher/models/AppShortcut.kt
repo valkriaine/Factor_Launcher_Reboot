@@ -15,7 +15,7 @@ class AppShortcut (private val isStatic : Boolean,
         return if (this.isStatic && other.isStatic)
             if (this.rank > other.rank) 1 else -1
         else if (!this.isStatic && !other.isStatic)
-            if (this.rank > other.rank) 1 else -1
+            if (this.rank < other.rank) 1 else -1
         else
         {
             if (this.isStatic) -1 else 1
