@@ -21,10 +21,10 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 # Version 0.64.4
 
-- show available shortcuts in app drawer context menu
-- recent apps now persist after reload
-- better Chinese pinyin indexing
-- better notification center gesture
+- medium and large tiles now display more notification content
+- fixed full screen display on devices running Android 11 and above
+- app shortcuts are now sorted based on functionality 
+- updated dependencies 
 
 <p>&nbsp;</p>
 
