@@ -26,6 +26,8 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 - app shortcuts are now sorted based on functionality 
 - updated dependencies 
 
+<img src="./Images/notification_display.gif" width="300"/> 
+
 <p>&nbsp;</p>
 
 
