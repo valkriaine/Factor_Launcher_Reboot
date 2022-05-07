@@ -34,7 +34,9 @@
         </activity>
 
         <activity
-                android:name=".activities.EmptyHome"  android:enabled="false">
+                android:name=".activities.EmptyHome"
+                android:exported="true"
+                android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME"/>

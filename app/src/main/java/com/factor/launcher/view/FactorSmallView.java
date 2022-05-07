@@ -14,8 +14,7 @@ import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
-import eightbitlab.com.blurview.BlurView;
-import eightbitlab.com.blurview.RenderScriptBlur;
+import eightbitlab.com.blurview.*;
 
 /**
  * Small tile
@@ -80,12 +79,15 @@ public class FactorSmallView extends ConstraintLayout
             trans.setVisibility(VISIBLE);
             card.setCardBackgroundColor(Color.TRANSPARENT);
 
+            BlurAlgorithm algorithm;
+
+            algorithm = new RenderScriptBlur(getContext());
+
             trans.setupWith(background)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                    .setBlurAlgorithm(new RenderScriptBlur(getContext()))
+                    .setBlurAlgorithm(algorithm)
                     .setBlurRadius(appSettings.getBlurRadius())
-                    .setBlurAutoUpdate(false)
-                    .setHasFixedTransformationMatrix(false);
+                    .setBlurAutoUpdate(false);
         }
 
         card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));

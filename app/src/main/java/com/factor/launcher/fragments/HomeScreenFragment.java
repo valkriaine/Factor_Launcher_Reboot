@@ -724,7 +724,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                     .setBlurAlgorithm(blurAlg)
                     .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
-                    .setHasFixedTransformationMatrix(false)
                     .setBlurEnabled(true);
         }
         else //live wallpaper
