@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +58,17 @@ public class FactorLargeView extends ConstraintLayout
 
     private AppSettings settings;
 
-
     private Guideline notificationStart;
 
     private Guideline notificationEnd;
 
     private Guideline notificationDivider;
+
+    private Guideline notificationDivider2;
+
+    private Guideline notificationDivider3;
+
+    private Guideline notificationDivider4;
 
     private int notificationState = 0; //0 for no notification, 1 for otherwise
 
@@ -96,6 +102,9 @@ public class FactorLargeView extends ConstraintLayout
         shortcutAvailability = findViewById(R.id.shortcut_availability);
         shortcut_list = findViewById(R.id.shortcut_list);
         notificationDivider = findViewById(R.id.guideline_horizontal);
+        notificationDivider2 = findViewById(R.id.guideline_horizontal2);
+        notificationDivider3 = findViewById(R.id.guideline_horizontal3);
+        notificationDivider4 = findViewById(R.id.guideline_horizontal4);
         notificationStart = findViewById(R.id.guideline_notification_content_start);
         notificationEnd = findViewById(R.id.guideline_notification_content_end);
 
@@ -192,6 +201,17 @@ public class FactorLargeView extends ConstraintLayout
 
                 });
 
+                ValueAnimator valueAnimator4 = ValueAnimator.ofFloat(0.25f, 0.135f);
+                valueAnimator4.setDuration(300);
+                valueAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator4.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider2.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider2.setLayoutParams(lp);
+
+                });
+
                 ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(0.4f, 0.05f);
                 valueAnimator2.setDuration(300);
                 valueAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -214,18 +234,44 @@ public class FactorLargeView extends ConstraintLayout
 
                 });
 
+                ValueAnimator valueAnimator5 = ValueAnimator.ofFloat(0.355f, 0.48f);
+                valueAnimator5.setDuration(300);
+                valueAnimator5.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator5.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider3.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider3.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.13f, 0.045f);
+                valueAnimator6.setDuration(300);
+                valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator6.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider4.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider4.setLayoutParams(lp);
+
+                });
+
                 valueAnimator.start();
                 valueAnimator2.start();
                 valueAnimator3.start();
+                valueAnimator4.start();
+                valueAnimator5.start();
+                valueAnimator6.start();
 
                 tileIcon.animate().translationX(-500f).setDuration(400).start();
 
-                notificationContent.setLines(3);
+                notificationContent.setLines(4);
+                notificationContent.setGravity(Gravity.NO_GRAVITY);
             }
             else if (newCount == 0)
             {
                 // animate back to normal layout
-                ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.055f, 0.25f);
+                ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.15f, 0.25f);
                 valueAnimator.setDuration(300);
                 valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
                 valueAnimator.addUpdateListener(valueAnimator1 ->
@@ -233,6 +279,17 @@ public class FactorLargeView extends ConstraintLayout
                     LayoutParams lp = (LayoutParams)notificationDivider.getLayoutParams();
                     lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
                     notificationDivider.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator4 = ValueAnimator.ofFloat(0.135f, 0.25f);
+                valueAnimator4.setDuration(300);
+                valueAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator4.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider2.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider2.setLayoutParams(lp);
 
                 });
 
@@ -258,14 +315,39 @@ public class FactorLargeView extends ConstraintLayout
 
                 });
 
+                ValueAnimator valueAnimator5 = ValueAnimator.ofFloat(0.48f, 0.355f);
+                valueAnimator5.setDuration(300);
+                valueAnimator5.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator5.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider3.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider3.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.045f, 0.13f);
+                valueAnimator6.setDuration(300);
+                valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator6.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider4.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider4.setLayoutParams(lp);
+
+                });
 
                 valueAnimator.start();
                 valueAnimator2.start();
                 valueAnimator3.start();
+                valueAnimator4.start();
+                valueAnimator5.start();
+                valueAnimator6.start();
 
                 tileIcon.animate().translationX(0f).setDuration(400).start();
 
                 notificationContent.setLines(1);
+                notificationContent.setGravity(Gravity.CENTER_VERTICAL);
             }
 
             notificationState = newCount;

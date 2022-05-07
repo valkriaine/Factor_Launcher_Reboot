@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -44,6 +45,12 @@ public class FactorMediumView extends ConstraintLayout
 
     private Guideline notificationDivider;
 
+    private Guideline notificationDivider2;
+
+    private Guideline notificationDivider3;
+
+    private Guideline notificationDivider4;
+
     private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     public FactorMediumView(Context context) {
@@ -73,6 +80,9 @@ public class FactorMediumView extends ConstraintLayout
         notificationTitle = findViewById(R.id.notification_title);
         notificationContent = findViewById(R.id.notification_content);
         notificationDivider = findViewById(R.id.guideline_horizontal);
+        notificationDivider2 = findViewById(R.id.guideline_horizontal2);
+        notificationDivider3 = findViewById(R.id.guideline_horizontal3);
+        notificationDivider4 = findViewById(R.id.guideline_horizontal4);
         notificationStart = findViewById(R.id.guideline_notification_content_start);
         notificationEnd = findViewById(R.id.guideline_notification_content_end);
     }
@@ -173,13 +183,51 @@ public class FactorMediumView extends ConstraintLayout
 
                 });
 
+                ValueAnimator valueAnimator4 = ValueAnimator.ofFloat(0.5f, 0.27f);
+                valueAnimator4.setDuration(300);
+                valueAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator4.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider2.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider2.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator5 = ValueAnimator.ofFloat(0.73f, 0.85f);
+                valueAnimator5.setDuration(300);
+                valueAnimator5.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator5.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider3.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider3.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.27f, 0.1f);
+                valueAnimator6.setDuration(300);
+                valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator6.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider4.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider4.setLayoutParams(lp);
+
+                });
+
                 valueAnimator.start();
                 valueAnimator2.start();
                 valueAnimator3.start();
+                valueAnimator4.start();
+                valueAnimator5.start();
+                valueAnimator6.start();
 
                 tileIcon.animate().translationX(-500f).setDuration(400).start();
 
                 notificationContent.setLines(3);
+                notificationContent.setGravity(Gravity.NO_GRAVITY);
+
             }
             else if (newCount == 0)
             {
@@ -194,6 +242,7 @@ public class FactorMediumView extends ConstraintLayout
                     notificationDivider.setLayoutParams(lp);
 
                 });
+
 
                 ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(0.05f, 0.4f);
                 valueAnimator2.setDuration(300);
@@ -217,14 +266,50 @@ public class FactorMediumView extends ConstraintLayout
 
                 });
 
+                ValueAnimator valueAnimator4 = ValueAnimator.ofFloat(0.27f, 0.5f);
+                valueAnimator4.setDuration(300);
+                valueAnimator4.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator4.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider2.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider2.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator5 = ValueAnimator.ofFloat(0.85f, 0.73f);
+                valueAnimator5.setDuration(300);
+                valueAnimator5.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator5.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider3.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider3.setLayoutParams(lp);
+
+                });
+
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.1f, 0.27f);
+                valueAnimator6.setDuration(300);
+                valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
+                valueAnimator6.addUpdateListener(valueAnimator1 ->
+                {
+                    LayoutParams lp = (LayoutParams)notificationDivider4.getLayoutParams();
+                    lp.guidePercent = (float)valueAnimator1.getAnimatedValue();
+                    notificationDivider4.setLayoutParams(lp);
+
+                });
 
                 valueAnimator.start();
                 valueAnimator2.start();
                 valueAnimator3.start();
+                valueAnimator4.start();
+                valueAnimator5.start();
+                valueAnimator6.start();
 
                 tileIcon.animate().translationX(0f).setDuration(400).start();
 
                 notificationContent.setLines(1);
+                notificationContent.setGravity(Gravity.CENTER_VERTICAL);
             }
 
             notificationState = newCount;
