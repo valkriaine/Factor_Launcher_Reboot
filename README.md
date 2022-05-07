@@ -19,7 +19,7 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Version 0.63-beta
+# Version 0.64.4
 
 - show available shortcuts in app drawer context menu
 - recent apps now persist after reload
