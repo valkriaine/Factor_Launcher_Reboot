@@ -1,4 +1,4 @@
-# Version 0.64-alpha
+# Version 0.64.4-alpha
 
 - medium and large tiles now display more notification content
 - fixed full screen display on devices running Android 11 and above
