@@ -246,7 +246,7 @@ public class FactorLargeView extends ConstraintLayout
 
                 });
 
-                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.13f, 0.045f);
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.13f, 0.02f);
                 valueAnimator6.setDuration(300);
                 valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
                 valueAnimator6.addUpdateListener(valueAnimator1 ->
@@ -267,6 +267,7 @@ public class FactorLargeView extends ConstraintLayout
                 tileIcon.animate().translationX(-500f).setDuration(400).start();
 
                 notificationContent.setLines(4);
+                notificationTitle.setGravity(Gravity.NO_GRAVITY);
                 notificationContent.setGravity(Gravity.NO_GRAVITY);
             }
             else if (newCount == 0)
@@ -327,7 +328,7 @@ public class FactorLargeView extends ConstraintLayout
 
                 });
 
-                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.045f, 0.13f);
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.02f, 0.13f);
                 valueAnimator6.setDuration(300);
                 valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
                 valueAnimator6.addUpdateListener(valueAnimator1 ->
@@ -348,6 +349,7 @@ public class FactorLargeView extends ConstraintLayout
                 tileIcon.animate().translationX(0f).setDuration(400).start();
 
                 notificationContent.setLines(1);
+                notificationTitle.setGravity(Gravity.CENTER_VERTICAL);
                 notificationContent.setGravity(Gravity.CENTER_VERTICAL);
             }
 

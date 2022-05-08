@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/valkr/Downloads/Factor_Launcher_Reboot/app/src/main/res/layout/factor_large_view.xml" value="0.45" />
+        <entry key="..\:/Users/valkr/Downloads/Factor_Launcher_Reboot/app/src/main/res/layout/factor_medium_view.xml" value="0.25" />
+        <entry key="..\:/Users/valkr/Downloads/Factor_Launcher_Reboot/app/src/main/res/layout/fragment_home_screen.xml" value="0.2572463768115942" />
         <entry key="..\:/Users/valkr/OneDrive/Factor/FactorLauncher/app/src/main/res/layout/factor_large_view.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/valkr/OneDrive/Factor/FactorLauncher/app/src/main/res/layout/factor_medium_view.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/valkr/OneDrive/Factor/FactorLauncher/app/src/main/res/layout/fragment_home_screen.xml" value="0.4" />

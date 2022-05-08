@@ -69,6 +69,7 @@ public class FactorMediumView extends ConstraintLayout
     }
 
 
+
     private void init()
     {
         View.inflate(getContext(), R.layout.factor_medium_view, this);
@@ -205,7 +206,7 @@ public class FactorMediumView extends ConstraintLayout
 
                 });
 
-                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.27f, 0.1f);
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.27f, 0.05f);
                 valueAnimator6.setDuration(300);
                 valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
                 valueAnimator6.addUpdateListener(valueAnimator1 ->
@@ -226,6 +227,7 @@ public class FactorMediumView extends ConstraintLayout
                 tileIcon.animate().translationX(-500f).setDuration(400).start();
 
                 notificationContent.setLines(3);
+                notificationTitle.setGravity(Gravity.NO_GRAVITY);
                 notificationContent.setGravity(Gravity.NO_GRAVITY);
 
             }
@@ -288,7 +290,7 @@ public class FactorMediumView extends ConstraintLayout
 
                 });
 
-                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.1f, 0.27f);
+                ValueAnimator valueAnimator6 = ValueAnimator.ofFloat(0.05f, 0.27f);
                 valueAnimator6.setDuration(300);
                 valueAnimator6.setInterpolator(new AccelerateDecelerateInterpolator());
                 valueAnimator6.addUpdateListener(valueAnimator1 ->
@@ -309,6 +311,7 @@ public class FactorMediumView extends ConstraintLayout
                 tileIcon.animate().translationX(0f).setDuration(400).start();
 
                 notificationContent.setLines(1);
+                notificationTitle.setGravity(Gravity.CENTER_VERTICAL);
                 notificationContent.setGravity(Gravity.CENTER_VERTICAL);
             }
 

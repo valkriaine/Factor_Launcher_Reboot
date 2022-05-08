@@ -113,6 +113,9 @@ dependencies {
     // https://github.com/reddit/IndicatorFastScroll
     implementation project(path: ':indicator-fast-scroll')
 
+    //renderscript replacement toolkit
+    implementation files('../libs/renderscript-toolkit-release.aar')
+
     // Color picker
     // https://github.com/skydoves/ColorPickerView
     implementation 'com.github.skydoves:colorpickerview:2.2.4'

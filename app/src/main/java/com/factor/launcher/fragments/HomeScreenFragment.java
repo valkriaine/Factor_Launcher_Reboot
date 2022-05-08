@@ -37,10 +37,6 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.renderscript.Allocation;
-import androidx.renderscript.Element;
-import androidx.renderscript.RenderScript;
-import androidx.renderscript.ScriptIntrinsicBlur;
 import androidx.viewpager.widget.ViewPager;
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
@@ -59,6 +55,7 @@ import com.factor.launcher.ui.FixedLinearLayoutManager;
 import com.factor.launcher.util.*;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
+import com.google.android.renderscript.Toolkit;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
@@ -710,21 +707,15 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
                 Bitmap m = Util.INSTANCE.toBitmap(wm.getFastDrawable());
 
-                RenderScript rs = RenderScript.create(getContext());
+                Bitmap blurredM;
 
                 for (int i = 0; i < 10; i++)
-                {
-                    final Allocation input = Allocation.createFromBitmap(rs, m);
-                    final Allocation output = Allocation.createTyped(rs, input.getType());
-                    final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+                    m = Toolkit.INSTANCE.blur(m, 25);
 
-                    script.setRadius(25F);
-                    script.setInput(input);
-                    script.forEach(output);
-                    output.copyTo(m);
-                }
+                blurredM = m;
 
-                getActivity().runOnUiThread(() -> binding.blur.setImageBitmap(m));
+                getActivity().runOnUiThread(() -> binding.blur.setImageBitmap(blurredM));
+
             }).start();
 
 
