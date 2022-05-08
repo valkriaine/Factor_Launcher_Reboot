@@ -29,7 +29,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.Fragment;
@@ -86,6 +85,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     private AppSettings appSettings;
 
     private RenderScriptBlur blurAlg;
+
+     private Intent notificationListenerIntent;
 
     private boolean isWidgetExpanded = false;
 
@@ -207,8 +208,19 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         if (getContext()!= null)
         {
             appListManager.clearAllNotifications();
-            Intent intent = new Intent(getActivity(), NotificationListener.class);
-            ContextCompat.startForegroundService(getContext(), intent);
+            if (notificationListenerIntent != null)
+            {
+                try
+                {
+                    getContext().startService(notificationListenerIntent);
+
+                }
+                catch (IllegalStateException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
 
             binding.recentAppsList.smoothScrollToPosition(0);
 
@@ -216,7 +228,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 appListManager.updateShortcuts();
         }
     }
-
 
     //initialize views and listeners
     @SuppressLint("ClickableViewAccessibility")
@@ -254,8 +265,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         blurAlg = new RenderScriptBlur(getContext());
 
-
-
+        notificationListenerIntent = new Intent(getActivity(), NotificationListener.class);
 
         //initialize saved user settings
         appSettings = AppSettingsManager.getInstance(getActivity().getApplication()).getAppSettings();
@@ -769,16 +779,18 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
         getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
 
+        if (notificationListenerIntent != null)
+        {
+            try
+            {
+                getContext().startService(notificationListenerIntent);
 
-        try
-        {
-            Intent intent = new Intent(getActivity(), NotificationListener.class);
-            ContextCompat.startForegroundService(getContext(), intent);
-        }catch (IllegalStateException e)
-        {
-            e.printStackTrace();
+            }
+            catch (IllegalStateException e)
+            {
+                e.printStackTrace();
+            }
         }
-
     }
 
 
