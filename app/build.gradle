@@ -13,10 +13,10 @@ android {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 31
-        versionCode 29
-        versionName "0.64.41"
+        versionCode 31
+        versionName "0.65.1"
 
-        renderscriptTargetApi 30
+        renderscriptTargetApi 31
         renderscriptSupportModeEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -85,6 +85,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'androidx.palette:palette-ktx:1.0.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.fragment:fragment-ktx:1.5.0-beta01"
@@ -113,8 +114,12 @@ dependencies {
     // https://github.com/reddit/IndicatorFastScroll
     implementation project(path: ':indicator-fast-scroll')
 
-    //renderscript replacement toolkit
+    // renderscript replacement toolkit
     implementation files('../libs/renderscript-toolkit-release.aar')
+
+    // wave_view
+    // https://github.com/ssynhtn/wave-view
+    implementation files('../libs/waves-release.aar')
 
     // Color picker
     // https://github.com/skydoves/ColorPickerView

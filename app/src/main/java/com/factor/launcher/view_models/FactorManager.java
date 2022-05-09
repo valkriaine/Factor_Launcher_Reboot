@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Process;
@@ -21,6 +22,7 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Payload;
+import com.factor.launcher.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +87,13 @@ public class FactorManager extends ViewModel
                 try {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
-                        f.setIcon(packageManager.getApplicationIcon(f.getPackageName()));
+                        Drawable icon = packageManager.getApplicationIcon(f.getPackageName());
+                        f.setIcon(icon);
+                        Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
+                        f.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                        f.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
+                        f.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                             f.setShortcuts(getShortcutsFromFactor(f));
                     }

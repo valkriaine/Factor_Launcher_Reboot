@@ -3,10 +3,10 @@ package com.factor.launcher.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
+import androidx.core.graphics.drawable.toBitmap
+import androidx.palette.graphics.Palette
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Method
 
@@ -58,21 +58,60 @@ object Util
             res
         } else false
     } ?: kotlin.run { false }
+
     private fun Bitmap.doRecycle() {
         if (!isRecycled) recycle()
     }
-    fun <T : Drawable> T.toBitmap(): Bitmap {
-        if (this is BitmapDrawable) return bitmap
 
-        val drawable: Drawable = this
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
-    }
     private fun Bitmap.toBytes(): ByteArray = ByteArrayOutputStream().use { stream ->
         compress(Bitmap.CompressFormat.JPEG, 100, stream)
         stream.toByteArray()
+    }
+
+    fun drawableToBitmap(drawable: Drawable) : Bitmap
+    {
+        return drawable.toBitmap()
+    }
+
+    fun getDominantColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getDominantColor(0)
+    }
+
+    fun getVibrantColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getVibrantColor(0)
+    }
+
+    fun getLightVibrantColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getLightVibrantColor(0)
+    }
+
+    fun getDarkVibrantColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getDarkVibrantColor(0)
+    }
+
+    fun getMutedColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getMutedColor(0)
+    }
+
+    fun getLightMutedColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getLightMutedColor(0)
+    }
+
+    fun getDarkMutedColor(resource: Bitmap): Int {
+        return Palette.from(resource)
+            .maximumColorCount(8)
+            .generate().getDarkMutedColor(0)
     }
 }

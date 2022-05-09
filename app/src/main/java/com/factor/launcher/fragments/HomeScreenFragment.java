@@ -197,34 +197,65 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
     }
 
-
     @Override
     public void onResume()
     {
         super.onResume();
         if (getContext()!= null)
         {
-            appListManager.clearAllNotifications();
-            if (notificationListenerIntent != null)
-            {
-                try
-                {
-                    getContext().startService(notificationListenerIntent);
-
-                }
-                catch (IllegalStateException e)
-                {
-                    e.printStackTrace();
-                }
-
-            }
-
+            forceNotificationListener();
             binding.recentAppsList.smoothScrollToPosition(0);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                 appListManager.updateShortcuts();
         }
     }
+
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        appListManager.saveRecentApps();
+        try
+        {
+            FactorApplication.getAppWidgetHost().stopListening();
+        }
+        catch (NullPointerException e)
+        {
+            removeWidget(appWidgetId);
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        if (isWidgetExpanded)
+            FactorApplication.getAppWidgetHost().startListening();
+    }
+
+
+
+    private void forceNotificationListener()
+    {
+        appListManager.clearAllNotifications();
+        if (notificationListenerIntent != null && getContext() != null)
+        {
+            try
+            {
+                getContext().startService(notificationListenerIntent);
+            }
+            catch (IllegalStateException e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
     //initialize views and listeners
     @SuppressLint("ClickableViewAccessibility")
@@ -257,7 +288,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, getContext());
         int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, getContext());
         int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, getContext());
-
 
 
         blurAlg = new RenderScriptBlur(getContext());
@@ -449,17 +479,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int left = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.05)) - 1;
         int right = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.2)) - 1;
         binding.tilesList.setPadding(left, paddingTop, right, paddingBottom300);
-        binding.tilesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
-            {
-                super.onScrolled(recyclerView, dx, dy);
-                if (isWidgetExpanded && !animatorCollapse.isStarted())
-                {
-                    animatorCollapse.start();
-                }
-            }
-        });
+
         Observer<ArrayList<Factor>> factorObserver = userArrayList ->
         {
             binding.tilesList
@@ -705,7 +725,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             new Thread(() ->
             {
-                Bitmap m = Util.INSTANCE.toBitmap(wm.getFastDrawable());
+                Bitmap m = Util.INSTANCE.drawableToBitmap(wm.getFastDrawable());
 
                 Bitmap blurredM;
 
@@ -914,31 +934,5 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         appWidgetId = -1;
         SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
         p.edit().putInt("widget_key", appWidgetId).apply();
-    }
-
-
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        appListManager.saveRecentApps();
-        try
-        {
-            FactorApplication.getAppWidgetHost().stopListening();
-        }
-        catch (NullPointerException e)
-        {
-            removeWidget(appWidgetId);
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        if (isWidgetExpanded)
-            FactorApplication.getAppWidgetHost().startListening();
     }
 }
