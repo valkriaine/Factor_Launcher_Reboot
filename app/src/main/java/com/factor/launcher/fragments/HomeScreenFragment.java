@@ -725,14 +725,32 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             {
                 Bitmap m = Util.INSTANCE.drawableToBitmap(wm.getFastDrawable());
 
-                Bitmap blurredM;
+                Bitmap temp = m;
+                Bitmap blurredM5;
+                Bitmap blurredM10;
 
                 for (int i = 0; i < 10; i++)
-                    m = Toolkit.INSTANCE.blur(m, 25);
+                {
+                    temp = Toolkit.INSTANCE.blur(temp, 25);
+                }
 
-                blurredM = m;
+                blurredM10 = temp;
 
-                getActivity().runOnUiThread(() -> binding.blur.setImageBitmap(blurredM));
+                for (int i = 0; i < 10; i++)
+                {
+                    m = Toolkit.INSTANCE.blur(m, appSettings.getBlurRadius());
+                }
+                blurredM5 = m;
+
+                getActivity().runOnUiThread(() ->
+                {
+                    binding.blur.setImageBitmap(blurredM10);
+                    binding.blurTileStatic.setImageBitmap(blurredM5);
+                    if (appSettings.getStaticBlur())
+                        binding.blurTileStatic.setAlpha(1f);
+                    else
+                        binding.blurTileStatic.setAlpha(0f);
+                });
 
             }).start();
 

@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
@@ -29,6 +32,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.ui.CustomFlag;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Util;
+import com.google.android.renderscript.Toolkit;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -52,6 +56,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     private String tileColor = "";
 
     private String searchColor = "";
+
+    private Bitmap m;
 
     public SettingsFragment()
     {
@@ -99,6 +105,13 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     {
         if (getContext() == null || getActivity() == null)
             return;
+
+
+        Drawable background = AppCompatResources.getDrawable(getContext(), R.drawable.city_welcome_background);
+
+        assert background != null;
+
+        m = Util.INSTANCE.drawableToBitmap(background);
 
         int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
 
@@ -214,6 +227,15 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
             }
         });
 
+        binding.staticBlurToggle.setChecked(settings.getStaticBlur());
+        binding.staticBlurToggle.setOnClickListener(v ->
+        {
+            setUpDemoTile();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
+        });
+
         binding.darkTextToggle.setChecked(settings.isDarkText());
         binding.darkTextToggle.setOnClickListener(v ->
         {
@@ -288,7 +310,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     //update demo tile according to user settings
     private void setUpDemoTile()
     {
-        if (getContext() == null)
+        if (getContext() == null || getActivity() == null)
             return;
 
         int padding = (int) Util.INSTANCE.dpToPx(binding.tileMarginSlider.getValue(), getContext());
@@ -311,9 +333,44 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
 
         binding.searchBlur.setBlurEnabled(binding.blurToggle.isChecked());
-        binding.demoBlur.setVisibility(binding.blurToggle.isChecked()?View.VISIBLE:View.INVISIBLE);
+
+        if (binding.staticBlurToggle.isChecked())
+        {
+            binding.demoBlur.setVisibility(View.INVISIBLE);
+        }
+        else
+            binding.demoBlur.setVisibility(binding.blurToggle.isChecked()?View.VISIBLE:View.INVISIBLE);
+
         binding.blurRadiusSlider.setEnabled(binding.blurToggle.isChecked());
         binding.blurRadiusSlider.setAlpha(binding.blurToggle.isChecked()?1:0.5f);
+
+        binding.staticBlurToggle.setEnabled(binding.blurToggle.isChecked());
+
+
+        new Thread(() ->
+        {
+
+
+            Bitmap temp = m;
+            Bitmap blurredM5;
+
+            for (int i = 0; i < 10; i++)
+            {
+                temp = Toolkit.INSTANCE.blur(temp, (int) binding.blurRadiusSlider.getValue());
+            }
+            blurredM5 = temp;
+
+            getActivity().runOnUiThread(() ->
+            {
+                binding.staticBlurPreviewImage.setImageBitmap(blurredM5);
+
+                if (binding.staticBlurToggle.isChecked())
+                    binding.staticBlurPreviewImage.setAlpha(1f);
+                else
+                    binding.staticBlurPreviewImage.setAlpha(0f);
+            });
+
+        }).start();
 
 
         binding.tileLabel.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
@@ -339,6 +396,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
             updated.setDarkIcon(binding.darkIconToggle.isChecked());
             updated.setDarkText(binding.darkTextToggle.isChecked());
             updated.setShowShadowAroundIcon(binding.iconShadowToggle.isChecked());
+            updated.setStaticBlur(binding.staticBlurToggle.isChecked());
 
             //sliders
             updated.setBlurRadius((int) binding.blurRadiusSlider.getValue());
@@ -370,7 +428,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                 binding.tileMarginSlider.getValue() != settings.getTileMargin() ||
                 !tileColor.equals(settings.getTileThemeColor()) ||
                 !searchColor.equals(settings.getSearchBarColor()) ||
-                binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon();
+                binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon() ||
+                binding.staticBlurToggle.isChecked() != settings.getStaticBlur();
     }
 
 

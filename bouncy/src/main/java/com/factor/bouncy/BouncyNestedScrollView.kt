@@ -54,6 +54,11 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
     private var mEdgeGlowTop: BouncyEdgeEffect? = null
     private var mEdgeGlowBottom: BouncyEdgeEffect? = null
 
+
+
+
+    private var touched = false
+
     /**
      * Position of the last motion event.
      */
@@ -612,6 +617,7 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
 
         val vMotionEvent = MotionEvent.obtain(ev)
         vMotionEvent.offsetLocation(0f, mNestedYOffset.toFloat())
+        touched = true
         when (actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 if (childCount == 0)
@@ -706,7 +712,7 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
                                 ev.getX(activePointerIndex) / width
                             )
 
-                            if (!mEdgeGlowBottom!!.isFinished)
+                            if (!mEdgeGlowBottom!!.isFinished && !touched)
                                 mEdgeGlowBottom!!.onRelease()
 
                         } else if (pulledToY > range) {
@@ -716,7 +722,7 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
                                 1f - ev.getX(activePointerIndex) / width
                             )
 
-                            if (!mEdgeGlowTop!!.isFinished)
+                            if (!mEdgeGlowTop!!.isFinished && !touched)
                                 mEdgeGlowTop!!.onRelease()
 
                         }
@@ -728,6 +734,7 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
                 }
             }
             MotionEvent.ACTION_UP -> {
+                touched = false
                 val velocityTracker = mVelocityTracker
                 velocityTracker!!.computeCurrentVelocity(1000, mMaximumVelocity.toFloat())
                 val initialVelocity = velocityTracker.getYVelocity(mActivePointerId).toInt()
@@ -743,6 +750,7 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
                 endDrag()
             }
             MotionEvent.ACTION_CANCEL -> {
+                touched = false
                 if (mIsBeingDragged && childCount > 0 && mScroller!!.springBack(scrollX, scrollY, 0, 0, 0, scrollRange))
                     ViewCompat.postInvalidateOnAnimation(this)
 
@@ -1585,26 +1593,34 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
         }
     }
 
+    var bindSpringToParent = false
+        set(value)
+        {
+            field = value
+            ensureGlows()
+        }
+
     private fun ensureGlows() {
-        if (overScrollMode != OVER_SCROLL_NEVER) {
-            if (mEdgeGlowTop == null) {
-                val context = context
-                mEdgeGlowTop = BouncyEdgeEffect(
-                    context,
-                    spring,
-                    this,
-                    EdgeEffectFactory.DIRECTION_TOP,
-                    flingAnimationSize,
-                    overscrollAnimationSize
-                )
-                mEdgeGlowBottom = BouncyEdgeEffect(
-                    context,
-                    spring,
-                    this,
-                    EdgeEffectFactory.DIRECTION_BOTTOM,
-                    flingAnimationSize,
-                    overscrollAnimationSize
-                )
+        if (overScrollMode != OVER_SCROLL_NEVER)
+        {
+            if (mEdgeGlowTop == null)
+            {
+                val viewToAnimate : View = if (!bindSpringToParent)
+                    this
+                else
+                    this.parent as View
+
+                val spring = SpringAnimation(viewToAnimate, SpringAnimation.TRANSLATION_Y)
+                    .setSpring(
+                        SpringForce()
+                            .setFinalPosition(0f)
+                            .setDampingRatio(dampingRatio)
+                            .setStiffness(stiffness)
+                    )
+                mEdgeGlowTop = BouncyEdgeEffect(context, spring, viewToAnimate, EdgeEffectFactory.DIRECTION_TOP, flingAnimationSize, overscrollAnimationSize)
+                mEdgeGlowBottom = BouncyEdgeEffect(context, spring, viewToAnimate, EdgeEffectFactory.DIRECTION_BOTTOM, flingAnimationSize, overscrollAnimationSize)
+
+
             }
         } else {
             mEdgeGlowTop = null
@@ -1828,14 +1844,14 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
                 overscrollAnimationSize = getFloat(R.styleable.BouncyNestedScrollView_overscroll_animation_size, 0.5f)
                 flingAnimationSize = getFloat(R.styleable.BouncyNestedScrollView_fling_animation_size, 0.5f)
 
-                when (getInt(R.styleable.BouncyNestedScrollView_damping_ratio, 0)) {
+                when (getInt(R.styleable.BouncyNestedScrollView_bouncy_scrollview_damping_ratio, 0)) {
                     0 -> dampingRatio = Bouncy.DAMPING_RATIO_NO_BOUNCY
                     1 -> dampingRatio = Bouncy.DAMPING_RATIO_LOW_BOUNCY
                     2 -> dampingRatio = Bouncy.DAMPING_RATIO_MEDIUM_BOUNCY
                     3 -> dampingRatio = Bouncy.DAMPING_RATIO_HIGH_BOUNCY
                 }
 
-                when (getInt(R.styleable.BouncyNestedScrollView_stiffness, 1)) {
+                when (getInt(R.styleable.BouncyNestedScrollView_bouncy_scrollview_stiffness, 1)) {
                     0 -> stiffness = Bouncy.STIFFNESS_VERY_LOW
                     1 -> stiffness = Bouncy.STIFFNESS_LOW
                     2 -> stiffness = Bouncy.STIFFNESS_MEDIUM

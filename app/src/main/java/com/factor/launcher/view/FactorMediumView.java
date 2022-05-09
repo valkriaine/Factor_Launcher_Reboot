@@ -156,7 +156,9 @@ public class FactorMediumView extends ConstraintLayout
     // sound wave animation for media notification
     public void startWave()
     {
-        waveView.setAlpha(1);
+        if (waveView.getAlpha() != 1)
+            waveView.animate().alpha(1).setDuration(150).start();
+
         waveView.startAnimation();
 
     }
@@ -196,7 +198,7 @@ public class FactorMediumView extends ConstraintLayout
         notificationContent.setTextColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
 
         //initialize blur and color
-        if (isLiveWallpaper || !appSettings.isBlurred())
+        if (isLiveWallpaper || !appSettings.isBlurred() || appSettings.getStaticBlur())
         {
             trans.setVisibility(INVISIBLE);
             card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
@@ -225,7 +227,7 @@ public class FactorMediumView extends ConstraintLayout
     {
 
         setUpNotificationCount(factor.retrieveNotificationCount());
-
+        isMediaTile = factor.isMediaTile();
         notificationTitle.setText(factor.getUserApp().getNotificationTitle());
         notificationContent.setText(factor.getUserApp().getNotificationText());
 
@@ -323,12 +325,16 @@ public class FactorMediumView extends ConstraintLayout
 
                 notificationContent.setLines(3);
                 notificationTitle.setGravity(Gravity.NO_GRAVITY);
-                notificationContent.setGravity(Gravity.NO_GRAVITY); if (factor.getUserApp().getNotificationCategory() != null
-                    && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT))
-            {
-                setupWaves(factor);
-                startWave();
-            }
+                notificationContent.setGravity(Gravity.NO_GRAVITY);
+
+
+
+                if (factor.getUserApp().getNotificationCategory() != null
+                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.isMediaTile())
+                {
+                    setupWaves(factor);
+                    startWave();
+                }
 
 
             }
@@ -414,10 +420,10 @@ public class FactorMediumView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
+                    factor.setMediaTile(false);
                     isMediaTile = false;
                     waveView.setAlpha(0);
                 }
-
             }
 
             notificationState = newCount;

@@ -1,8 +1,10 @@
 package com.factor.bouncy
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EdgeEffect
 import androidx.dynamicanimation.animation.SpringAnimation
@@ -31,6 +33,21 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             setupDirection(value)
 
         }
+
+    var touched: Boolean = false
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(e: MotionEvent?): Boolean
+    {
+
+        touched = when (e?.actionMasked)
+        {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> false
+            else -> true
+        }
+        return super.onTouchEvent(e)
+    }
+
+
 
     @Suppress("MemberVisibilityCanBePrivate")
     var dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
@@ -79,7 +96,6 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         )
 
     //**********************************************************************
-    //todo: implement with pull to refresh
     //set translationY
     fun springTranslationY(distance : Float)
     {
@@ -203,7 +219,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
 
         //create edge effect
-        this.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory()
+        this.edgeEffectFactory = object : EdgeEffectFactory()
         {
             override fun createEdgeEffect(recyclerView: RecyclerView, direction: Int): EdgeEffect
             {

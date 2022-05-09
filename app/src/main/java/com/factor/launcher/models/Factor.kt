@@ -28,6 +28,9 @@ class Factor
     var size: Int = Size.small
 
     @Ignore
+    var isMediaTile = false
+
+    @Ignore
     var userApp : UserApp = UserApp()
 
     //get notification count in string form

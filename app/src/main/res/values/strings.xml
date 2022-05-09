@@ -73,5 +73,6 @@
     <string name="confirm_app_edit">confirm app edit</string>
     <string name="home_screen">home screen</string>
     <string name="recently_used_apps">recently used apps</string>
+    <string name="use_static_blur_for_better_performance">Blur wallpaper instead of tiles on the home screen (for better performance)</string>
 
 </resources>

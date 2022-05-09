@@ -36,6 +36,13 @@
                         android:src="@drawable/city_welcome_background"
                         android:scaleType="centerCrop"/>
 
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/static_blur_preview_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="#053257"
+                        android:scaleType="centerCrop"/>
+
             </androidx.cardview.widget.CardView>
 
             <!--search bar holder-->
@@ -274,6 +281,34 @@
                                         app:layout_constraintStart_toStartOf="parent"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/blur_toggle"
+                                        android:hapticFeedbackEnabled="true"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:theme="@style/SettingsTheme"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"/>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <!--static blur option-->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:id="@+id/static_blur_base"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/static_blur_label"
+                                        android:text="@string/use_static_blur_for_better_performance"
+                                        android:layout_width="0dp"
+                                        android:maxLines="3"
+                                        android:ellipsize="end"
+                                        android:layout_height="wrap_content"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toStartOf="@id/static_blur_toggle" />
+                                <com.google.android.material.switchmaterial.SwitchMaterial
+                                        android:id="@+id/static_blur_toggle"
                                         android:hapticFeedbackEnabled="true"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"

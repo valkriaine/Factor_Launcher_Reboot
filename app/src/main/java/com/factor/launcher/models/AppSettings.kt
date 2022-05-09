@@ -41,4 +41,7 @@ class AppSettings
 
     @ColumnInfo(name = "tile_margin")
     var tileMargin = 5
+
+    @ColumnInfo(name = "static_blur")
+    var staticBlur = false
 }

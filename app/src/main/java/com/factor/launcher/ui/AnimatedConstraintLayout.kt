@@ -34,12 +34,12 @@ class AnimatedConstraintLayout(context: Context, attrs: AttributeSet?) : Constra
     fun animateToSelectedState()
     {
         isInDragAndDrop = true
-        animate().scaleX(1.1f)
+        animate().scaleX(1.05f)
             .setInterpolator(accelerateDecelerateInterpolator)
-            .setDuration(200).start()
-        animate().scaleY(1.1f)
+            .setDuration(80).start()
+        animate().scaleY(1.05f)
             .setInterpolator(accelerateDecelerateInterpolator)
-            .setDuration(200).start()
+            .setDuration(80).start()
     }
 
     fun animateToNormalState()

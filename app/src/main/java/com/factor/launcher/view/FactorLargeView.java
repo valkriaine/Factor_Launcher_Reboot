@@ -176,7 +176,7 @@ public class FactorLargeView extends ConstraintLayout
         divider.setBackgroundColor(appSettings.isDarkText() ? Color.BLACK : Color.WHITE);
 
         //initialize blur and color
-        if (isLiveWallpaper || !appSettings.isBlurred())
+        if (isLiveWallpaper || !appSettings.isBlurred() || appSettings.getStaticBlur())
         {
             trans.setVisibility(INVISIBLE);
             card.setCardBackgroundColor(Color.parseColor("#" + appSettings.getTileThemeColor()));
@@ -208,7 +208,7 @@ public class FactorLargeView extends ConstraintLayout
     {
 
         setUpNotificationCount(factor.retrieveNotificationCount());
-
+        isMediaTile = factor.isMediaTile();
         notificationTitle.setText(factor.getUserApp().getNotificationTitle());
         notificationContent.setText(factor.getUserApp().getNotificationText());
 
@@ -319,11 +319,12 @@ public class FactorLargeView extends ConstraintLayout
 
 
                 if (factor.getUserApp().getNotificationCategory() != null
-                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT))
+                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.isMediaTile())
                 {
                     setupWaves(factor);
                     startWave();
                 }
+
             }
             else if (newCount == 0)
             {
@@ -412,6 +413,7 @@ public class FactorLargeView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
+                    factor.setMediaTile(false);
                     isMediaTile = false;
                     waveView.setAlpha(0);
                 }
@@ -446,7 +448,9 @@ public class FactorLargeView extends ConstraintLayout
     // sound wave animation for media notification
     public void startWave()
     {
-        waveView.setAlpha(1);
+        if (waveView.getAlpha() != 1)
+            waveView.animate().alpha(1).setDuration(150).start();
+
         waveView.startAnimation();
 
     }

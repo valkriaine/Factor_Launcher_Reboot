@@ -130,6 +130,14 @@
                     android:scaleType="matrix"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
+            <!--static blurred wallpaper for tile list-->
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/blur_tile_static"
+                    android:translationZ="-15dp"
+                    android:alpha="0"
+                    android:scaleType="matrix"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             <!--wallpaper-->
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/background_host"

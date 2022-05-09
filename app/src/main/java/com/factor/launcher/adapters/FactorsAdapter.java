@@ -334,20 +334,32 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
             new Thread(()->
             {
-                // if media notification, prepare for media animation
-                if (app.getNotificationCategory() != null
-                        && app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
+
+                if (app.getNotificationCategory() != null)
                 {
 
-                    Drawable icon = app.getIcon();
+                    factorToUpdate.setMediaTile(false);
 
-                    if (icon != null)
+                    // if media notification, prepare for media animation
+                    if (app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
                     {
-                        Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
-                        app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
-                        app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
-                        app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                        Drawable icon = app.getIcon();
+
+                        if (icon != null)
+                        {
+                            Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
+                            app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
+                            app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
+                            app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                        }
+                        factorToUpdate.setMediaTile(true);
                     }
+
+                    // other categories
+                    // ...
+
+
+
                 }
 
                 factorToUpdate.setUserApp(app);
