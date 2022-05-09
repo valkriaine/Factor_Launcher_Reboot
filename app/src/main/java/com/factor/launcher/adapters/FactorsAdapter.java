@@ -2,7 +2,11 @@ package com.factor.launcher.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -28,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 
 public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.FactorsViewHolder>
 {
@@ -308,34 +314,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
     }
 
-    @Override
-    public void onViewAttachedToWindow(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewAttachedToWindow(holder);
-        ViewDataBinding binding = holder.binding;
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.startWave();
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewDetachedFromWindow(holder);
-        ViewDataBinding binding = holder.binding;
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.stopWave();
-    }
-
-    @Override
-    public void onViewRecycled(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewRecycled(holder);
-        ViewDataBinding binding = holder.binding;
-        binding.invalidateAll();
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.stopWave();
-    }
-
     //send a broadcast when a factor has been added to home screen
     public void addFactorBroadcast(int position)
     {
@@ -352,8 +330,36 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
         if (userFactors.contains(factorToUpdate))
         {
-            factorToUpdate.setUserApp(app);
-            notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+            if (app.getNotificationCategory() != null
+                    && app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
+            {
+                new Thread(()->
+                {
+                    Bitmap b = Util.INSTANCE.drawableToBitmap(app.getIcon());
+                    app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
+                    app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
+                    app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+
+                    factorToUpdate.setUserApp(app);
+
+                    new Handler(Looper.getMainLooper())
+                    {
+                        @Override
+                        public void handleMessage(@NonNull Message msg)
+                        {
+                            super.handleMessage(msg);
+                            notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+                        }
+                    }.sendEmptyMessage(1);
+
+
+                }).start();
+            }
+            else
+            {
+                factorToUpdate.setUserApp(app);
+                notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+            }
         }
     }
 

@@ -32,6 +32,7 @@
 
         <com.ssynhtn.waveview.WaveView
                 android:id="@+id/wave"
+                android:alpha="0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

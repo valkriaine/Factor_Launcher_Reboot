@@ -28,9 +28,12 @@ import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
+import com.ssynhtn.waveview.WaveView;
 import eightbitlab.com.blurview.*;
 
 import java.util.List;
+
+import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 
 /**
  * Large tile
@@ -72,6 +75,41 @@ public class FactorLargeView extends ConstraintLayout
 
     private Guideline guidelineTitleEnd;
 
+    private WaveView waveView;
+
+    private final WaveView.WaveData wave1 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f,
+                    (long) (2000 + Math.random() * 1000),
+                    true);
+
+    private final WaveView.WaveData wave2 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f,
+                    (long) (2000 + Math.random() * 1000),
+                    false);
+
+    private final WaveView.WaveData wave3 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f, (long)
+                    (2000 + Math.random() * 1000),
+                    false);
+
     private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     public FactorLargeView(Context context) {
@@ -110,6 +148,9 @@ public class FactorLargeView extends ConstraintLayout
         guidelineTitleBottom = findViewById(R.id.guideline_title_bottom);
         guidelineContentBottom = findViewById(R.id.guideline_content_bottom);
         guidelineTitleEnd = findViewById(R.id.guideline_notification_title_end);
+
+        waveView = findViewById(R.id.wave);
+        waveView.setEnabled(false);
 
         shortcut_list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
@@ -273,6 +314,14 @@ public class FactorLargeView extends ConstraintLayout
                 notificationContent.setLines(4);
                 notificationTitle.setGravity(Gravity.NO_GRAVITY);
                 notificationContent.setGravity(Gravity.NO_GRAVITY);
+
+
+                if (factor.getUserApp().getNotificationCategory() != null
+                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT))
+                {
+                    setupWaves(factor);
+                    startWave();
+                }
             }
             else if (newCount == 0)
             {
@@ -356,11 +405,74 @@ public class FactorLargeView extends ConstraintLayout
                 notificationContent.setLines(1);
                 notificationTitle.setGravity(Gravity.CENTER_VERTICAL);
                 notificationContent.setGravity(Gravity.CENTER_VERTICAL);
+
+
+                if (waveView.isEnabled())
+                {
+                    waveView.setEnabled(false);
+                    waveView.setAlpha(0);
+                }
+
             }
 
             notificationState = newCount;
         }
     }
+
+
+    public void setupWaves(Factor factor)
+    {
+        wave1.setStartColor(factor.getUserApp().getVibrantColor());
+        wave1.setEndColor(factor.getUserApp().getDominantColor());
+
+        wave2.setStartColor(factor.getUserApp().getDominantColor());
+        wave2.setEndColor(factor.getUserApp().getDarkMutedColor());
+
+        wave3.setStartColor(factor.getUserApp().getVibrantColor());
+        wave3.setEndColor(factor.getUserApp().getDarkMutedColor());
+
+        waveView.addWaveData(wave1);
+        waveView.addWaveData(wave2);
+        waveView.addWaveData(wave3);
+
+        waveView.setEnabled(true);
+    }
+
+
+    // sound wave animation for media notification
+    public void startWave()
+    {
+        waveView.setAlpha(1);
+        waveView.startAnimation();
+
+    }
+
+    public void stopWave()
+    {
+        waveView.pauseAnimation();
+    }
+
+    @Override
+    protected void onAttachedToWindow()
+    {
+        super.onAttachedToWindow();
+        if (waveView.isEnabled())
+            waveView.startAnimation();
+    }
+
+    @Override
+    protected void onDetachedFromWindow()
+    {
+        super.onDetachedFromWindow();
+        if (waveView.isEnabled())
+            stopWave();
+    }
+
+
+
+
+
+
 
 
     protected static class ShortcutsAdapter extends RecyclerView.Adapter<ShortcutsAdapter.ShortcutViewHolder>
