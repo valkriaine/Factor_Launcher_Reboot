@@ -26,9 +26,9 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.WaveView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
-import com.ssynhtn.waveview.WaveView;
 import eightbitlab.com.blurview.*;
 
 import java.util.List;
@@ -76,6 +76,8 @@ public class FactorLargeView extends ConstraintLayout
     private Guideline guidelineTitleEnd;
 
     private WaveView waveView;
+
+    private boolean isMediaTile = false;
 
     private final WaveView.WaveData wave1 =
             new WaveView.WaveData((float)
@@ -410,6 +412,7 @@ public class FactorLargeView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
+                    isMediaTile = false;
                     waveView.setAlpha(0);
                 }
 
@@ -436,6 +439,7 @@ public class FactorLargeView extends ConstraintLayout
         waveView.addWaveData(wave3);
 
         waveView.setEnabled(true);
+        isMediaTile = true;
     }
 
 
@@ -456,7 +460,7 @@ public class FactorLargeView extends ConstraintLayout
     protected void onAttachedToWindow()
     {
         super.onAttachedToWindow();
-        if (waveView.isEnabled())
+        if (waveView.isEnabled() && isMediaTile)
             waveView.startAnimation();
     }
 

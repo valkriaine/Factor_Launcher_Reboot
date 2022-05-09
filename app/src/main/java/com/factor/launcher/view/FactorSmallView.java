@@ -12,9 +12,9 @@ import com.factor.launcher.R;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.WaveView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
-import com.ssynhtn.waveview.WaveView;
 import eightbitlab.com.blurview.BlurAlgorithm;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -37,6 +37,8 @@ public class FactorSmallView extends ConstraintLayout
     private AppCompatTextView tileLabel;
 
     private WaveView waveView;
+
+    private boolean isMediaTile = false;
 
     private int notificationState = 0; //0 for no notification, 1 for otherwise
 
@@ -175,6 +177,7 @@ public class FactorSmallView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
+                    isMediaTile = false;
                     waveView.setAlpha(0);
                 }
 
@@ -201,6 +204,7 @@ public class FactorSmallView extends ConstraintLayout
         waveView.addWaveData(wave3);
 
         waveView.setEnabled(true);
+        isMediaTile = true;
     }
 
 
@@ -221,7 +225,7 @@ public class FactorSmallView extends ConstraintLayout
     protected void onAttachedToWindow()
     {
         super.onAttachedToWindow();
-        if (waveView.isEnabled())
+        if (waveView.isEnabled() && isMediaTile)
             waveView.startAnimation();
     }
 

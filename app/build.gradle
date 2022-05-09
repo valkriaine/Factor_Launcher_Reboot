@@ -117,9 +117,6 @@ dependencies {
     // renderscript replacement toolkit
     implementation files('../libs/renderscript-toolkit-release.aar')
 
-    // wave_view
-    // https://github.com/ssynhtn/wave-view
-    implementation files('../libs/waves-release.aar')
 
     // Color picker
     // https://github.com/skydoves/ColorPickerView
