@@ -341,6 +341,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         else
             binding.demoBlur.setVisibility(binding.blurToggle.isChecked()?View.VISIBLE:View.INVISIBLE);
 
+        binding.staticBlurPreviewImage.setVisibility(binding.blurToggle.isChecked()?View.VISIBLE:View.INVISIBLE);
+
         binding.blurRadiusSlider.setEnabled(binding.blurToggle.isChecked());
         binding.blurRadiusSlider.setAlpha(binding.blurToggle.isChecked()?1:0.5f);
 
