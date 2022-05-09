@@ -1,5 +1,6 @@
 package com.factor.launcher.models
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.room.ColumnInfo
@@ -38,13 +39,13 @@ class UserApp
     var notificationCategory : String? = ""
 
     @Ignore
-    var dominantColor : Int = 0
+    var dominantColor : Int = Color.WHITE
 
     @Ignore
-    var vibrantColor : Int = 0
+    var vibrantColor : Int = Color.GRAY
 
     @Ignore
-    var darkMutedColor : Int = 0
+    var darkMutedColor : Int = Color.BLACK
 
     @Ignore
     var shortCuts : ArrayList<AppShortcut> = ArrayList()

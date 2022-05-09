@@ -3,6 +3,7 @@ package com.factor.launcher.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -330,36 +331,39 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         Factor factorToUpdate = getFactorByPackage(intent.getStringExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY));
         if (userFactors.contains(factorToUpdate))
         {
-            if (app.getNotificationCategory() != null
-                    && app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
+
+            new Thread(()->
             {
-                new Thread(()->
+                // if media notification, prepare for media animation
+                if (app.getNotificationCategory() != null
+                        && app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
                 {
-                    Bitmap b = Util.INSTANCE.drawableToBitmap(app.getIcon());
-                    app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
-                    app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
-                    app.setDominantColor(Util.INSTANCE.getDominantColor(b));
 
-                    factorToUpdate.setUserApp(app);
+                    Drawable icon = app.getIcon();
 
-                    new Handler(Looper.getMainLooper())
+                    if (icon != null)
                     {
-                        @Override
-                        public void handleMessage(@NonNull Message msg)
-                        {
-                            super.handleMessage(msg);
-                            notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
-                        }
-                    }.sendEmptyMessage(1);
+                        Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
+                        app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
+                        app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
+                        app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                    }
+                }
 
-
-                }).start();
-            }
-            else
-            {
                 factorToUpdate.setUserApp(app);
-                notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
-            }
+
+                new Handler(Looper.getMainLooper())
+                {
+                    @Override
+                    public void handleMessage(@NonNull Message msg)
+                    {
+                        super.handleMessage(msg);
+                        notifyItemChanged(userFactors.indexOf(factorToUpdate), payload);
+                    }
+                }.sendEmptyMessage(1);
+
+            }).start();
+
         }
     }
 
