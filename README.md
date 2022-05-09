@@ -23,7 +23,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 - medium and large tiles now display more notification content
 
-- some apps will display soundwave animation upon playing media
+- some apps will display soundwave animation upon playing media 
+
+(more tile designs coming soon)
 
 <img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
 
