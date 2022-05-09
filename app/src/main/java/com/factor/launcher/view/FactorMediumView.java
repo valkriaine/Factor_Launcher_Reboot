@@ -99,11 +99,12 @@ public class FactorMediumView extends ConstraintLayout
         notificationEnd = findViewById(R.id.guideline_notification_content_end);
 
         waveView = findViewById(R.id.wave);
-        waveView.setAlpha(0f);
     }
 
-    private void setupWaves(Factor factor)
+    public FactorMediumView setupWaves(Factor factor)
     {
+
+
         wave1.setStartColor(factor.getVibrantColor());
         wave1.setEndColor(factor.getDominantColor());
 
@@ -116,19 +117,25 @@ public class FactorMediumView extends ConstraintLayout
         waveView.addWaveData(wave1);
         waveView.addWaveData(wave2);
         waveView.addWaveData(wave3);
+
+        return this;
     }
 
 
     // sound wave animation for media notification
     public void startWave()
     {
-        //waveView.startAnimation();
+        waveView.setAlpha(1);
+        waveView.startAnimation();
     }
 
     public void stopWave()
     {
-        //waveView.pauseAnimation();
+        waveView.setAlpha(0);
+        waveView.pauseAnimation();
     }
+
+
 
     private void setUpNotificationCount(String count)
     {
@@ -179,11 +186,7 @@ public class FactorMediumView extends ConstraintLayout
 
         tileLabel.setText(factor.getLabelNew());
         if (factor.getIcon() != null)
-        {
             tileIcon.setImageDrawable(factor.getIcon());
-            setupWaves(factor);
-        }
-
         updateLayout(factor);
     }
 
@@ -195,8 +198,6 @@ public class FactorMediumView extends ConstraintLayout
 
             if (notificationState == 0)
             {
-                waveView.setAlpha(1f);
-                //startWave();
                 // animate new notification arrived
                 ValueAnimator animatorNotificationStart = ValueAnimator.ofFloat(0.4f, 0.05f);
                 animatorNotificationStart.setDuration(300);
@@ -282,10 +283,7 @@ public class FactorMediumView extends ConstraintLayout
             }
             else if (newCount == 0)
             {
-                waveView.setAlpha(0f);
-                //stopWave();
                 // animate back to normal layout
-
                 ValueAnimator animatorNotificationStart = ValueAnimator.ofFloat(0.05f, 0.4f).setDuration(300);
                 animatorNotificationStart.setInterpolator(new AccelerateDecelerateInterpolator());
                 animatorNotificationStart.addUpdateListener(valueAnimator1 ->

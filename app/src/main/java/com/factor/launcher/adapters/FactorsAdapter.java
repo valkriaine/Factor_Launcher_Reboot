@@ -308,34 +308,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
     }
 
-    @Override
-    public void onViewAttachedToWindow(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewAttachedToWindow(holder);
-        ViewDataBinding binding = holder.binding;
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.startWave();
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewDetachedFromWindow(holder);
-        ViewDataBinding binding = holder.binding;
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.stopWave();
-    }
-
-    @Override
-    public void onViewRecycled(@NonNull FactorsViewHolder holder)
-    {
-        super.onViewRecycled(holder);
-        ViewDataBinding binding = holder.binding;
-        binding.invalidateAll();
-        if (binding instanceof FactorMediumBinding)
-            ((FactorMediumBinding) binding).tile.stopWave();
-    }
-
     //send a broadcast when a factor has been added to home screen
     public void addFactorBroadcast(int position)
     {
