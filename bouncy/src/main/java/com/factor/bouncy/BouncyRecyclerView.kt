@@ -280,6 +280,9 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
                     override fun onRelease()
                     {
                         super.onRelease()
+
+                        if (touched)
+                            return
                         onOverPullListener?.onRelease()
                         spring.start()
                         connectedSpringTop?.start()
