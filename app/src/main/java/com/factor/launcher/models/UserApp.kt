@@ -35,6 +35,18 @@ class UserApp
     var isBeingEdited : Boolean = false
 
     @Ignore
+    var notificationCategory : String? = ""
+
+    @Ignore
+    var dominantColor : Int = 0
+
+    @Ignore
+    var vibrantColor : Int = 0
+
+    @Ignore
+    var darkMutedColor : Int = 0
+
+    @Ignore
     var shortCuts : ArrayList<AppShortcut> = ArrayList()
 
     @Ignore

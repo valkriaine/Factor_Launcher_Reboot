@@ -19,11 +19,19 @@ public class NotificationListener extends NotificationListenerService
         String title = String.valueOf(sbn.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE));
         String text = String.valueOf(sbn.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT));
 
+
+        String category = sbn.getNotification().category;
+
+
         Intent intent = new Intent(Constants.NOTIFICATION_INTENT_ACTION_POST);
         intent.putExtra(Constants.NOTIFICATION_INTENT_PACKAGE_KEY, packageName);
         intent.putExtra(Constants.NOTIFICATION_INTENT_ID_KEY, id);
         intent.putExtra(Constants.NOTIFICATION_INTENT_CONTENT_TEXT_KEY, text);
         intent.putExtra(Constants.NOTIFICATION_INTENT_TITLE_TEXT_KEY, title);
+        intent.putExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY, category);
+
+
+
         sendBroadcast(intent);
     }
 

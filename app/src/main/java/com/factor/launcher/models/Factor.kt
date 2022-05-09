@@ -30,15 +30,6 @@ class Factor
     @Ignore
     var userApp : UserApp = UserApp()
 
-    @Ignore
-    var dominantColor : Int = 0
-
-    @Ignore
-    var vibrantColor : Int = 0
-
-    @Ignore
-    var darkMutedColor : Int = 0
-
     //get notification count in string form
     fun retrieveNotificationCount() : String = userApp.currentNotifications.size.toString()
 

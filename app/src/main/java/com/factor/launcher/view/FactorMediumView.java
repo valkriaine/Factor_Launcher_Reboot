@@ -21,6 +21,8 @@ import com.google.android.material.card.MaterialCardView;
 import com.ssynhtn.waveview.WaveView;
 import eightbitlab.com.blurview.*;
 
+import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
+
 /**
  * Medium tile
  */
@@ -56,11 +58,38 @@ public class FactorMediumView extends ConstraintLayout
 
     private WaveView waveView;
 
-    private final WaveView.WaveData wave1 = new WaveView.WaveData((float) (800 + Math.random() * 100), (float) (100 + Math.random() * 20), (float) (200 + Math.random() * 20), (float) (Math.random() * 50), Color.RED, Color.BLUE, 0.3f, (long) (2000 + Math.random() * 1000), true);
+    private final WaveView.WaveData wave1 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f,
+                    (long) (2000 + Math.random() * 1000),
+                    true);
 
-    private final WaveView.WaveData wave2 = new WaveView.WaveData((float) (800 + Math.random() * 100), (float) (100 + Math.random() * 20), (float) (200 + Math.random() * 20), (float) (Math.random() * 50), Color.RED, Color.BLUE, 0.3f, (long) (2000 + Math.random() * 1000), false);
+    private final WaveView.WaveData wave2 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f,
+                    (long) (2000 + Math.random() * 1000),
+                    false);
 
-    private final WaveView.WaveData wave3 = new WaveView.WaveData((float) (800 + Math.random() * 100), (float) (100 + Math.random() * 20), (float) (200 + Math.random() * 20), (float) (Math.random() * 50), Color.RED, Color.BLUE, 0.3f, (long) (2000 + Math.random() * 1000), false);
+    private final WaveView.WaveData wave3 =
+            new WaveView.WaveData((float)
+                    (800 + Math.random() * 100),
+                    (float) (100 + Math.random() * 20),
+                    (float) (200 + Math.random() * 20),
+                    (float) (Math.random() * 50),
+                    Color.WHITE, Color.BLACK,
+                    0.3f, (long)
+                    (2000 + Math.random() * 1000),
+                    false);
     private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     public FactorMediumView(Context context) {
@@ -99,26 +128,25 @@ public class FactorMediumView extends ConstraintLayout
         notificationEnd = findViewById(R.id.guideline_notification_content_end);
 
         waveView = findViewById(R.id.wave);
+        waveView.setEnabled(false);
     }
 
-    public FactorMediumView setupWaves(Factor factor)
+    public void setupWaves(Factor factor)
     {
+        wave1.setStartColor(factor.getUserApp().getVibrantColor());
+        wave1.setEndColor(factor.getUserApp().getDominantColor());
 
+        wave2.setStartColor(factor.getUserApp().getDominantColor());
+        wave2.setEndColor(factor.getUserApp().getDarkMutedColor());
 
-        wave1.setStartColor(factor.getVibrantColor());
-        wave1.setEndColor(factor.getDominantColor());
-
-        wave2.setStartColor(factor.getDominantColor());
-        wave2.setEndColor(factor.getDarkMutedColor());
-
-        wave3.setStartColor(factor.getVibrantColor());
-        wave3.setEndColor(factor.getDarkMutedColor());
+        wave3.setStartColor(factor.getUserApp().getVibrantColor());
+        wave3.setEndColor(factor.getUserApp().getDarkMutedColor());
 
         waveView.addWaveData(wave1);
         waveView.addWaveData(wave2);
         waveView.addWaveData(wave3);
 
-        return this;
+        waveView.setEnabled(true);
     }
 
 
@@ -127,15 +155,29 @@ public class FactorMediumView extends ConstraintLayout
     {
         waveView.setAlpha(1);
         waveView.startAnimation();
+
     }
 
     public void stopWave()
     {
-        waveView.setAlpha(0);
         waveView.pauseAnimation();
     }
 
+    @Override
+    protected void onAttachedToWindow()
+    {
+        super.onAttachedToWindow();
+        if (waveView.isEnabled())
+            waveView.startAnimation();
+    }
 
+    @Override
+    protected void onDetachedFromWindow()
+    {
+        super.onDetachedFromWindow();
+        if (waveView.isEnabled())
+            stopWave();
+    }
 
     private void setUpNotificationCount(String count)
     {
@@ -278,7 +320,13 @@ public class FactorMediumView extends ConstraintLayout
 
                 notificationContent.setLines(3);
                 notificationTitle.setGravity(Gravity.NO_GRAVITY);
-                notificationContent.setGravity(Gravity.NO_GRAVITY);
+                notificationContent.setGravity(Gravity.NO_GRAVITY); if (factor.getUserApp().getNotificationCategory() != null
+                    && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT))
+            {
+                setupWaves(factor);
+                startWave();
+            }
+
 
             }
             else if (newCount == 0)
@@ -358,6 +406,14 @@ public class FactorMediumView extends ConstraintLayout
                 notificationContent.setLines(1);
                 notificationTitle.setGravity(Gravity.CENTER_VERTICAL);
                 notificationContent.setGravity(Gravity.CENTER_VERTICAL);
+
+
+                if (waveView.isEnabled())
+                {
+                    waveView.setEnabled(false);
+                    waveView.setAlpha(0);
+                }
+
             }
 
             notificationState = newCount;

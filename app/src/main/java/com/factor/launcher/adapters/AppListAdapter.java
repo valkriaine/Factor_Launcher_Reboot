@@ -109,8 +109,11 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             if (userApps.contains(app))
             {
                 if (app.incrementNotificationCount(notificationHolder))
+                {
+                    String category = intent.getStringExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY);
+                    app.setNotificationCategory(category);
                     notifyItemChanged(userApps.indexOf(app), payload);
-
+                }
                 if (app.isPinned())
                     appListManager.getFactorManager().onReceivedNotification(intent, app, payload);
 

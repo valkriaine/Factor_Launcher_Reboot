@@ -59,6 +59,7 @@ import com.google.android.renderscript.Toolkit;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
+
 import static com.factor.launcher.util.Constants.REQUEST_CREATE_WIDGET;
 import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
 
@@ -311,9 +312,6 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //initialize data manager
         //***************************************************************************************************************************************************
         appListManager = new AppListManager(this, binding.backgroundHost, isLiveWallpaper, appSettings);
-
-
-
 
         //register broadcast receivers
         //***************************************************************************************************************************************************
