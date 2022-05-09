@@ -19,14 +19,13 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Version 0.64.4
+# Version 0.65.1
 
 - medium and large tiles now display more notification content
-- fixed full screen display on devices running Android 11 and above
-- app shortcuts are now sorted based on functionality 
-- updated dependencies 
 
-<img src="./Images/notification_display.gif" width="300"/> 
+- some apps will display soundwave animation upon playing media
+
+<img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
 
 <p>&nbsp;</p>
 
