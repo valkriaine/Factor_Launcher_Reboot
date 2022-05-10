@@ -19,7 +19,7 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Version 0.65.1-alpha
+# Version 0.65.6-alpha
 
 - medium and large tiles now display more notification content
 
