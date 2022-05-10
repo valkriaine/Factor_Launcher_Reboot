@@ -25,7 +25,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 - some apps will display soundwave animation upon playing media 
 
-(more tile designs coming soon)
+- added an option to blur the entire background instead of each individual tiles for better performance
+
+
 
 *Please be aware that alpha builds include experimental features and may cause issues on some devices.
 
