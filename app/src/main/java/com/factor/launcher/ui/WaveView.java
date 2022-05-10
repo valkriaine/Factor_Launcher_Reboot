@@ -12,11 +12,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
-import android.os.Build;
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +26,7 @@ import java.util.List;
 
 
 // https://github.com/ssynhtn/wave-view
-public class WaveView extends View
+public class WaveView extends View implements LifecycleOwner
 {
     private static final String TAG = WaveView.class.getSimpleName();
 
@@ -35,6 +37,12 @@ public class WaveView extends View
     private AnimatorSet animatorSet;
     private boolean animationPaused;
 
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle()
+    {
+        return ViewKt.getLifecycle(this);
+    }
 
     public static class WaveData {
 
@@ -167,7 +175,7 @@ public class WaveView extends View
     }
 
 
-    private List<WaveData> waveDataList = new ArrayList<>();
+    private final List<WaveData> waveDataList = new ArrayList<>();
 
     public WaveView(Context context) {
         super(context);
@@ -237,9 +245,7 @@ public class WaveView extends View
 
         animationPaused = true;
         if (animatorSet != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                animatorSet.pause();
-            }
+            animatorSet.pause();
         }
     }
 
@@ -249,9 +255,7 @@ public class WaveView extends View
         if (animationPaused) {
             animationPaused = false;
             if (animatorSet != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    animatorSet.resume();
-                }
+                animatorSet.resume();
             }
         }
     }
@@ -442,14 +446,11 @@ public class WaveView extends View
             waveData.heightScale = heightScale;
 
             requestLayout();
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    int width = getWidth();
-                    int height = getHeight();
-                    if (width > 0 && height > 0) {
-                        resetPath(waveData, width, height);
-                    }
+            post(() -> {
+                int width = getWidth();
+                int height = getHeight();
+                if (width > 0 && height > 0) {
+                    resetPath(waveData, width, height);
                 }
             });
         }
