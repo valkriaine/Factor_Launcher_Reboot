@@ -227,7 +227,7 @@ public class FactorMediumView extends ConstraintLayout
     {
 
         setUpNotificationCount(factor.retrieveNotificationCount());
-        isMediaTile = factor.isMediaTile();
+        isMediaTile = factor.getUserApp().isMediaTile();
         notificationTitle.setText(factor.getUserApp().getNotificationTitle());
         notificationContent.setText(factor.getUserApp().getNotificationText());
 
@@ -330,7 +330,7 @@ public class FactorMediumView extends ConstraintLayout
 
 
                 if (factor.getUserApp().getNotificationCategory() != null
-                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.isMediaTile())
+                        && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.getUserApp().isMediaTile())
                 {
                     setupWaves(factor);
                     startWave();
@@ -420,7 +420,7 @@ public class FactorMediumView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
-                    factor.setMediaTile(false);
+                    factor.getUserApp().setMediaTile(false);
                     isMediaTile = false;
                     waveView.setAlpha(0);
                 }

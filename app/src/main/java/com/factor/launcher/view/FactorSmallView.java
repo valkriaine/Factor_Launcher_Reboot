@@ -146,7 +146,7 @@ public class FactorSmallView extends ConstraintLayout
     public void setupContent(Factor factor)
     {
         tileLabel.setText(factor.getLabelNew());
-        isMediaTile = factor.isMediaTile();
+        isMediaTile = factor.getUserApp().isMediaTile();
         setUpNotificationCount(factor.retrieveNotificationCount());
         if (factor.getIcon() != null)
             tileIcon.setImageDrawable(factor.getIcon());
@@ -165,7 +165,7 @@ public class FactorSmallView extends ConstraintLayout
             {
                 // animate new notification arrived
                if (factor.getUserApp().getNotificationCategory() != null
-                    && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.isMediaTile())
+                    && factor.getUserApp().getNotificationCategory() .equals(CATEGORY_TRANSPORT) && factor.getUserApp().isMediaTile())
                 {
                     setupWaves(factor);
                     startWave();
@@ -179,7 +179,7 @@ public class FactorSmallView extends ConstraintLayout
                 if (waveView.isEnabled())
                 {
                     waveView.setEnabled(false);
-                    factor.setMediaTile(false);
+                    factor.getUserApp().setMediaTile(false);
                     isMediaTile = false;
                     waveView.setAlpha(0);
                 }
@@ -207,7 +207,7 @@ public class FactorSmallView extends ConstraintLayout
         waveView.addWaveData(wave3);
 
         waveView.setEnabled(true);
-        isMediaTile = factor.isMediaTile();
+        isMediaTile = factor.getUserApp().isMediaTile();
     }
 
 

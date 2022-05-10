@@ -3,6 +3,8 @@ package com.factor.launcher.models
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.core.app.NotificationCompat.CATEGORY_PROGRESS
+import androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -37,6 +39,21 @@ class UserApp
 
     @Ignore
     var notificationCategory : String? = ""
+    set(value)
+    {
+        field = value
+        when
+        {
+            value.equals(CATEGORY_TRANSPORT) -> this.isMediaTile = true
+            value.equals(CATEGORY_PROGRESS) -> this.isProgressBar = true
+            else ->
+            {
+                this.isMediaTile = false
+                this.isProgressBar = false
+                //...other categories
+            }
+        }
+    }
 
     @Ignore
     var dominantColor : Int = Color.WHITE
@@ -56,11 +73,22 @@ class UserApp
     @Ignore
     var icon: Drawable? = null
 
+    @Ignore
+    var isMediaTile = false
+
+    @Ignore
+    var isProgressBar = false
+
 
     //... other attributes
     fun changePinnedState()
     {
         this.isPinned = !isPinned
+    }
+
+    fun resetCategory()
+    {
+        this.notificationCategory = ""
     }
 
     //generate new factor

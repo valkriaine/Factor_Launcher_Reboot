@@ -2,8 +2,6 @@ package com.factor.launcher.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,8 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 
 public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.FactorsViewHolder>
 {
@@ -335,33 +331,6 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
             new Thread(()->
             {
 
-                if (app.getNotificationCategory() != null)
-                {
-
-                    factorToUpdate.setMediaTile(false);
-
-                    // if media notification, prepare for media animation
-                    if (app.getNotificationCategory().equals(CATEGORY_TRANSPORT))
-                    {
-                        Drawable icon = app.getIcon();
-
-                        if (icon != null)
-                        {
-                            Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
-                            app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
-                            app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
-                            app.setDominantColor(Util.INSTANCE.getDominantColor(b));
-                        }
-                        factorToUpdate.setMediaTile(true);
-                    }
-
-                    // other categories
-                    // ...
-
-
-
-                }
-
                 factorToUpdate.setUserApp(app);
 
                 new Handler(Looper.getMainLooper())
@@ -435,6 +404,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         {
             //determine layout based on size
             size = factor.getSize();
+
 
             switch (size)
             {

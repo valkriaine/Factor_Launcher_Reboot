@@ -4,9 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.SystemClock;
+import android.os.*;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
@@ -20,6 +21,7 @@ import com.factor.launcher.R;
 import com.factor.launcher.databinding.AppListItemBinding;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
+import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
@@ -28,6 +30,8 @@ import com.factor.launcher.util.Payload;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+
+import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 
 //adapter for app drawer
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder>
@@ -108,14 +112,60 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             Payload payload = new Payload(notificationHolder);
             if (userApps.contains(app))
             {
-                if (app.incrementNotificationCount(notificationHolder))
+
+                new Thread(()->
                 {
-                    String category = intent.getStringExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY);
-                    app.setNotificationCategory(category);
-                    notifyItemChanged(userApps.indexOf(app), payload);
-                }
-                if (app.isPinned())
-                    appListManager.getFactorManager().onReceivedNotification(intent, app, payload);
+
+
+
+                    if (app.incrementNotificationCount(notificationHolder))
+                    {
+
+                        String category = intent.getStringExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY);
+
+                        app.setNotificationCategory(category);
+
+                        if (category != null)
+                        {
+                            // if media notification, prepare for media animation
+                            if (category.equals(CATEGORY_TRANSPORT))
+                            {
+                                Drawable icon = app.getIcon();
+
+                                if (icon != null)
+                                {
+                                    Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
+                                    app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
+                                    app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
+                                    app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                                }
+                            }
+
+                            // other categories
+                            // ...
+
+
+                        }
+
+                        if (app.isPinned())
+                            appListManager.getFactorManager().onReceivedNotification(intent, app, payload);
+
+
+
+                        new Handler(Looper.getMainLooper())
+                        {
+                            @Override
+                            public void handleMessage(@NonNull Message msg)
+                            {
+                                super.handleMessage(msg);
+                                notifyItemChanged(userApps.indexOf(app), payload);
+                            }
+                        }.sendEmptyMessage(1);
+
+                    }
+
+
+                }).start();
 
 
                 Log.d("payload", app.getNotificationTitle() + " created payload");
