@@ -131,11 +131,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             finishAfterTransition();
     }
 
-    //perform home button action if activity is visible
-    public boolean isVisible()
-    {
-        return isVisible;
-    }
 
     //detect if wallpaper has changed
     private void detectWallpaperChanges()
