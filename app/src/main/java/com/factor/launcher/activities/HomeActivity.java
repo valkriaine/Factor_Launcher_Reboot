@@ -22,8 +22,8 @@ import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.util.OnSystemActionsCallBack;
-import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.util.Util;
+import com.factor.launcher.view_models.AppSettingsManager;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
@@ -31,6 +31,8 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 {
 
     private Drawable wallpaper = null;
+
+    private int wallpaperId = 0;
 
     private WallpaperManager wm;
 
@@ -57,7 +59,13 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
         wm = WallpaperManager.getInstance(this);
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED)
         {
-            if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
+            if (wm.getWallpaperInfo() == null)
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
+                else
+                if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
+            }
         }
 
 
@@ -111,6 +119,8 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
         }
     }
 
+
+    //home button press
     @Override
     protected void onNewIntent(Intent intent)
     {
@@ -139,13 +149,30 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
                 //live wallpaper
                 if (wm.getWallpaperInfo() != null)
                 {
-                    isWallpaperChanged = wallpaper != null;
-                    wallpaper = null;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    {
+                        isWallpaperChanged = wallpaperId != 0;
+                        wallpaperId = 0;
+                    }
+                    else
+                    {
+                        isWallpaperChanged = wallpaper != null;
+                        wallpaper = null;
+                    }
                 }
                 else //static wallpaper
                 {
-                    isWallpaperChanged = wallpaper == null || !Util.bytesEqualTo(wallpaper, wm.getFastDrawable());
-                    wallpaper = wm.getFastDrawable();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    {
+                        isWallpaperChanged = wallpaperId == 0 || wallpaperId != wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
+                        wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
+                    }
+                    else
+                    {
+                        isWallpaperChanged = wallpaper == null || !Util.bytesEqualTo(wallpaper, wm.getFastDrawable());
+                        wallpaper = wm.getFastDrawable();
+                    }
                 }
             }
         }
