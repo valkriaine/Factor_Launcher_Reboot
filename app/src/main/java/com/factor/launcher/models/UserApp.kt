@@ -46,11 +46,8 @@ class UserApp
         {
             value.equals(CATEGORY_TRANSPORT) -> this.isMediaTile = true
             value.equals(CATEGORY_PROGRESS) -> this.isProgressBar = true
-            else ->
-            {
-                resetCategory()
-                //...other categories
-            }
+            //...other categories
+            else -> resetCategory()
         }
     }
 
@@ -87,9 +84,8 @@ class UserApp
 
     private fun resetCategory()
     {
-        this.notificationCategory = ""
-        isProgressBar = false
-        isMediaTile = false
+        this.isMediaTile = false
+        this.isProgressBar = false
         // add more here
         //...
     }
