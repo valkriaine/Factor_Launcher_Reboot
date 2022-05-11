@@ -48,8 +48,7 @@ class UserApp
             value.equals(CATEGORY_PROGRESS) -> this.isProgressBar = true
             else ->
             {
-                this.isMediaTile = false
-                this.isProgressBar = false
+                resetCategory()
                 //...other categories
             }
         }
@@ -86,9 +85,13 @@ class UserApp
         this.isPinned = !isPinned
     }
 
-    fun resetCategory()
+    private fun resetCategory()
     {
         this.notificationCategory = ""
+        isProgressBar = false
+        isMediaTile = false
+        // add more here
+        //...
     }
 
     //generate new factor
