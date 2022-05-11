@@ -20,8 +20,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
+import com.factor.launcher.util.OnSystemActionsCallBack;
 import com.factor.launcher.view_models.AppSettingsManager;
-import com.factor.launcher.util.OnBackPressedCallBack;
 import com.factor.launcher.util.Util;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
@@ -85,7 +85,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     public void onBackPressed()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) finishAfterTransition();
+        if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onBackPressed()) finishAfterTransition();
     }
 
     //if wallpaper is changed, reload fragment
@@ -127,7 +127,8 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     {
         super.onNewIntent(intent);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) finishAfterTransition();
+        if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onNewIntent())
+            finishAfterTransition();
     }
 
     //perform home button action if activity is visible

@@ -5,10 +5,6 @@ object Constants
 {
     const val PACKAGE_NAME = "com.factor.launcher"
 
-    const val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"
-
-    const val SYSTEM_DIALOG_REASON_KEY = "reason"
-
     const val STORAGE_PERMISSION_CODE = 955
 
     const val BROADCAST_ACTION_ADD = "$PACKAGE_NAME.ACTION_ADD"

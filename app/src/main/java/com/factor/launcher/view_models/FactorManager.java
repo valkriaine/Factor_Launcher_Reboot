@@ -20,7 +20,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
-import com.factor.launcher.util.Payload;
+import com.factor.launcher.models.Payload;
 
 import java.util.ArrayList;
 import java.util.Collections;

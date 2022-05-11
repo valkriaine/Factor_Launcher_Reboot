@@ -24,7 +24,7 @@ import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.ui.AnimatedConstraintLayout;
 import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.Payload;
+import com.factor.launcher.models.Payload;
 import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.FactorManager;
 import org.jetbrains.annotations.Nullable;

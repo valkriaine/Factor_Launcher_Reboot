@@ -26,7 +26,7 @@ import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.models.NotificationHolder;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.Constants;
-import com.factor.launcher.util.Payload;
+import com.factor.launcher.models.Payload;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;

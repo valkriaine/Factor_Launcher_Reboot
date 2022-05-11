@@ -65,7 +65,7 @@ import static com.factor.launcher.util.Constants.REQUEST_CREATE_WIDGET;
 import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
 
 
-public class HomeScreenFragment extends Fragment implements OnBackPressedCallBack, LifecycleOwner
+public class HomeScreenFragment extends Fragment implements OnSystemActionsCallBack, LifecycleOwner
 {
     private boolean isLiveWallpaper = false;
 
@@ -127,11 +127,11 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
     public boolean onBackPressed()
     {
 
-            if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
-            {
-                animatorCollapse.start();
-                return true;
-            }
+        if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
+        {
+            animatorCollapse.start();
+            return true;
+        }
 
         if (binding.homePager.getCurrentItem() == 1)
         {
@@ -160,6 +160,35 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         }
         else
             return true;
+    }
+
+
+    @Override
+    public boolean onNewIntent()
+    {
+        if (getContext() != null)
+        {
+            if (isWidgetExpanded && !animatorCollapse.isStarted())
+                animatorCollapse.start();
+        }
+
+        if (binding.homePager.getCurrentItem() == 1)
+        {
+            if (appListManager.isDisplayingHidden())
+                binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
+
+            if (binding.appsList.getLayoutManager() != null)
+                (binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
+
+
+            binding.homePager.setCurrentItem(0, true);
+        }
+
+        if (binding.tilesList.getLayoutManager() != null)
+            binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+
+
+        return true;
     }
 
 
