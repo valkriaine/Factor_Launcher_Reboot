@@ -243,7 +243,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
     private void forceNotificationListener()
     {
-        appListManager.clearAllNotifications();
+        //appListManager.clearAllNotifications();
         if (notificationListenerIntent != null && getContext() != null)
         {
             try
@@ -275,9 +275,9 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         int height = Resources.getSystem().getDisplayMetrics().heightPixels;
 
 
-        int paddingTop105 = (int) Util.INSTANCE.dpToPx(105, getContext());
-        int dp4 = (int) Util.INSTANCE.dpToPx(4, getContext());
-        int dp20 = (int) Util.INSTANCE.dpToPx(20, getContext());
+        int paddingTop105 = (int) Util.dpToPx(105, getContext());
+        int dp4 = (int) Util.dpToPx(4, getContext());
+        int dp20 = (int) Util.dpToPx(20, getContext());
 
         int paddingTop;
 
@@ -286,10 +286,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         else
             paddingTop = height/8;
 
-        int paddingBottom300 = (int) Util.INSTANCE.dpToPx(300, getContext());
-        int paddingBottom150 = (int) Util.INSTANCE.dpToPx(150, getContext());
-        int paddingBottomOnSearch = (int) Util.INSTANCE.dpToPx(2000, getContext());
-        int appListPaddingTop100 = (int) Util.INSTANCE.dpToPx(100, getContext());
+        int paddingBottom300 = (int) Util.dpToPx(300, getContext());
+        int paddingBottom150 = (int) Util.dpToPx(150, getContext());
+        int paddingBottomOnSearch = (int) Util.dpToPx(2000, getContext());
+        int appListPaddingTop100 = (int) Util.dpToPx(100, getContext());
 
 
         blurAlg = new RenderScriptBlur(getContext());
@@ -476,7 +476,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
         //tile list
         //***************************************************************************************************************************************************
-        binding.widgetBase.setTranslationY(Util.INSTANCE.dpToPx(-500, getContext()));
+        binding.widgetBase.setTranslationY(Util.dpToPx(-500, getContext()));
         int left = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.05)) - 1;
         int right = (int)(width*(((0.8 - appSettings.getTileListScale())) * 100 * 0.005 + 0.2)) - 1;
         binding.tilesList.setPadding(left, paddingTop, right, paddingBottom300);
@@ -517,7 +517,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         //search bar
         //***************************************************************************************************************************************************
         binding.searchBase.setTranslationY(-500f);
-        binding.searchCard.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
+        binding.searchCard.setRadius(Util.dpToPx(appSettings.getCornerRadius(), getContext()));
 
         EditText searchBar = binding.searchView.findViewById(R.id.search_src_text);
 
@@ -612,7 +612,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.widgetBaseShadow.setTranslationY(-9999);
 
         // widget base animators
-        animatorExpand = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(0, getContext()));
+        animatorExpand = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.dpToPx(0, getContext()));
         animatorExpand.addListener(new AnimatorListenerAdapter()
         {
             @Override
@@ -626,7 +626,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 FactorApplication.getAppWidgetHost().startListening();
             }
         });
-        animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.INSTANCE.dpToPx(-500, getContext()));
+        animatorCollapse = ObjectAnimator.ofFloat(binding.widgetBase, View.TRANSLATION_Y, Util.dpToPx(-500, getContext()));
         animatorCollapse.setDuration(80);
         animatorCollapse.addListener(new AnimatorListenerAdapter()
         {
@@ -683,7 +683,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             animatorExpand.start();
 
             if (getContext() != null)
-                binding.tilesList.springTranslateTo(Util.INSTANCE.dpToPx(400 - paddingTop/4f, getContext()));
+                binding.tilesList.springTranslateTo(Util.dpToPx(400 - paddingTop/4f, getContext()));
 
 
             //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
@@ -747,7 +747,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
 
             new Thread(() ->
             {
-                Bitmap m = Util.INSTANCE.drawableToBitmap(wm.getFastDrawable());
+                Bitmap m = Util.drawableToBitmap(wm.getFastDrawable());
 
                 Bitmap temp = m;
                 Bitmap blurredM5;
@@ -811,7 +811,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         filterAppAction.addAction(Constants.BROADCAST_ACTION_ADD);
         filterAppAction.addAction(Constants.BROADCAST_ACTION_RENAME);
         filterAppAction.addAction(Constants.SETTINGS_CHANGED);
-        filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        //filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         getContext().registerReceiver(appActionReceiver, filterAppAction);
 
         packageActionsReceiver = new PackageActionsReceiver(appListManager);
@@ -933,10 +933,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
                 ConstraintLayout.LayoutParams.MATCH_PARENT);
 
         params.setMargins(
-                (int)Util.INSTANCE.dpToPx(10, getContext()),
-                (int)Util.INSTANCE.dpToPx(30, getContext()),
-                (int)Util.INSTANCE.dpToPx(10, getContext()),
-                (int)Util.INSTANCE.dpToPx(10, getContext()));
+                (int) Util.dpToPx(10, getContext()),
+                (int) Util.dpToPx(30, getContext()),
+                (int) Util.dpToPx(10, getContext()),
+                (int) Util.dpToPx(10, getContext()));
         hostView.setLayoutParams(params);
         binding.widgetBase.addView(hostView);
         binding.widgetBaseShadow.setVisibility(View.GONE);

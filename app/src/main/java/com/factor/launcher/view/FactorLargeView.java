@@ -29,7 +29,8 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
 import com.factor.launcher.ui.ViewKt;
-import com.factor.launcher.ui.WaveView;
+import com.factor.launcher.ui.wave_animation.WaveView;
+import com.factor.launcher.ui.wave_animation.Waves;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
 import eightbitlab.com.blurview.*;
@@ -83,38 +84,11 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
 
     private WaveView waveView;
 
-    private final WaveView.WaveData wave1 =
-            new WaveView.WaveData((float)
-                    (800 + Math.random() * 100),
-                    (float) (100 + Math.random() * 20),
-                    (float) (200 + Math.random() * 20),
-                    (float) (Math.random() * 50),
-                    Color.WHITE, Color.BLACK,
-                    0.3f,
-                    (long) (2000 + Math.random() * 1000),
-                    true);
+    private final WaveView.WaveData wave1 = Waves.generateWave();
 
-    private final WaveView.WaveData wave2 =
-            new WaveView.WaveData((float)
-                    (800 + Math.random() * 100),
-                    (float) (100 + Math.random() * 20),
-                    (float) (200 + Math.random() * 20),
-                    (float) (Math.random() * 50),
-                    Color.WHITE, Color.BLACK,
-                    0.3f,
-                    (long) (2000 + Math.random() * 1000),
-                    false);
+    private final WaveView.WaveData wave2 = Waves.generateWave();
 
-    private final WaveView.WaveData wave3 =
-            new WaveView.WaveData((float)
-                    (800 + Math.random() * 100),
-                    (float) (100 + Math.random() * 20),
-                    (float) (200 + Math.random() * 20),
-                    (float) (Math.random() * 50),
-                    Color.WHITE, Color.BLACK,
-                    0.3f, (long)
-                    (2000 + Math.random() * 1000),
-                    false);
+    private final WaveView.WaveData wave3 = Waves.generateWave();
 
     public FactorLargeView(Context context) {
         super(context);
@@ -201,7 +175,7 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
 
         }
 
-        card.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
+        card.setRadius(Util.dpToPx(appSettings.getCornerRadius(), getContext()));
 
         tileIcon.setElevationDp(appSettings.getShowShadowAroundIcon()? 50 : 0);
     }
@@ -544,7 +518,7 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
                 icon = itemView.findViewById(R.id.shortcut_icon);
                 shortcutBase = itemView.findViewById(R.id.shortcut_base);
 
-                card.setElevation(settings.getShowShadowAroundIcon()? Util.INSTANCE.dpToPx(10, itemView.getContext()) : 0);
+                card.setElevation(settings.getShowShadowAroundIcon()? Util.dpToPx(10, itemView.getContext()) : 0);
 
                 ViewGroup.LayoutParams params = card.getLayoutParams();
 

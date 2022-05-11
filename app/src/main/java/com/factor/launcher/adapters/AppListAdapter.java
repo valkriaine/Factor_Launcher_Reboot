@@ -134,10 +134,10 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
                                 if (icon != null)
                                 {
-                                    Bitmap b = Util.INSTANCE.drawableToBitmap(icon);
-                                    app.setVibrantColor(Util.INSTANCE.getVibrantColor(b));
-                                    app.setDarkMutedColor(Util.INSTANCE.getDarkMutedColor(b));
-                                    app.setDominantColor(Util.INSTANCE.getDominantColor(b));
+                                    Bitmap b = Util.drawableToBitmap(icon);
+                                    app.setVibrantColor(Util.getVibrantColor(b));
+                                    app.setDarkMutedColor(Util.getDarkMutedColor(b));
+                                    app.setDominantColor(Util.getDominantColor(b));
                                 }
                             }
 

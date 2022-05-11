@@ -134,7 +134,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
                 float xOffset = position + positionOffset;
-                binding.arrowButton.setRotation(+180 * xOffset - 180);
+                binding.arrowButton.setRotation(180 * xOffset - 180);
                 binding.scroller.scrollTo((int) (500*xOffset), 0);
             }
 

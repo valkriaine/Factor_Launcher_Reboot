@@ -14,6 +14,7 @@ import java.lang.reflect.Method
 object Util
 {
     //convert dp to pixel
+    @JvmStatic
     fun dpToPx(value : Float, context: Context) : Float
     {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
@@ -21,6 +22,7 @@ object Util
 
     //expand notification panel
     @SuppressLint("WrongConstant", "PrivateApi")
+    @JvmStatic
     fun setExpandNotificationDrawer(context: Context, expand: Boolean)
     {
         try
@@ -46,6 +48,7 @@ object Util
     ** by ChrisDEV @ https://gist.github.com/XinyueZ
     */
     //compare drawables
+    @JvmStatic
     fun <T : Drawable> T.bytesEqualTo(t: T?) = toBitmap().bytesEqualTo(t?.toBitmap(), true)
 
     //required for drawable comparison
@@ -68,29 +71,34 @@ object Util
         stream.toByteArray()
     }
 
+    @JvmStatic
     fun drawableToBitmap(drawable: Drawable) : Bitmap
     {
         return drawable.toBitmap()
     }
 
+    @JvmStatic
     fun getDominantColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)
             .generate().getDominantColor(0)
     }
 
+    @JvmStatic
     fun getVibrantColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)
             .generate().getVibrantColor(0)
     }
 
+    @JvmStatic
     fun getLightVibrantColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)
             .generate().getLightVibrantColor(0)
     }
 
+    @JvmStatic
     fun getDarkVibrantColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)
@@ -103,12 +111,14 @@ object Util
             .generate().getMutedColor(0)
     }
 
+    @JvmStatic
     fun getLightMutedColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)
             .generate().getLightMutedColor(0)
     }
 
+    @JvmStatic
     fun getDarkMutedColor(resource: Bitmap): Int {
         return Palette.from(resource)
             .maximumColorCount(8)

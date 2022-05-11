@@ -128,7 +128,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                 break;
         }
 
-        int padding = (int) Util.INSTANCE.dpToPx(appSettings.getTileMargin(), parent.getContext());
+        int padding = (int) Util.dpToPx(appSettings.getTileMargin(), parent.getContext());
         view.setPadding(padding, padding, padding, padding);
         view.setLayoutParams(layoutParams);
         activity.registerForContextMenu(view);

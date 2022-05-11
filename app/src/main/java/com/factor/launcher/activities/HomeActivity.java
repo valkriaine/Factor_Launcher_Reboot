@@ -122,6 +122,14 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
         isVisible = false;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
+        if (!(fragment instanceof OnBackPressedCallBack) || !((OnBackPressedCallBack) fragment).onBackPressed()) finishAfterTransition();
+    }
+
     //perform home button action if activity is visible
     public boolean isVisible()
     {
@@ -148,7 +156,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
                 }
                 else //static wallpaper
                 {
-                    isWallpaperChanged = wallpaper == null || !Util.INSTANCE.bytesEqualTo(wallpaper, wm.getFastDrawable());
+                    isWallpaperChanged = wallpaper == null || !Util.bytesEqualTo(wallpaper, wm.getFastDrawable());
                     wallpaper = wm.getFastDrawable();
                 }
             }

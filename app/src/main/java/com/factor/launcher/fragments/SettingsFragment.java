@@ -42,7 +42,7 @@ import pub.devrel.easypermissions.PermissionRequest;
 
 import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 
-
+//todo: it's time to cleanup this page LOL
 public class SettingsFragment extends Fragment implements LifecycleOwner
 {
     private final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -111,9 +111,9 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
         assert background != null;
 
-        m = Util.INSTANCE.drawableToBitmap(background);
+        m = Util.drawableToBitmap(background);
 
-        int paddingHorizontal = (int) Util.INSTANCE.dpToPx(20, getContext());
+        int paddingHorizontal = (int) Util.dpToPx(20, getContext());
 
         AppSettingsManager appSettingsManager = AppSettingsManager.getInstance(getActivity().getApplication());
 
@@ -189,7 +189,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         });
 
         binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
-        binding.searchBase.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.searchBase.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.notificationAccessButton.setOnClickListener(v -> buildNotificationServiceAlertDialog());
         binding.storageAccessButton.setOnClickListener(v -> requestStoragePermission());
@@ -211,14 +211,14 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.menuButton.setImageResource(settings.isDarkIcon()? R.drawable.icon_menu_black : R.drawable.icon_menu);
 
         binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
-        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.demoCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
 
-        binding.rootCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.togglesCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.slidersCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.demoBackground.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.colorPickerCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.advancedOptionsCard.setRadius(Util.INSTANCE.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.rootCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.togglesCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.slidersCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.demoBackground.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.colorPickerCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+        binding.advancedOptionsCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.blurToggle.setChecked(settings.isBlurred());
         binding.blurToggle.setOnClickListener(v ->
@@ -315,21 +315,21 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         if (getContext() == null || getActivity() == null)
             return;
 
-        int padding = (int) Util.INSTANCE.dpToPx(binding.tileMarginSlider.getValue(), getContext());
+        int padding = (int) Util.dpToPx(binding.tileMarginSlider.getValue(), getContext());
         binding.demoBase.setPadding(padding, padding, padding, padding);
 
-        binding.rootCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.demoCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.togglesCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.slidersCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.demoBackground.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.colorPickerCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
-        binding.advancedOptionsCard.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.rootCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.demoCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.togglesCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.slidersCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.demoBackground.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.colorPickerCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.advancedOptionsCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
 
         binding.demoBlur.setBlurRadius(binding.blurRadiusSlider.getValue());
 
         binding.menuButton.setImageResource(binding.darkIconToggle.isChecked()? R.drawable.icon_menu_black : R.drawable.icon_menu);
-        binding.searchBase.setRadius(Util.INSTANCE.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.searchBase.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(binding.darkIconToggle.isChecked()?Color.BLACK:Color.WHITE);
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(binding.darkIconToggle.isChecked()?Color.DKGRAY:Color.LTGRAY);
 
@@ -381,7 +381,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.notificationTitle.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
         binding.notificationContent.setTextColor(binding.darkTextToggle.isChecked()?Color.BLACK:Color.WHITE);
 
-        binding.tileIcon.setElevation(binding.iconShadowToggle.isChecked()?Util.INSTANCE.dpToPx(50, getContext()):0);
+        binding.tileIcon.setElevation(binding.iconShadowToggle.isChecked()? Util.dpToPx(50, getContext()):0);
     }
 
     //detect, save, and notify changes in app settings
