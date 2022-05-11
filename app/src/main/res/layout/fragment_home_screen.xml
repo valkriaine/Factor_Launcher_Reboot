@@ -238,9 +238,11 @@
 
 
 
+                        <!--layout animation does not work, need new layout manager-->
                         <com.factor.bouncy.BouncyRecyclerView
                                 android:id="@+id/tiles_list"
                                 android:contentDescription="@string/home_screen"
+                                android:layoutAnimation="@anim/tile_animation"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 app:recyclerview_fling_animation_size="0.3"
