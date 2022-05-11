@@ -61,7 +61,7 @@ public class AppListManager extends ViewModel
 
     public final RecentAppsHost recentAppsHost;
 
-    private final AppSettings settings;
+    public final AppSettings settings;
 
     //constructor
     public AppListManager(HomeScreenFragment fragment,

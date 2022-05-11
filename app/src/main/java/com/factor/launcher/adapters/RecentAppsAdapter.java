@@ -84,6 +84,7 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
             try
             {
                 binding.recentIcon.setImageDrawable(appListManager.packageManager.getApplicationIcon(name));
+                binding.recentIcon.setElevationDp(appListManager.settings.getShowShadowAroundIcon()? 30 : 0);
             }
             catch (PackageManager.NameNotFoundException ignored){}
 
