@@ -170,24 +170,23 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         {
             if (isWidgetExpanded && !animatorCollapse.isStarted())
                 animatorCollapse.start();
+
+            if (binding.homePager.getCurrentItem() == 1)
+            {
+                if (appListManager.isDisplayingHidden())
+                    binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
+
+                if (binding.appsList.getLayoutManager() != null)
+                    (binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
+
+
+                binding.homePager.setCurrentItem(0, true);
+            }
+
+            if (binding.tilesList.getLayoutManager() != null)
+                binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
+
         }
-
-        if (binding.homePager.getCurrentItem() == 1)
-        {
-            if (appListManager.isDisplayingHidden())
-                binding.appsList.setAdapter(appListManager.setDisplayHidden(false));
-
-            if (binding.appsList.getLayoutManager() != null)
-                (binding.appsList.getLayoutManager()).smoothScrollToPosition(binding.appsList, new RecyclerView.State(), 0);
-
-
-            binding.homePager.setCurrentItem(0, true);
-        }
-
-        if (binding.tilesList.getLayoutManager() != null)
-            binding.tilesList.getLayoutManager().smoothScrollToPosition(binding.tilesList, new RecyclerView.State(), 0);
-
-
         return true;
     }
 
@@ -272,7 +271,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
     private void forceNotificationListener()
     {
-        //appListManager.clearAllNotifications();
+        appListManager.clearAllNotifications();
         if (notificationListenerIntent != null && getContext() != null)
         {
             try

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import androidx.core.content.PermissionChecker;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
@@ -36,8 +37,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     private boolean isWallpaperChanged = false;
 
     private boolean areSettingsChanged = false;
-
-    private boolean isVisible = true;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -102,8 +101,6 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             return;
         }
 
-        isVisible = true;
-
         detectWallpaperChanges();
 
         if(isWallpaperChanged || areSettingsChanged)
@@ -114,21 +111,16 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
         }
     }
 
-    //set isVisible to false when activity is no longer visible
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        isVisible = false;
-    }
-
     @Override
     protected void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onNewIntent())
-            finishAfterTransition();
+        if (hasWindowFocus())
+        {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
+            if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onNewIntent())
+                finishAfterTransition();
+        }
     }
 
 
@@ -165,7 +157,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     {
         AppSettingsManager.getInstance(getApplication()).respondToSettingsChange();
 
-        if (isVisible)
+        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED))
         {
             areSettingsChanged = false;
             Log.d("settings_changed", "reload");
