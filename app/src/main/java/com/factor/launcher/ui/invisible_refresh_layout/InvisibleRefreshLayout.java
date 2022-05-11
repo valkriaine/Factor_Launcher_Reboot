@@ -144,7 +144,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
             android.R.attr.enabled
     };
 
-    InvisibleCircleImageView mCircleView;
+    InvisibleCircle mCircleView;
     private int mCircleViewIndex = -1;
 
     protected int mFrom;
@@ -452,7 +452,7 @@ public class InvisibleRefreshLayout extends ViewGroup implements NestedScrolling
     }
 
     private void createProgressView() {
-        mCircleView = new InvisibleCircleImageView(getContext());
+        mCircleView = new InvisibleCircle(getContext());
         mProgress = new CircularProgressDrawable(getContext());
         mProgress.setStyle(CircularProgressDrawable.DEFAULT);
         mCircleView.setImageDrawable(mProgress);

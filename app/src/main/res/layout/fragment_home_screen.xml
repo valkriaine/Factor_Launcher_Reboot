@@ -59,6 +59,7 @@
         <!--search bar holder-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@id/search_base"
+                android:hapticFeedbackEnabled="true"
                 android:translationZ="10dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginHorizontal="10dp"
@@ -288,17 +289,24 @@
                             android:layout_height="match_parent"
                             app:layout_constraintEnd_toStartOf="@id/scroll_bar"/>
 
+                    <com.factor.launcher.ui.invisible_refresh_layout.InvisibleRefreshLayout
+                            android:id="@+id/drawer_swipe_refresh_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
 
                         <com.factor.bouncy.BouncyRecyclerView
                                 android:id="@+id/apps_list"
-                                android:translationZ="-20dp"
                                 app:recyclerview_fling_animation_size="0.3"
                                 app:recyclerview_overscroll_animation_size="0.3"
-                                android:nestedScrollingEnabled="false"
-                                app:layout_constraintTop_toTopOf="parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clipToPadding="false"/>
+
+                    </com.factor.launcher.ui.invisible_refresh_layout.InvisibleRefreshLayout>
+
+
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

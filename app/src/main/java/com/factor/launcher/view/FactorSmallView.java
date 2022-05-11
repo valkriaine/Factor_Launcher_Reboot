@@ -5,13 +5,17 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.ViewKt;
 import com.factor.launcher.ui.WaveView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
@@ -24,8 +28,10 @@ import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 /**
  * Small tile
  */
-public class FactorSmallView extends ConstraintLayout
+public class FactorSmallView extends ConstraintLayout implements LifecycleOwner
 {
+    private boolean isMediaTile = false;
+    private int notificationState = 0; //0 for no notification
     private BlurView trans;
 
     private MaterialCardView card;
@@ -38,10 +44,6 @@ public class FactorSmallView extends ConstraintLayout
 
     private WaveView waveView;
 
-    private boolean isMediaTile = false;
-
-
-    private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     private final WaveView.WaveData wave1 =
             new WaveView.WaveData((float)
@@ -143,6 +145,7 @@ public class FactorSmallView extends ConstraintLayout
         tileIcon.setElevationDp(appSettings.getShowShadowAroundIcon()? 50 : 0);
     }
 
+
     public void setupContent(Factor factor)
     {
         tileLabel.setText(factor.getLabelNew());
@@ -191,7 +194,7 @@ public class FactorSmallView extends ConstraintLayout
     }
 
 
-    public void setupWaves(Factor factor)
+    private void setupWaves(Factor factor)
     {
         wave1.setStartColor(factor.getUserApp().getVibrantColor());
         wave1.setEndColor(factor.getUserApp().getDominantColor());
@@ -212,7 +215,7 @@ public class FactorSmallView extends ConstraintLayout
 
 
     // sound wave animation for media notification
-    public void startWave()
+    private void startWave()
     {
         if (waveView.getAlpha() != 1)
             waveView.animate().alpha(1).setDuration(150).start();
@@ -221,7 +224,7 @@ public class FactorSmallView extends ConstraintLayout
 
     }
 
-    public void stopWave()
+    private void stopWave()
     {
         waveView.pauseAnimation();
     }
@@ -240,5 +243,12 @@ public class FactorSmallView extends ConstraintLayout
         super.onDetachedFromWindow();
         if (waveView.isEnabled())
             stopWave();
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle()
+    {
+        return ViewKt.getLifecycle(this);
     }
 }

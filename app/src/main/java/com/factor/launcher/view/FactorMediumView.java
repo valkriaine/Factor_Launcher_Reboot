@@ -8,14 +8,18 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.ViewKt;
 import com.factor.launcher.ui.WaveView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
@@ -26,8 +30,10 @@ import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 /**
  * Medium tile
  */
-public class FactorMediumView extends ConstraintLayout
+public class FactorMediumView extends ConstraintLayout implements LifecycleOwner
 {
+    private boolean isMediaTile = false;
+    private int notificationState = 0; //0 for no notification
     private BlurView trans;
 
     private MaterialCardView card;
@@ -58,7 +64,6 @@ public class FactorMediumView extends ConstraintLayout
 
     private WaveView waveView;
 
-    private boolean isMediaTile = false;
 
     private final WaveView.WaveData wave1 =
             new WaveView.WaveData((float)
@@ -92,7 +97,6 @@ public class FactorMediumView extends ConstraintLayout
                     0.3f, (long)
                     (2000 + Math.random() * 1000),
                     false);
-    private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     public FactorMediumView(Context context) {
         super(context);
@@ -428,5 +432,12 @@ public class FactorMediumView extends ConstraintLayout
 
             notificationState = newCount;
         }
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle()
+    {
+        return ViewKt.getLifecycle(this);
     }
 }

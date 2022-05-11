@@ -46,13 +46,8 @@ public class WaveView extends View implements LifecycleOwner
 
     public static class WaveData {
 
-        public static final int GRADIENT_ORIENTATION_VERTICAL = 1;
         public static final int GRADIENT_ORIENTATION_HORIZONTAL = 2;
         private static final int DEFAULT_SAMPLE_SIZE = 16;
-
-        public WaveData() {
-
-        }
 
         public WaveData(float waveLength, float waveHeight, float fixedHeight, float offset, int startColor, int endColor, float alpha, long duration, boolean right) {
             this.waveLength = waveLength;
@@ -81,15 +76,15 @@ public class WaveView extends View implements LifecycleOwner
          *
          */
 
-        private float waveLength = 200;
-        private float waveHeight = 50;
-        private float fixedHeight = 0;
-        private float offset = 0;
-        private long duration = 2000;
-        private int startColor = Color.WHITE;
-        private int endColor = Color.WHITE;
-        private float alpha = 1;
-        private boolean right = true;
+        private float waveLength;
+        private float waveHeight;
+        private float fixedHeight;
+        private float offset;
+        private long duration;
+        private int startColor;
+        private int endColor;
+        private float alpha;
+        private boolean right;
         private int sampleSize = DEFAULT_SAMPLE_SIZE;
         private int gradientOrientation = GRADIENT_ORIENTATION_HORIZONTAL;
 
@@ -212,12 +207,10 @@ public class WaveView extends View implements LifecycleOwner
                 animator.setRepeatMode(ValueAnimator.RESTART);
                 animator.setRepeatCount(ValueAnimator.INFINITE);
                 if (first) {
-                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    animator.addUpdateListener(valueAnimator ->
+                    {
 //                            Log.d(TAG, "onAnimationUpdate");
-                            ViewCompat.postInvalidateOnAnimation(WaveView.this);
-                        }
+                        ViewCompat.postInvalidateOnAnimation(WaveView.this);
                     });
                 }
                 first = false;

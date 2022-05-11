@@ -18,6 +18,8 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.bouncy.BouncyRecyclerView;
@@ -26,6 +28,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.ViewKt;
 import com.factor.launcher.ui.WaveView;
 import com.factor.launcher.util.Util;
 import com.google.android.material.card.MaterialCardView;
@@ -38,8 +41,11 @@ import static androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT;
 /**
  * Large tile
  */
-public class FactorLargeView extends ConstraintLayout
+public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
 {
+
+    private boolean isMediaTile = false;
+    private int notificationState = 0; //0 for no notification
     private BlurView trans;
 
     private MaterialCardView card;
@@ -77,8 +83,6 @@ public class FactorLargeView extends ConstraintLayout
 
     private WaveView waveView;
 
-    private boolean isMediaTile = false;
-
     private final WaveView.WaveData wave1 =
             new WaveView.WaveData((float)
                     (800 + Math.random() * 100),
@@ -111,8 +115,6 @@ public class FactorLargeView extends ConstraintLayout
                     0.3f, (long)
                     (2000 + Math.random() * 1000),
                     false);
-
-    private int notificationState = 0; //0 for no notification, 1 for otherwise
 
     public FactorLargeView(Context context) {
         super(context);
@@ -567,5 +569,12 @@ public class FactorLargeView extends ConstraintLayout
                 catch (NullPointerException | ActivityNotFoundException ignored){}
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle()
+    {
+        return ViewKt.getLifecycle(this);
     }
 }

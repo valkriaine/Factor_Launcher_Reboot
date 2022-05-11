@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -361,6 +362,8 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.recentAppsList.setLayoutManager(recentManager);
         binding.recentAppsList.setAdapter(appListManager.recentAppsHost.getAdapter());
 
+
+
         binding.emptyBase.setOnClickListener(v ->
         {
             if (getContext() != null && isWidgetExpanded && !animatorCollapse.isStarted())
@@ -493,7 +496,7 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         };
 
         appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
-        binding.tilesList.setItemViewCacheSize(20);
+        binding.tilesList.setItemViewCacheSize(appListManager.getFactorManager().adapter.getItemCount());
         binding.tilesList.setOrientation(1);
         binding.tilesList.setConnectedView(binding.arrowButton);
         binding.tilesList.setConnectedSpringBottom(
@@ -516,8 +519,10 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
         binding.searchBase.setTranslationY(-500f);
         binding.searchCard.setRadius(Util.INSTANCE.dpToPx(appSettings.getCornerRadius(), getContext()));
 
-        ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(appSettings.isDarkIcon()?Color.BLACK:Color.WHITE);
-        ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setHintTextColor(appSettings.isDarkIcon()?Color.DKGRAY:Color.LTGRAY);
+        EditText searchBar = binding.searchView.findViewById(R.id.search_src_text);
+
+        searchBar.setTextColor(appSettings.isDarkIcon()?Color.BLACK:Color.WHITE);
+        searchBar.setHintTextColor(appSettings.isDarkIcon()?Color.DKGRAY:Color.LTGRAY);
 
         //select all text when the user clicks on the search bar
         //instead of clearing the search input
@@ -684,6 +689,25 @@ public class HomeScreenFragment extends Fragment implements OnBackPressedCallBac
             //Util.INSTANCE.setExpandNotificationDrawer(getContext(), true);
 
         });
+
+
+        //pull to open search
+        binding.drawerSwipeRefreshLayout.setDistanceToTriggerSync(appListPaddingTop100*2);
+        binding.drawerSwipeRefreshLayout.setOnRefreshListener(() ->
+        {
+            binding.drawerSwipeRefreshLayout.setRefreshing(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                binding.searchBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
+            searchBar.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(searchBar, 0);
+            }
+        });
+
+
 
         widgetResultLauncher = registerForActivityResult(widgetActivityResultContract, this::handleWidgetResult);
 

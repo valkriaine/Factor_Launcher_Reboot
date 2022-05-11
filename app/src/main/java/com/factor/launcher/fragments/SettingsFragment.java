@@ -119,6 +119,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
         settings = appSettingsManager.getAppSettings();
 
+        binding.scrollView.setBindSpringToParent(true);
+
         tileColor = settings.getTileThemeColor();
         searchColor = settings.getSearchBarColor();
 
