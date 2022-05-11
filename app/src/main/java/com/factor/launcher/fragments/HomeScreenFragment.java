@@ -69,6 +69,8 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 {
     private boolean isLiveWallpaper = false;
 
+    private boolean isResetState = false;
+
     private FragmentHomeScreenBinding binding;
 
     private WallpaperManager wm;
@@ -238,6 +240,12 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                 appListManager.updateShortcuts();
+
+            isResetState = binding.homePager.getCurrentItem() == 0
+                    && !appListManager.isDisplayingHidden()
+                    && !binding.appsList.canScrollVertically(-1)
+                    && !binding.tilesList.canScrollVertically(-1)
+                    && !isWidgetExpanded;
         }
     }
 
