@@ -1,5 +1,6 @@
 package com.factor.launcher.models
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -44,9 +45,16 @@ class Factor
 
     fun getIcon() : Drawable? = this.userApp.icon
 
+    fun getBitmapIcon() : Bitmap? = this.userApp.bitmapIcon
+
     fun setIcon(icon : Drawable)
     {
         this.userApp.icon = icon
+    }
+
+    fun setIcon(bitmap: Bitmap)
+    {
+        this.userApp.bitmapIcon = bitmap
     }
 
     object Size

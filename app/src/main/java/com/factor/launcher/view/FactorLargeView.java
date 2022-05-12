@@ -95,12 +95,14 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
         init();
     }
 
-    public FactorLargeView(Context context, AttributeSet attrs) {
+    public FactorLargeView(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
         init();
     }
 
-    public FactorLargeView(Context context, AttributeSet attrs, int defStyle) {
+    public FactorLargeView(Context context, AttributeSet attrs, int defStyle)
+    {
         super(context, attrs, defStyle);
         init();
     }
@@ -477,7 +479,7 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
         @Override
         public ShortcutViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.shortcut_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shortcut_holder, parent, false);
 
             //resize to fit screen
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();

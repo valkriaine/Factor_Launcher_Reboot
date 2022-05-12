@@ -6,7 +6,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.factor.launcher.models.AppSettings
 
-@Database(entities = [AppSettings::class], exportSchema = false, version = 3)
+@Database(entities = [AppSettings::class], exportSchema = false, version = 4)
 abstract class AppSettingsDatabase : RoomDatabase()
 {
     abstract fun appSettingsDao(): AppSettingsDao
@@ -15,6 +15,7 @@ abstract class AppSettingsDatabase : RoomDatabase()
         Room.databaseBuilder(it.applicationContext, AppSettingsDatabase::class.java, "factor_settings")
             .addMigrations(SettingsMigrations.MIGRATION_CHANGE_TILE_LIST_RESIZING)
             .addMigrations(SettingsMigrations.MIGRATION_STATIC_BLUR)
+            .addMigrations(SettingsMigrations.MIGRATION_ICON_PACK)
             .fallbackToDestructiveMigration()
             .allowMainThreadQueries()
             .build()
@@ -54,6 +55,14 @@ abstract class AppSettingsDatabase : RoomDatabase()
                 override fun migrate(database: SupportSQLiteDatabase)
                 {
                     database.execSQL("ALTER TABLE AppSettings ADD COLUMN static_blur INTEGER NOT NULL DEFAULT 0")
+                }
+            }
+
+            val MIGRATION_ICON_PACK = object : Migration(3, 4)
+            {
+                override fun migrate(database: SupportSQLiteDatabase)
+                {
+                    database.execSQL("ALTER TABLE AppSettings ADD COLUMN icon_pack TEXT NOT NULL DEFAULT ''")
                 }
             }
         }

@@ -1,0 +1,17 @@
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.factor.bouncy.BouncyRecyclerView
+            android:id="@+id/icon_pack_recyclerview"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            app:recyclerview_overscroll_animation_size="0.3"
+            app:recyclerview_fling_animation_size="0.3"
+            android:scrollbars="horizontal"
+            android:scrollbarSize="1dp"
+            android:scrollbarDefaultDelayBeforeFade="50"/>
+</androidx.cardview.widget.CardView>

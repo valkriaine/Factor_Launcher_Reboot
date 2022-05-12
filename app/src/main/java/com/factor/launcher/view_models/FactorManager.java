@@ -21,6 +21,7 @@ import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.models.Payload;
+import com.factor.launcher.util.IconPackManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +48,8 @@ public class FactorManager extends ViewModel
 
     private final AppListManager appListManager;
 
+    private final IconPackManager.IconPack iconPack;
+
     //constructor
     public FactorManager(Activity activity,
                          ViewGroup background,
@@ -54,6 +57,7 @@ public class FactorManager extends ViewModel
                          PackageManager pm,
                          LauncherApps launcherApps,
                          LauncherApps.ShortcutQuery shortcutQuery,
+                         IconPackManager.IconPack iconPack,
                          Boolean isLiveWallpaper)
     {
         this.packageManager = pm;
@@ -61,6 +65,7 @@ public class FactorManager extends ViewModel
         this.shortcutQuery = shortcutQuery;
         this.launcherApps = launcherApps;
         this.appSettings = AppSettingsManager.getInstance(activity.getApplication()).getAppSettings();
+        this.iconPack = iconPack;
 
         adapter = new FactorsAdapter(this, appSettings, activity, isLiveWallpaper, userFactors, background);
         daoReference = FactorsDatabase.Companion.getInstance(activity.getApplicationContext()).factorsDao();
@@ -85,7 +90,15 @@ public class FactorManager extends ViewModel
                 try {
                     if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
                     {
-                        Drawable icon = packageManager.getApplicationIcon(f.getPackageName());
+                        Drawable icon;
+
+                        if (iconPack != null)
+                        {
+                            icon = iconPack.getDrawableIconForPackage(f.getPackageName(), packageManager.getApplicationIcon(f.getPackageName()));
+                        }
+                        else
+                            icon = appListManager.packageManager.getApplicationIcon(f.getPackageName());
+
                         f.setIcon(icon);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
@@ -258,8 +271,19 @@ public class FactorManager extends ViewModel
     {
         try
         {
+            Drawable icon;
             if (packageManager.getApplicationInfo(factor.getPackageName(), 0).enabled)
-                factor.setIcon(packageManager.getApplicationIcon(factor.getPackageName()));
+            {
+                if (iconPack != null)
+                {
+                    icon = iconPack.getDrawableIconForPackage(factor.getPackageName(), packageManager.getApplicationIcon(factor.getPackageName()));
+                }
+                else
+                    icon = appListManager.packageManager.getApplicationIcon(factor.getPackageName());
+
+                factor.setIcon(icon);
+
+            }
         }
         catch (Exception e)
         {

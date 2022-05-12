@@ -121,10 +121,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                    <!--app label-->
+                    <!--app label, icon pack name-->
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tileLabel"
-                            android:text="@string/app_name"
+                            android:text="@string/no_icon_pack"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
@@ -146,6 +146,21 @@
                             android:layout_height="70dp"
                             android:layout_width="70dp"
                             android:gravity="center"
+                            android:padding="10dp"
+                            android:elevation="50dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <com.factor.launcher.ui.ElevationImageView
+                            android:id="@+id/demo_icon_pack"
+                            android:src="@mipmap/factor_icon_round"
+                            android:layout_height="70dp"
+                            android:layout_width="70dp"
+                            android:gravity="center"
+                            android:visibility="invisible"
                             android:padding="10dp"
                             android:elevation="50dp"
                             android:scaleType="fitCenter"
@@ -251,6 +266,14 @@
                         android:orientation="vertical">
 
 
+                    <com.factor.launcher.ui.IconPackPickerView
+                            android:id="@+id/icon_pack_picker"
+                            app:cardCornerRadius="5dp"
+                            android:layout_marginBottom="10dp"
+                            app:cardBackgroundColor="@color/colorPrimaryDark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
                     <!--toggles section-->
                     <androidx.cardview.widget.CardView
                             android:id="@+id/toggles_card"
@@ -274,11 +297,13 @@
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:id="@+id/blur_toggle_label"
                                         android:text="@string/blur_effect"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"/>
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toStartOf="@+id/blur_toggle"
+                                        android:layout_height="0dp"
+                                        android:layout_width="0dp"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/blur_toggle"
                                         android:hapticFeedbackEnabled="true"
@@ -302,6 +327,7 @@
                                         android:layout_width="0dp"
                                         android:maxLines="3"
                                         android:ellipsize="end"
+                                        android:gravity="center_vertical"
                                         android:layout_height="wrap_content"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
@@ -325,11 +351,13 @@
                                     android:layout_height="wrap_content">
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:text="@string/use_dark_text"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_width="0dp"
+                                        android:gravity="center_vertical"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"/>
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toStartOf="@+id/dark_text_toggle"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/dark_text_toggle"
                                         android:hapticFeedbackEnabled="true"
@@ -348,11 +376,13 @@
                                     android:layout_height="wrap_content">
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:text="@string/use_dark_icon"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_width="0dp"
+                                        android:gravity="center_vertical"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"/>
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toStartOf="@+id/dark_icon_toggle"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/dark_icon_toggle"
                                         android:hapticFeedbackEnabled="true"
@@ -371,11 +401,12 @@
                                     android:layout_height="wrap_content">
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:text="@string/show_shadow_under_tile_icons"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_width="0dp"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"/>
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toStartOf="@+id/icon_shadow_toggle"/>
                                 <com.google.android.material.switchmaterial.SwitchMaterial
                                         android:id="@+id/icon_shadow_toggle"
                                         android:hapticFeedbackEnabled="true"

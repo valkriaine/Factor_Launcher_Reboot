@@ -2,6 +2,7 @@ package com.factor.launcher.adapters;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.factor.launcher.R;
-import com.factor.launcher.databinding.RecentAppsItemBinding;
+import com.factor.launcher.databinding.ItemRecentAppsBinding;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.util.Constants;
@@ -41,7 +42,7 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
     @Override
     public RecentAppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recent_apps_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recent_apps, parent, false);
         return new RecentAppViewHolder(view);
     }
 
@@ -70,7 +71,7 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
 
     static class RecentAppViewHolder extends RecyclerView.ViewHolder
     {
-        private final RecentAppsItemBinding binding;
+        private final ItemRecentAppsBinding binding;
 
         public RecentAppViewHolder(@NonNull View itemView)
         {
@@ -83,7 +84,13 @@ public class RecentAppsAdapter extends RecyclerView.Adapter<RecentAppsAdapter.Re
             binding.setPackageName(name);
             try
             {
-                binding.recentIcon.setImageDrawable(appListManager.packageManager.getApplicationIcon(name));
+                Drawable icon;
+                if (appListManager.getIconPack() != null)
+                    icon = appListManager.getIconPack().getDrawableIconForPackage(name, appListManager.packageManager.getApplicationIcon(name));
+                else
+                    icon = appListManager.packageManager.getApplicationIcon(name);
+
+                binding.recentIcon.setImageDrawable(icon);
                 binding.recentIcon.setElevationDp(appListManager.settings.getShowShadowAroundIcon()? 30 : 0);
             }
             catch (PackageManager.NameNotFoundException ignored){}

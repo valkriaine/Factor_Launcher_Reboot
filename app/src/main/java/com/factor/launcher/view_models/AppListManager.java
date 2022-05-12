@@ -23,6 +23,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.UserApp;
 import com.factor.launcher.util.ChineseHelper;
+import com.factor.launcher.util.IconPackManager;
 
 import java.text.Collator;
 import java.util.*;
@@ -63,6 +64,8 @@ public class AppListManager extends ViewModel
 
     public final AppSettings settings;
 
+    private IconPackManager.IconPack iconPack = null;
+
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
@@ -74,11 +77,18 @@ public class AppListManager extends ViewModel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
             this.shortcutQuery = new LauncherApps.ShortcutQuery();
 
+        if (fragment.getContext() != null)
+        {
+            iconPack = settings.getIconPackProvider(fragment.getContext());
+        }
 
         packageManager = fragment.requireActivity().getPackageManager();
         launcherApps = (LauncherApps) fragment.requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE);
         adapter = new AppListAdapter(this, userApps, displayHidden, fragment.getActivity(), settings);
-        factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, isLiveWallpaper);
+
+
+
+        factorManager = new FactorManager(fragment.requireActivity(), background, this, packageManager, launcherApps, shortcutQuery, iconPack, isLiveWallpaper);
 
         daoReference = AppListDatabase.Companion.getInstance(fragment.requireActivity().getApplicationContext()).appListDao();
         factorSharedPreferences = fragment.requireActivity().getSharedPreferences(PACKAGE_NAME + "_FIRST_LAUNCH", Context.MODE_PRIVATE);
@@ -91,6 +101,13 @@ public class AppListManager extends ViewModel
         loadApps(factorSharedPreferences.getBoolean("saved", false));
 
         this.recentAppsHost = new RecentAppsHost(this);
+
+
+    }
+
+    public IconPackManager.IconPack getIconPack()
+    {
+        return this.iconPack;
     }
 
     //compare app label (new)
@@ -161,63 +178,71 @@ public class AppListManager extends ViewModel
             new Thread(() ->
             {
 
-                    Intent i = new Intent(Intent.ACTION_MAIN, null);
-                    i.addCategory(Intent.CATEGORY_LAUNCHER);
-                    List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
-                    for (ResolveInfo r : availableApps)
+                Intent i = new Intent(Intent.ACTION_MAIN, null);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+                List<ResolveInfo> availableApps = packageManager.queryIntentActivities(i, 0);
+
+                for (ResolveInfo r : availableApps)
+                {
+                    try
                     {
-                        try
+                        if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
                         {
-                            if (!r.activityInfo.packageName.equals(PACKAGE_NAME))
+                            UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
+                            if (app == null) //package name does not exist in database
                             {
-                                UserApp app = daoReference.findByPackage(r.activityInfo.packageName);
-                                if (app == null) //package name does not exist in database
+                                app = new UserApp();
+                                app.setLabelOld((String) r.loadLabel(packageManager));
+                                app.setLabelNew(app.getLabelOld());
+                                app.setPackageName(r.activityInfo.packageName);
+                                app.resetNotifications();
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                                    app.setShortCuts(getShortcutsFromApp(app));
+
+
+
+                                app.setIcon(r.activityInfo.loadIcon(packageManager));
+
+                                userApps.add(app);
+                                daoReference.insert(app);
+                            }
+                            else
+                            {
+                                if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
                                 {
-                                    app = new UserApp();
-                                    app.setLabelOld((String) r.loadLabel(packageManager));
-                                    app.setLabelNew(app.getLabelOld());
-                                    app.setPackageName(r.activityInfo.packageName);
-                                    app.resetNotifications();
+                                    if (iconPack != null)
+                                    {
+                                        app.setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), r.activityInfo.loadIcon(packageManager)));
+                                    }
+                                    else
+                                        app.setIcon(r.activityInfo.loadIcon(packageManager));
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                                         app.setShortCuts(getShortcutsFromApp(app));
 
-                                    app.setIcon(r.activityInfo.loadIcon(packageManager));
-
                                     userApps.add(app);
-                                    daoReference.insert(app);
-                                }
-                                else {
-                                    if (doesPackageExist(app) && packageManager.getApplicationInfo(app.getPackageName(), 0).enabled)
+
+                                    app.setPinned(factorManager.isAppPinned(app));
+                                    try
                                     {
-                                        app.setIcon(r.activityInfo.loadIcon(packageManager));
-
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                            app.setShortCuts(getShortcutsFromApp(app));
-
-                                        userApps.add(app);
-
-                                        app.setPinned(factorManager.isAppPinned(app));
-
-                                        try
-                                        {
-                                            Collections.sort(userApps, first_letter);
-                                        }
-                                        catch (ConcurrentModificationException ignored){}
+                                        Collections.sort(userApps, first_letter);
                                     }
-                                    else
-                                        daoReference.delete(app);
-                                }
+                                    catch (ConcurrentModificationException ignored){}
+                                    }
+                                else
+                                    daoReference.delete(app);
                             }
                         }
-                        catch (NullPointerException | PackageManager.NameNotFoundException ex)
-                        {
-                            ex.printStackTrace();
-                        }
-
                     }
-                    if (adapter!=null && getActivity() != null)
-                        getActivity().runOnUiThread(adapter::notifyDataSetChanged);
+                    catch (NullPointerException | PackageManager.NameNotFoundException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+                if (adapter!=null && getActivity() != null)
+                    getActivity().runOnUiThread(adapter::notifyDataSetChanged);
 
             }).start();
         }

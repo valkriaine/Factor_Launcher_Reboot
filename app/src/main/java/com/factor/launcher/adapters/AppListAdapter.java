@@ -236,7 +236,8 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 MenuInflater inflater = activity.getMenuInflater();
                 inflater.inflate(R.menu.app_list_item_menu, menu);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                {
                     menu.setGroupDividerEnabled(true);
                 }
 

@@ -35,7 +35,4 @@
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="colorPrimary">#0E7ED6</item>
     </style>
-
-
-
 </resources>

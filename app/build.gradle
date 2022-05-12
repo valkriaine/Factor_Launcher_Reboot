@@ -13,8 +13,8 @@ android {
         applicationId "com.factor.launcher"
         minSdkVersion 22
         targetSdkVersion 31
-        versionCode 38
-        versionName "0.66"
+        versionCode 40
+        versionName "0.7"
 
         renderscriptTargetApi 31
         renderscriptSupportModeEnabled true

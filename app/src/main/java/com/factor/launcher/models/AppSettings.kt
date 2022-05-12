@@ -1,9 +1,11 @@
 package com.factor.launcher.models
 
+import android.content.Context
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.factor.launcher.util.Constants
+import com.factor.launcher.util.IconPackManager
 
 
 @Entity
@@ -44,4 +46,16 @@ class AppSettings
 
     @ColumnInfo(name = "static_blur")
     var staticBlur = false
+
+    @ColumnInfo(name = "icon_pack")
+    var iconPackPackageName = ""
+
+
+    fun getIconPackProvider(context: Context): IconPackManager.IconPack?
+    {
+        val iconPackManager = IconPackManager()
+        iconPackManager.setContext(context)
+        iconPackManager.getAvailableIconPacks(true)
+        return iconPackManager.getIconPackWithName(iconPackPackageName)
+    }
 }

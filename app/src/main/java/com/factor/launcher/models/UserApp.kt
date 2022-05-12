@@ -1,5 +1,6 @@
 package com.factor.launcher.models
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -14,7 +15,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Entity
-class UserApp
+open class UserApp
 {
     @PrimaryKey
     var packageName: String = ""
@@ -70,6 +71,9 @@ class UserApp
     var icon: Drawable? = null
 
     @Ignore
+    var bitmapIcon: Bitmap? = null
+
+    @Ignore
     var isMediaTile = false
 
     @Ignore
@@ -88,6 +92,11 @@ class UserApp
         this.isProgressBar = false
         // add more here
         //...
+    }
+
+    fun equals(userApp: UserApp) : Boolean
+    {
+        return this.packageName.equals(userApp.packageName)
     }
 
     //generate new factor
@@ -113,8 +122,16 @@ class UserApp
             {
                 return if (notification.title != notificationHolder.title || notification.text != notificationHolder.text)
                 {
-                    currentNotifications[currentNotifications.indexOf(notification)] = notificationHolder
-                    true
+                    try
+                    {
+                        currentNotifications[currentNotifications.indexOf(notification)] = notificationHolder
+                        return true
+                    }
+                    catch (e : IndexOutOfBoundsException)
+                    {
+                        return false
+                    }
+
                 }
                 else false
             }

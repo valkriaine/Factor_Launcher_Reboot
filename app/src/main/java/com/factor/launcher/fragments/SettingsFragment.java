@@ -13,10 +13,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +24,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
+import com.factor.launcher.models.IconPackProvider;
+import com.factor.launcher.ui.IconPackPickerView;
 import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.ui.CustomFlag;
@@ -58,6 +57,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     private String searchColor = "";
 
     private Bitmap m;
+
+    private String iconPack = "";
 
     public SettingsFragment()
     {
@@ -305,6 +306,31 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.tileColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Tile color"));
         binding.searchBarColorPickerButton.setOnClickListener(v -> showColorPickerDialog("Search bar color"));
 
+
+        // Icon pack picker
+        iconPack = settings.getIconPackPackageName();
+        binding.iconPackPicker.setCurrentIconPack(iconPack);
+        binding.iconPackPicker.setOnIconPackClickedListener(new IconPackPickerView.OnIconPackClickedListener()
+        {
+            @Override
+            public void onIconPackClicked(IconPackProvider clickedIconPack)
+            {
+                if (clickedIconPack.isCurrentIconPack())
+                {
+                    binding.demoIconPack.setImageDrawable(clickedIconPack.getIcon());
+                    binding.demoIconPack.setVisibility(View.VISIBLE);
+                    iconPack = clickedIconPack.getPackageName();
+                }
+                else
+                {
+                    binding.demoIconPack.setVisibility(View.INVISIBLE);
+                    iconPack = "";
+                }
+
+                binding.tileLabel.setText(binding.iconPackPicker.getCurrentIconPackName());
+            }
+        });
+
         setUpUIState();
         setUpDemoTile();
     }
@@ -412,6 +438,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
             updated.setTileThemeColor(tileColor);
             updated.setSearchBarColor(searchColor);
 
+            updated.setIconPackPackageName(binding.iconPackPicker.getCurrentIconPackPackageName());
+
 
             AppSettingsManager.getInstance(getActivity().getApplication()).setAppSettings(updated).updateSettings();
             Intent intent = new Intent();
@@ -433,7 +461,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                 !tileColor.equals(settings.getTileThemeColor()) ||
                 !searchColor.equals(settings.getSearchBarColor()) ||
                 binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon() ||
-                binding.staticBlurToggle.isChecked() != settings.getStaticBlur();
+                binding.staticBlurToggle.isChecked() != settings.getStaticBlur() ||
+                binding.iconPackPicker.getCurrentIconPackPackageName().equals(settings.getIconPackPackageName());
     }
 
 
