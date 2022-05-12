@@ -414,7 +414,13 @@ public class AppListManager extends ViewModel
                 try
                 {
                     ApplicationInfo info = packageManager.getApplicationInfo(app.getPackageName(), 0);
-                    app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+                    if (iconPack != null)
+                    {
+                        app.setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), packageManager.getApplicationIcon(app.getPackageName())));
+                    }
+                    else
+                        app.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+
                     app.setLabelOld((String) packageManager.getApplicationLabel(info));
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
@@ -469,6 +475,15 @@ public class AppListManager extends ViewModel
                         try
                         {
                             ApplicationInfo info = packageManager.getApplicationInfo(appToUpdate.getPackageName(), 0);
+
+                            if (iconPack != null)
+                            {
+                                appToUpdate.setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), packageManager.getApplicationIcon(app.getPackageName())));
+                            }
+                            else
+                                appToUpdate.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+
+
                             userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
 

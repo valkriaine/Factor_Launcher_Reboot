@@ -122,6 +122,14 @@ public class IconPackPickerView extends CardView
 
         ArrayList<IconPackManager.IconPack> iconPackArrayList = iconPackManager.getAvailableIconPacks(true);
         Log.d("IconPack", "icon packs: " + iconPackArrayList.size());
+
+        if (iconPackArrayList.size() < 1)
+        {
+            this.setVisibility(GONE);
+            return;
+        }
+        else
+            this.setVisibility(VISIBLE);
         for (IconPackManager.IconPack iconPack : iconPackArrayList)
         {
             try
@@ -200,9 +208,9 @@ public class IconPackPickerView extends CardView
                     {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                         {
-                            base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorPrimaryDark, null));
+                            base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorDarker, null));
                         }
-                        else base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
+                        else base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorDarker));
                     }
 
                     base.setOnClickListener(view ->

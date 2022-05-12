@@ -7,9 +7,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            app:cardElevation="10dp"
             app:cardCornerRadius="5dp"
-            app:cardBackgroundColor="@color/colorPrimaryDark"
+            app:cardBackgroundColor="#111111"
             android:paddingHorizontal="10dp"
             android:paddingVertical="10dp">
 
@@ -27,7 +26,6 @@
                     android:layout_width="70dp"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:elevation="50dp"
                     android:scaleType="fitCenter"/>
 
             <androidx.appcompat.widget.AppCompatTextView

@@ -190,7 +190,6 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         });
 
         binding.searchBase.setCardBackgroundColor(Color.parseColor("#" + searchColor));
-        binding.searchBase.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
 
         binding.notificationAccessButton.setOnClickListener(v -> buildNotificationServiceAlertDialog());
         binding.storageAccessButton.setOnClickListener(v -> requestStoragePermission());
@@ -212,14 +211,13 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.menuButton.setImageResource(settings.isDarkIcon()? R.drawable.icon_menu_black : R.drawable.icon_menu);
 
         binding.demoCard.setCardBackgroundColor(Color.parseColor("#" + tileColor));
-        binding.demoCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
 
-        binding.rootCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.togglesCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.slidersCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.demoBackground.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.colorPickerCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
-        binding.advancedOptionsCard.setRadius(Util.dpToPx(settings.getCornerRadius(), getContext()));
+
+        binding.blurRadiusSlider.setValue(settings.getBlurRadius());
+        binding.cornerRadiusSlider.setValue(settings.getCornerRadius());
+        binding.tileListScaleSlider.setValue(settings.getTileListScale());
+        binding.tileMarginSlider.setValue(settings.getTileMargin());
+
 
         binding.blurToggle.setChecked(settings.isBlurred());
         binding.blurToggle.setOnClickListener(v ->
@@ -266,10 +264,6 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
             }
         });
 
-        binding.blurRadiusSlider.setValue(settings.getBlurRadius());
-        binding.cornerRadiusSlider.setValue(settings.getCornerRadius());
-        binding.tileListScaleSlider.setValue(settings.getTileListScale());
-        binding.tileMarginSlider.setValue(settings.getTileMargin());
 
         binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
@@ -367,6 +361,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.demoBackground.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
         binding.colorPickerCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
         binding.advancedOptionsCard.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
+        binding.iconPackPicker.setRadius(Util.dpToPx(binding.cornerRadiusSlider.getValue(), getContext()));
 
         binding.demoBlur.setBlurRadius(binding.blurRadiusSlider.getValue());
 

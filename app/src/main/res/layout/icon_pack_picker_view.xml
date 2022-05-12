@@ -3,15 +3,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.factor.bouncy.BouncyRecyclerView
-            android:id="@+id/icon_pack_recyclerview"
-            android:layout_height="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="10dp"
-            app:recyclerview_overscroll_animation_size="0.3"
-            app:recyclerview_fling_animation_size="0.3"
-            android:scrollbars="horizontal"
-            android:scrollbarSize="1dp"
-            android:scrollbarDefaultDelayBeforeFade="50"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+                android:paddingHorizontal="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/icon_packs"
+                android:layout_marginHorizontal="15dp"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+        <com.factor.bouncy.BouncyRecyclerView
+                android:id="@+id/icon_pack_recyclerview"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="10dp"
+                android:visibility="visible"
+                app:recyclerview_overscroll_animation_size="0.3"
+                app:recyclerview_fling_animation_size="0.3"
+                android:scrollbars="horizontal"
+                android:scrollbarSize="1dp"
+                android:scrollbarDefaultDelayBeforeFade="50"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.cardview.widget.CardView>
