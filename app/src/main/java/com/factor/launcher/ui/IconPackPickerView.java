@@ -57,21 +57,45 @@ public class IconPackPickerView extends CardView
 
     public void setCurrentIconPack(String packageName)
     {
+        Log.d("icon_pack", "current selected: " + packageName);
+        if (packageName.isEmpty())
+            return;
         selectedIconPack = new IconPackProvider();
         selectedIconPack.setPackageName(packageName);
-        if (iconPacks.contains(selectedIconPack))
-        {
-            selectedIconPack.setCurrentIconPack(true);
-            adapter.notifyItemChanged(iconPacks.indexOf(selectedIconPack));
-        }
+        selectedIconPack.setCurrentIconPack(true);
 
-        Log.d("Icon_pack", "current selected: " + packageName);
+        for (IconPackProvider provider : iconPacks)
+        {
+            if (provider.getPackageName().equals(packageName))
+            {
+                provider.setCurrentIconPack(true);
+                adapter.notifyItemChanged(iconPacks.indexOf(provider));
+            }
+
+        }
     }
-    public String getCurrentIconPackName()
+    public IconPackProvider getCurrentIconPack()
     {
-        if (selectedIconPack.isCurrentIconPack() && iconPacks.contains(selectedIconPack))
-            return selectedIconPack.getLabelNew();
-        else return getContext().getString(R.string.no_icon_pack);
+        PackageManager pm = getContext().getPackageManager();
+        IconPackManager ip = new IconPackManager();
+        ip.setContext(getContext());
+
+        ArrayList<IconPackManager.IconPack> iconPackArrayList = ip.getAvailableIconPacks(true);
+
+        for (IconPackManager.IconPack iconPack : iconPackArrayList)
+        {
+            try
+            {
+                if (iconPack.packageName.equals(selectedIconPack.getPackageName()))
+                {
+                    selectedIconPack.setIcon(pm.getApplicationIcon(selectedIconPack.getPackageName()));
+                    selectedIconPack.setLabelNew(iconPack.name);
+                }
+            }
+            catch (PackageManager.NameNotFoundException ignored){}
+
+        }
+        return selectedIconPack;
     }
 
 
@@ -111,14 +135,10 @@ public class IconPackPickerView extends CardView
                     iconPacks.add(iconPackProvider);
                     adapter.notifyItemInserted(iconPacks.indexOf(iconPackProvider));
                 }
-                Log.d("IconPack", "name: " + iconPackProvider.getPackageName());
             }
             catch (PackageManager.NameNotFoundException ignored){}
 
         }
-
-
-
     }
 
 

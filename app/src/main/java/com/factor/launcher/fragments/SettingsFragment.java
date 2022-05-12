@@ -310,11 +310,23 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         // Icon pack picker
         iconPack = settings.getIconPackPackageName();
         binding.iconPackPicker.setCurrentIconPack(iconPack);
+        if (!iconPack.isEmpty())
+        {
+            binding.demoIconPack.setImageDrawable(binding.iconPackPicker.getCurrentIconPack().getIcon());
+            binding.demoIconPack.setVisibility(View.VISIBLE);
+            binding.tileLabel.setText(binding.iconPackPicker.getCurrentIconPack().getLabelNew());
+        }
+        else
+        {
+            binding.tileLabel.setText(getContext().getString(R.string.no_icon_pack));
+        }
+
         binding.iconPackPicker.setOnIconPackClickedListener(new IconPackPickerView.OnIconPackClickedListener()
         {
             @Override
             public void onIconPackClicked(IconPackProvider clickedIconPack)
             {
+                assert getContext()!= null;
                 if (clickedIconPack.isCurrentIconPack())
                 {
                     binding.demoIconPack.setImageDrawable(clickedIconPack.getIcon());
@@ -327,7 +339,11 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                     iconPack = "";
                 }
 
-                binding.tileLabel.setText(binding.iconPackPicker.getCurrentIconPackName());
+                IconPackProvider i = binding.iconPackPicker.getCurrentIconPack();
+                if (i.getPackageName().isEmpty() || !i.isCurrentIconPack())
+                    binding.tileLabel.setText(getContext().getString(R.string.no_icon_pack));
+                else
+                    binding.tileLabel.setText(i.getLabelNew());
             }
         });
 
@@ -451,6 +467,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     //check if settings are changed
     private boolean areSettingsChanged()
     {
+
         return binding.blurToggle.isChecked() != settings.isBlurred() ||
                 binding.darkTextToggle.isChecked() != settings.isDarkText() ||
                 binding.darkIconToggle.isChecked() != settings.isDarkIcon() ||
@@ -462,7 +479,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                 !searchColor.equals(settings.getSearchBarColor()) ||
                 binding.iconShadowToggle.isChecked() != settings.getShowShadowAroundIcon() ||
                 binding.staticBlurToggle.isChecked() != settings.getStaticBlur() ||
-                binding.iconPackPicker.getCurrentIconPackPackageName().equals(settings.getIconPackPackageName());
+                !iconPack.equals(settings.getIconPackPackageName());
     }
 
 
