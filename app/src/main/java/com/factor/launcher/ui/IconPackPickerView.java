@@ -3,7 +3,7 @@ package com.factor.launcher.ui;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,6 +75,7 @@ public class IconPackPickerView extends CardView
 
         }
     }
+
     public IconPackProvider getCurrentIconPack()
     {
         PackageManager pm = getContext().getPackageManager();
@@ -88,7 +90,8 @@ public class IconPackPickerView extends CardView
             {
                 if (iconPack.packageName.equals(selectedIconPack.getPackageName()))
                 {
-                    selectedIconPack.setIcon(pm.getApplicationIcon(selectedIconPack.getPackageName()));
+                    Drawable icon = iconPack.getDrawableIconForPackage(iconPack.packageName, pm.getApplicationIcon(selectedIconPack.getPackageName()));
+                    selectedIconPack.setIcon(icon);
                     selectedIconPack.setLabelNew(iconPack.name);
                 }
             }
@@ -180,7 +183,7 @@ public class IconPackPickerView extends CardView
 
             private final AppCompatImageView icon;
 
-            private final CardView base;
+            private final LinearLayoutCompat base;
 
             public IconPackViewHolder(@NonNull View itemView)
             {
@@ -198,19 +201,11 @@ public class IconPackPickerView extends CardView
                     icon.setImageDrawable(provider.getIcon());
                     if (provider.isCurrentIconPack())
                     {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        {
-                            base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorHalo, null));
-                        }
-                        else base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorHalo));
+                        base.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_background_selected, null));
                     }
                     else
                     {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        {
-                            base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorDarker, null));
-                        }
-                        else base.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorDarker));
+                        base.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_background_default, null));
                     }
 
                     base.setOnClickListener(view ->

@@ -308,11 +308,14 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         {
             binding.demoIconPack.setImageDrawable(binding.iconPackPicker.getCurrentIconPack().getIcon());
             binding.demoIconPack.setVisibility(View.VISIBLE);
+            binding.tileIcon.setVisibility(View.INVISIBLE);
             binding.tileLabel.setText(binding.iconPackPicker.getCurrentIconPack().getLabelNew());
         }
         else
         {
             binding.tileLabel.setText(getContext().getString(R.string.no_icon_pack));
+            binding.tileIcon.setVisibility(View.VISIBLE);
+            binding.demoIconPack.setVisibility(View.INVISIBLE);
         }
 
         binding.iconPackPicker.setOnIconPackClickedListener(new IconPackPickerView.OnIconPackClickedListener()
@@ -325,11 +328,13 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                 {
                     binding.demoIconPack.setImageDrawable(clickedIconPack.getIcon());
                     binding.demoIconPack.setVisibility(View.VISIBLE);
+                    binding.tileIcon.setVisibility(View.INVISIBLE);
                     iconPack = clickedIconPack.getPackageName();
                 }
                 else
                 {
                     binding.demoIconPack.setVisibility(View.INVISIBLE);
+                    binding.tileIcon.setVisibility(View.VISIBLE);
                     iconPack = "";
                 }
 

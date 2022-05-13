@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<androidx.appcompat.widget.LinearLayoutCompat
             xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/icon_pack_base"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            app:cardCornerRadius="5dp"
-            app:cardBackgroundColor="#111111"
+            android:background="@drawable/rounded_background_selected"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="10dp">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
+            android:paddingVertical="10dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -25,7 +19,8 @@
                     android:layout_height="70dp"
                     android:layout_width="70dp"
                     android:gravity="center"
-                    android:padding="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
                     android:scaleType="fitCenter"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -37,13 +32,8 @@
                     android:padding="5dp"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:ellipsize="end" tools:layout_editor_absoluteX="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline_icon_h2"/>
+                    android:ellipsize="end"
+                    tools:layout_editor_absoluteX="10dp"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
-    </androidx.cardview.widget.CardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 

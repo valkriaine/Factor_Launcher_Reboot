@@ -118,51 +118,56 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
 
 
 
-                    if (app.incrementNotificationCount(notificationHolder))
+                    try
                     {
-
-                        String category = intent.getStringExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY);
-
-                        app.setNotificationCategory(category);
-
-                        if (category != null)
+                        if (app.incrementNotificationCount(notificationHolder))
                         {
-                            // if media notification, prepare for media animation
-                            if (category.equals(CATEGORY_TRANSPORT))
-                            {
-                                Drawable icon = app.getIcon();
 
-                                if (icon != null)
+                            String category = intent.getStringExtra(Constants.NOTIFICATION_INTENT_CATEGORY_KEY);
+
+                            app.setNotificationCategory(category);
+
+                            if (category != null)
+                            {
+                                // if media notification, prepare for media animation
+                                if (category.equals(CATEGORY_TRANSPORT))
                                 {
-                                    Bitmap b = Util.drawableToBitmap(icon);
-                                    app.setVibrantColor(Util.getVibrantColor(b));
-                                    app.setDarkMutedColor(Util.getDarkMutedColor(b));
-                                    app.setDominantColor(Util.getDominantColor(b));
+                                    Drawable icon = app.getIcon();
+
+                                    if (icon != null)
+                                    {
+                                        Bitmap b = Util.drawableToBitmap(icon);
+                                        app.setVibrantColor(Util.getVibrantColor(b));
+                                        app.setDarkMutedColor(Util.getDarkMutedColor(b));
+                                        app.setDominantColor(Util.getDominantColor(b));
+                                    }
                                 }
+
+                                // other categories
+                                // ...
+
+
                             }
 
-                            // other categories
-                            // ...
+                            if (app.isPinned())
+                                appListManager.getFactorManager().onReceivedNotification(intent, app, payload);
 
+
+
+                            new Handler(Looper.getMainLooper())
+                            {
+                                @Override
+                                public void handleMessage(@NonNull Message msg)
+                                {
+                                    super.handleMessage(msg);
+                                    notifyItemChanged(userApps.indexOf(app), payload);
+                                }
+                            }.sendEmptyMessage(1);
 
                         }
-
-                        if (app.isPinned())
-                            appListManager.getFactorManager().onReceivedNotification(intent, app, payload);
-
-
-
-                        new Handler(Looper.getMainLooper())
-                        {
-                            @Override
-                            public void handleMessage(@NonNull Message msg)
-                            {
-                                super.handleMessage(msg);
-                                notifyItemChanged(userApps.indexOf(app), payload);
-                            }
-                        }.sendEmptyMessage(1);
-
                     }
+                    catch (ConcurrentModificationException ignored){}
+
 
 
                 }).start();
