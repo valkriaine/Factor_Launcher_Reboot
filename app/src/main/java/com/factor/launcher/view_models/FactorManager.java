@@ -30,6 +30,7 @@ import java.util.List;
 
 public class FactorManager extends ViewModel
 {
+    private static final String TAG = FactorManager.class.getSimpleName();
     private final MutableLiveData<ArrayList<Factor>> factorMutableLiveData = new MutableLiveData<>();
 
     private final ArrayList<Factor> userFactors = new ArrayList<>();
@@ -87,29 +88,10 @@ public class FactorManager extends ViewModel
             userFactors.addAll(daoReference.getAll());
             for (Factor f: userFactors)
             {
-                try {
-                    if (packageManager.getApplicationInfo(f.getPackageName(), 0).enabled)
-                    {
-                        Drawable icon;
+                loadIcon(f);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                    f.setShortcuts(getShortcutsFromFactor(f));
 
-                        if (iconPack != null)
-                        {
-                            icon = iconPack.getDrawableIconForPackage(f.getPackageName(), packageManager.getApplicationIcon(f.getPackageName()));
-                        }
-                        else
-                            icon = appListManager.packageManager.getApplicationIcon(f.getPackageName());
-
-                        f.setIcon(icon);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                            f.setShortcuts(getShortcutsFromFactor(f));
-                    }
-
-                } catch (PackageManager.NameNotFoundException | NullPointerException e)
-                {
-                    Log.d("icon", "failed to load icon for " + f.getPackageName() + " " + e.getMessage());
-                    daoReference.delete(f);
-                }
             }
             adapter.activity.runOnUiThread(adapter::notifyDataSetChanged);
         }).start();
@@ -118,7 +100,6 @@ public class FactorManager extends ViewModel
     //add recently used app
     public void addToRecent(UserApp app)
     {
-        Log.d("recent", "called");
         if (!app.isHidden())
            appListManager.recentAppsHost.add(app);
     }
@@ -140,9 +121,6 @@ public class FactorManager extends ViewModel
         factor.setOrder(userFactors.indexOf(factor));
         new Thread(() ->
         {
-            Log.d("add", factor.getPackageName() + " index " + factor.getOrder());
-            Log.d("add", "number of Shortcuts:  " + factor.getUserApp().getShortCuts().size());
-            Log.d("add", "Shortcuts:  " + factor.getUserApp().getShortCuts());
             daoReference.insert(factor);
             adapter.addFactorBroadcast(userFactors.indexOf(factor));
             adapter.activity.runOnUiThread(()-> adapter.notifyItemInserted(factor.getOrder()));
@@ -269,26 +247,31 @@ public class FactorManager extends ViewModel
     //retrieve the icon for a given factor
     public void loadIcon(Factor factor)
     {
+        Drawable icon = null;
         try
         {
-            Drawable icon;
+
             if (packageManager.getApplicationInfo(factor.getPackageName(), 0).enabled)
             {
+
+                // todo: fallback to bitmap icon
                 if (iconPack != null)
                 {
                     icon = iconPack.getDrawableIconForPackage(factor.getPackageName(), packageManager.getApplicationIcon(factor.getPackageName()));
                 }
-                else
+
+                if (icon == null)
                     icon = appListManager.packageManager.getApplicationIcon(factor.getPackageName());
+
 
                 factor.setIcon(icon);
 
             }
         }
-        catch (Exception e)
+        catch (PackageManager.NameNotFoundException | NullPointerException e)
         {
-            e.printStackTrace();
-            new Thread(() -> daoReference.delete(factor)).start();
+            Log.d(TAG, "failed to load icon for " + factor.getPackageName() + " " + e.getMessage());
+            //removeFromHome(factor);
         }
     }
 

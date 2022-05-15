@@ -384,7 +384,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
 
     //Tile ViewHolder
-    protected static class FactorsViewHolder extends RecyclerView.ViewHolder
+    public static class FactorsViewHolder extends RecyclerView.ViewHolder
     {
         public final ViewDataBinding binding;
 

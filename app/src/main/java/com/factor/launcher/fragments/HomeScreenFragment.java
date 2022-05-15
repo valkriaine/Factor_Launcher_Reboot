@@ -10,10 +10,7 @@ import android.app.WallpaperManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -30,6 +27,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.ViewDataBinding;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.Fragment;
@@ -44,6 +42,10 @@ import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
 import com.factor.launcher.FactorApplication;
 import com.factor.launcher.R;
 import com.factor.launcher.activities.SettingsActivity;
+import com.factor.launcher.adapters.FactorsAdapter;
+import com.factor.launcher.databinding.FactorLargeBinding;
+import com.factor.launcher.databinding.FactorMediumBinding;
+import com.factor.launcher.databinding.FactorSmallBinding;
 import com.factor.launcher.databinding.FragmentHomeScreenBinding;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
@@ -124,7 +126,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
     }
 
 
-    //handle back button press
+    // handle back button press
     @Override
     public boolean onBackPressed()
     {
@@ -165,6 +167,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
     }
 
 
+    // home button press
     @Override
     public boolean onNewIntent()
     {
@@ -226,6 +229,25 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
                 removeWidget(appWidgetId);
                 e.printStackTrace();
             }
+
+            // stop wave animations
+            for (int x = binding.tilesList.getChildCount(), i = 0; i < x; ++i)
+            {
+                FactorsAdapter.FactorsViewHolder holder = (FactorsAdapter.FactorsViewHolder) binding.tilesList.getChildViewHolder(binding.tilesList.getChildAt(i));
+                ViewDataBinding holderBinding = holder.binding;
+                if (holderBinding instanceof FactorSmallBinding)
+                {
+                    ((FactorSmallBinding) holderBinding).tile.getWaveView().stopAnimation();
+                }
+                if (holderBinding instanceof FactorMediumBinding)
+                {
+                    ((FactorMediumBinding) holderBinding).tile.getWaveView().stopAnimation();
+                }
+                if (holderBinding instanceof FactorLargeBinding)
+                {
+                    ((FactorLargeBinding) holderBinding).tile.getWaveView().stopAnimation();
+                }
+            }
         }
     }
 
@@ -279,9 +301,16 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
     private void forceNotificationListener()
     {
+
         appListManager.clearAllNotifications();
         if (notificationListenerIntent != null && getContext() != null)
         {
+            ComponentName notificationComponent = new ComponentName(getContext().getApplicationContext(), NotificationListener.class);
+            PackageManager pm = getContext().getPackageManager();
+
+            pm.setComponentEnabledSetting(notificationComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(notificationComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
             try
             {
                 getContext().startService(notificationListenerIntent);
@@ -290,6 +319,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
             {
                 e.printStackTrace();
             }
+
 
         }
     }
@@ -530,6 +560,8 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
             binding.tilesList.setAdapter(appListManager.getFactorManager().adapter);
         };
+        // debug
+        binding.tilesList.setItemViewCacheSize(40);
 
         appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
         binding.tilesList.setItemViewCacheSize(appListManager.getFactorManager().adapter.getItemCount());

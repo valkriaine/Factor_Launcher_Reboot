@@ -66,6 +66,10 @@ public class FactorSmallView extends ConstraintLayout implements LifecycleOwner
         init();
     }
 
+    public WaveView getWaveView()
+    {
+        return waveView;
+    }
 
     private void init()
     {

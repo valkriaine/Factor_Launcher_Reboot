@@ -253,6 +253,12 @@ public class WaveView extends View implements LifecycleOwner
         }
     }
 
+    public void stopAnimation()
+    {
+        pauseAnimation();
+        onDetachedFromWindow();
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();

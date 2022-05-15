@@ -456,9 +456,10 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
 
 
 
-
-
-
+    public WaveView getWaveView()
+    {
+        return waveView;
+    }
 
 
     protected static class ShortcutsAdapter extends RecyclerView.Adapter<ShortcutsAdapter.ShortcutViewHolder>

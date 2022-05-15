@@ -32,7 +32,7 @@ import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 
 public class AppListManager extends ViewModel
 {
-    private static final String TAG = "AppListManager";
+    private static final String TAG = AppListManager.class.getSimpleName();
 
     private boolean displayHidden = false;
 
@@ -66,6 +66,7 @@ public class AppListManager extends ViewModel
 
     private IconPackManager.IconPack iconPack = null;
 
+    // todo: fallback to bitmap icon if drawable icon fails to load from icon pack
     //constructor
     public AppListManager(HomeScreenFragment fragment,
                           ViewGroup background,
@@ -201,8 +202,12 @@ public class AppListManager extends ViewModel
                                     app.setShortCuts(getShortcutsFromApp(app));
 
 
-
-                                app.setIcon(r.activityInfo.loadIcon(packageManager));
+                                if (iconPack != null)
+                                {
+                                    app.setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), r.activityInfo.loadIcon(packageManager)));
+                                }
+                                else
+                                    app.setIcon(r.activityInfo.loadIcon(packageManager));
 
                                 userApps.add(app);
                                 daoReference.insert(app);
@@ -478,13 +483,12 @@ public class AppListManager extends ViewModel
 
                             if (iconPack != null)
                             {
-                                appToUpdate.setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), packageManager.getApplicationIcon(app.getPackageName())));
+                                userApps.get(position).setIcon(iconPack.getDrawableIconForPackage(app.getPackageName(), packageManager.getApplicationIcon(app.getPackageName())));
                             }
                             else
-                                appToUpdate.setIcon(packageManager.getApplicationIcon(app.getPackageName()));
+                                userApps.get(position).setIcon(packageManager.getApplicationIcon(app.getPackageName()));
 
 
-                            userApps.get(position).setIcon(packageManager.getApplicationIcon(appToUpdate.getPackageName()));
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
 
                             //retrieve shortcuts on api 25 and higher
