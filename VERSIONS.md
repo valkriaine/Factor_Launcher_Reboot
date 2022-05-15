@@ -1,3 +1,7 @@
+# Version 0.7
+
+- icon pack support
+
 # Version 0.65.1-alpha
 
 - medium and large tiles now display more notification content
