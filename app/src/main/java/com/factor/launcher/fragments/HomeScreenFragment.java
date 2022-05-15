@@ -305,12 +305,6 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         appListManager.clearAllNotifications();
         if (notificationListenerIntent != null && getContext() != null)
         {
-            ComponentName notificationComponent = new ComponentName(getContext().getApplicationContext(), NotificationListener.class);
-            PackageManager pm = getContext().getPackageManager();
-
-            pm.setComponentEnabledSetting(notificationComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-            pm.setComponentEnabledSetting(notificationComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-
             try
             {
                 getContext().startService(notificationListenerIntent);
