@@ -556,6 +556,9 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         };
         // debug
         binding.tilesList.setItemViewCacheSize(40);
+        binding.tilesList.getRecycledViewPool().setMaxRecycledViews(1, 20);
+        binding.tilesList.getRecycledViewPool().setMaxRecycledViews(2, 20);
+        binding.tilesList.getRecycledViewPool().setMaxRecycledViews(3, 20);
 
         appListManager.getFactorManager().getFactorMutableLiveData().observe(getViewLifecycleOwner(), factorObserver);
         binding.tilesList.setItemViewCacheSize(appListManager.getFactorManager().adapter.getItemCount());
