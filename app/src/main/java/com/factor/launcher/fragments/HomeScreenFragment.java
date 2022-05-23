@@ -53,7 +53,7 @@ import com.factor.launcher.models.UserApp;
 import com.factor.launcher.receivers.AppActionReceiver;
 import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
-import com.factor.launcher.services.NotificationListener;
+import com.factor.launcher.services.FactorNotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
 import com.factor.launcher.util.*;
 import com.factor.launcher.view_models.AppListManager;
@@ -70,8 +70,6 @@ import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
 public class HomeScreenFragment extends Fragment implements OnSystemActionsCallBack, LifecycleOwner
 {
     private boolean isLiveWallpaper = false;
-
-    private boolean isResetState = false;
 
     private FragmentHomeScreenBinding binding;
 
@@ -257,17 +255,13 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         super.onResume();
         if (getContext()!= null)
         {
+
             forceNotificationListener();
             binding.recentAppsList.smoothScrollToPosition(0);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
                 appListManager.updateShortcuts();
 
-            isResetState = binding.homePager.getCurrentItem() == 0
-                    && !appListManager.isDisplayingHidden()
-                    && !binding.appsList.canScrollVertically(-1)
-                    && !binding.tilesList.canScrollVertically(-1)
-                    && !isWidgetExpanded;
         }
     }
 
@@ -354,7 +348,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
         blurAlg = new RenderScriptBlur(getContext());
 
-        notificationListenerIntent = new Intent(getActivity(), NotificationListener.class);
+        notificationListenerIntent = new Intent(getActivity(), FactorNotificationListener.class);
 
         //initialize saved user settings
         appSettings = AppSettingsManager.getInstance(getActivity().getApplication()).getAppSettings();
@@ -863,7 +857,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
     }
 
 
-    //setup all broadcast receivers and notify NotificationListener when all receivers are ready
+    //setup all broadcast receivers and notify FactorNotificationListener when all receivers are ready
     private void registerBroadcastReceivers(AppListManager appListManager, FragmentHomeScreenBinding binding)
     {
 

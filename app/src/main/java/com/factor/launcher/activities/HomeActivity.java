@@ -6,6 +6,7 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -53,7 +54,8 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 
         setContentView(binding.getRoot());
 
-
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
@@ -100,6 +102,9 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     protected void onResume()
     {
         super.onResume();
+
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //first launch, start welcome activity
         if (isFirstTime())

@@ -1,6 +1,7 @@
 package com.factor.launcher.activities;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -20,6 +21,9 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle("Options");
@@ -60,5 +64,12 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
     {
         //library leak fix
         finishAfterTransition();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 }

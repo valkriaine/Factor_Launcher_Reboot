@@ -32,6 +32,7 @@
         <activity
                 android:name=".activities.SettingsActivity"
                 android:documentLaunchMode="intoExisting"
+                android:configChanges="orientation|screenSize"
                 android:autoRemoveFromRecents="true"
                 android:launchMode="singleInstance"
                 android:icon="@drawable/icon_menu_black"
@@ -53,6 +54,7 @@
         <activity
                 android:name=".activities.WelcomeActivity"
                 android:screenOrientation="portrait"
+                android:configChanges="orientation|screenSize"
                 android:theme="@style/WelcomeTheme"
                 android:windowSoftInputMode="adjustPan">
         </activity>
@@ -77,7 +79,7 @@
         </activity>
 
         <service
-                android:name=".services.NotificationListener"
+                android:name=".services.FactorNotificationListener"
                 android:label="@string/notification_service_description"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
                 android:stopWithTask="true"
