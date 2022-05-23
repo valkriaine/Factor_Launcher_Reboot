@@ -34,6 +34,8 @@ public class IconPackPickerView extends CardView
 
     private OnIconPackClickedListener listener;
 
+    private BouncyRecyclerView rc;
+
     public IconPackPickerView(Context context)
     {
         super(context);
@@ -71,8 +73,9 @@ public class IconPackPickerView extends CardView
             {
                 provider.setCurrentIconPack(true);
                 adapter.notifyItemChanged(iconPacks.indexOf(provider));
+                rc.smoothScrollToPosition(iconPacks.indexOf(provider));
+                return;
             }
-
         }
     }
 
@@ -115,7 +118,7 @@ public class IconPackPickerView extends CardView
     private void init(Context context)
     {
         View.inflate(getContext(), R.layout.icon_pack_picker_view, this);
-        BouncyRecyclerView rc = findViewById(R.id.icon_pack_recyclerview);
+        rc = findViewById(R.id.icon_pack_recyclerview);
         rc.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rc.setAdapter(adapter);
 

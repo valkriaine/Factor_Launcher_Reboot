@@ -40,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
 
 
     @Override
+    // handle editText cancel
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
