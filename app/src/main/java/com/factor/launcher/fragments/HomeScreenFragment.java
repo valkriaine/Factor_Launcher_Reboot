@@ -246,6 +246,9 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
                     ((FactorLargeBinding) holderBinding).tile.getWaveView().stopAnimation();
                 }
             }
+
+            blurAlg.destroy();
+            blurAlg = null;
         }
     }
 
@@ -789,6 +792,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
 
     //setup wallpaper
+    @SuppressLint("MissingPermission")
     private void checkLiveWallpaper()
     {
 
@@ -840,10 +844,9 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
             binding.backgroundImage.setImageDrawable(wm.getDrawable());
 
-            binding.searchBlur.setupWith(binding.rootContent)
+            binding.searchBlur.setupWith(binding.rootContent, blurAlg)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getSearchBarColor()))
                     .setFrameClearDrawable(wm.getDrawable())
-                    .setBlurAlgorithm(blurAlg)
                     .setBlurRadius(25f)
                     .setBlurAutoUpdate(true)
                     .setBlurEnabled(true);

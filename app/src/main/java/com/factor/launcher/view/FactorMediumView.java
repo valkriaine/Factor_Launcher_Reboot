@@ -195,9 +195,8 @@ public class FactorMediumView extends ConstraintLayout implements LifecycleOwner
 
             algorithm = new RenderScriptBlur(getContext());
 
-            trans.setupWith(background)
+            trans.setupWith(background, algorithm)
                     .setOverlayColor(Color.parseColor("#" + appSettings.getTileThemeColor()))
-                    .setBlurAlgorithm(algorithm)
                     .setBlurRadius(appSettings.getBlurRadius())
                     .setBlurAutoUpdate(false);
         }

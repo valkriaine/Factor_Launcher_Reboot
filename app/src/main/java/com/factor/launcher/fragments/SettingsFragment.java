@@ -125,19 +125,15 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         tileColor = settings.getTileThemeColor();
         searchColor = settings.getSearchBarColor();
 
-        binding.demoBlur.setupWith(binding.demoBackground)
+        binding.demoBlur.setupWith(binding.demoBackground, new RenderScriptBlur(getContext()))
                 .setOverlayColor(Color.parseColor("#" + tileColor))
-                .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(settings.getBlurRadius())
-                .setBlurAutoUpdate(true)
-                .setHasFixedTransformationMatrix(true);
+                .setBlurAutoUpdate(true);
 
-        binding.searchBlur.setupWith(binding.demoBackground)
+        binding.searchBlur.setupWith(binding.demoBackground, new RenderScriptBlur(getContext()))
                 .setOverlayColor(Color.parseColor("#" + searchColor))
-                .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(25f)
                 .setBlurAutoUpdate(true)
-                .setHasFixedTransformationMatrix(false)
                 .setBlurEnabled(true);
 
         binding.tileColorIcon.setBackgroundColor(Color.parseColor("#" + tileColor));

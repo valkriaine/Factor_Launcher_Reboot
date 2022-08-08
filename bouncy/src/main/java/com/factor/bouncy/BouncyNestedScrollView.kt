@@ -1109,9 +1109,9 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
         }
 
         if (currentFocused != null && currentFocused.isFocused && isOffScreen(currentFocused)) {
-            // previously focused item still has focus and is off screen, give
+            // previously focused item still has focus and is off-screen, give
             // it up (take it back to ourselves)
-            // (also, need to temporarily force FOCUS_BEFORE_DESCENDANTS so we are
+            // (also, need to temporarily force FOCUS_BEFORE_DESCENDANTS, so we are
             // sure to
             // get it)
             val descendantFocusability = descendantFocusability // save
@@ -1726,8 +1726,9 @@ class BouncyNestedScrollView @JvmOverloads constructor(context: Context, attrs: 
     }
 
     internal class AccessibilityDelegate : AccessibilityDelegateCompat() {
-        override fun performAccessibilityAction(host: View, action: Int, arguments: Bundle): Boolean {
-            if (super.performAccessibilityAction(host, action, arguments))
+
+        override fun performAccessibilityAction(host: View, action: Int, args: Bundle?): Boolean {
+            if (super.performAccessibilityAction(host, action, args))
                 return true
 
 

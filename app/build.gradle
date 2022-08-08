@@ -5,14 +5,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     buildToolsVersion "30.0.3"
     ndkVersion "21.0.6113669"
 
     defaultConfig {
         applicationId "com.factor.launcher"
         minSdkVersion 22
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 43
         versionName "0.73"
 
@@ -61,22 +61,23 @@ android {
         dataBinding = true
         viewBinding = true
     }
-
-    aaptOptions {
+    androidResources {
         noCompress 'db'
     }
+    namespace 'com.factor.launcher'
+
 }
 
 
 dependencies {
-    def room_version = "2.4.2"
-    def lifecycle_version = '2.4.1'
+    def room_version = "2.4.3"
+    def lifecycle_version = '2.5.1'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     // ViewModel
@@ -88,12 +89,12 @@ dependencies {
     implementation 'androidx.palette:palette-ktx:1.0.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation "androidx.fragment:fragment-ktx:1.5.0-beta01"
+    implementation "androidx.fragment:fragment-ktx:1.6.0-alpha01"
     implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "androidx.core:core-ktx:1.8.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     kapt "androidx.room:room-compiler:$room_version"
-    annotationProcessor "androidx.room:room-compiler:2.5.0-alpha01"
+    annotationProcessor "androidx.room:room-compiler:2.5.0-alpha02"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -124,7 +125,7 @@ dependencies {
 
     // blur
     // https://github.com/Dimezis/BlurView
-    implementation 'com.github.Dimezis:BlurView:version-1.6.6'
+    implementation 'com.github.Dimezis:BlurView:version-2.0.2'
 
     // memory leak detection
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'

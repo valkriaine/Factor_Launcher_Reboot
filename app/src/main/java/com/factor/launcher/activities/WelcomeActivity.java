@@ -116,16 +116,12 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
 
         binding.turnOnBlurButton.setTranslationY(500f);
         binding.skipButton.setTranslationY(500f);
-        binding.blurDialog.setupWith(binding.scrollerBase)
-                .setBlurAlgorithm(new RenderScriptBlur(this))
+        binding.blurDialog.setupWith(binding.scrollerBase, new RenderScriptBlur(this))
                 .setBlurRadius(15f)
-                .setBlurAutoUpdate(true)
-                .setHasFixedTransformationMatrix(false);
-        binding.trans.setupWith(binding.scrollerBase)
-            .setBlurAlgorithm(new RenderScriptBlur(this))
+                .setBlurAutoUpdate(true);
+        binding.trans.setupWith(binding.scrollerBase, new RenderScriptBlur(this))
             .setBlurRadius(15f)
-            .setBlurAutoUpdate(true)
-            .setHasFixedTransformationMatrix(false);
+            .setBlurAutoUpdate(true);
 
 
         binding.welcomeHomePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
