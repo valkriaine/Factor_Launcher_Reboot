@@ -92,7 +92,6 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.6.0-alpha01"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.core:core-ktx:1.8.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     kapt "androidx.room:room-compiler:$room_version"
     annotationProcessor "androidx.room:room-compiler:2.5.0-alpha02"
 
