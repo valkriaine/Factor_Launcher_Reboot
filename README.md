@@ -19,13 +19,9 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Version 0.65.6-alpha
+# Version 0.73
 
-- medium and large tiles now display more notification content
-
-- some apps will display soundwave animation upon playing media 
-
-- added an option to blur the entire background instead of each individual tiles for better performance
+- Icon pack support
 
 
 
