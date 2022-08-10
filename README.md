@@ -23,10 +23,6 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 - Icon pack support
 
-
-
-*Please be aware that alpha builds include experimental features and may cause issues on some devices.
-
 <img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
 
 <p>&nbsp;</p>
