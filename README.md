@@ -23,10 +23,18 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 
 - Icon pack support
 
-<img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
+<img src="./Images/iconpack_support.gif" width="400"/>
 
 <p>&nbsp;</p>
 
+# Version 0.6
+
+- Now animations will play upon receiving notifications and playing media
+- More animation/live-tile features coming in the future
+
+<img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
+
+<p>&nbsp;</p>
 
 
 # My Other Projects
