@@ -561,6 +561,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         binding.tilesList.setItemViewCacheSize(appListManager.getFactorManager().adapter.getItemCount());
         binding.tilesList.setOrientation(1);
         binding.tilesList.setConnectedView(binding.arrowButton);
+        //binding.tilesList.setViewToAnimate(binding.swipeRefreshLayout);
         binding.tilesList.setConnectedSpringBottom(
                 new SpringAnimation(binding.arrowButton, SpringAnimation.TRANSLATION_X)
                         .setSpring(new SpringForce()
@@ -1030,9 +1031,16 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
 
     public void removeWidget(int id)
     {
-        FactorApplication.getAppWidgetHost().deleteAppWidgetId(id);
-        binding.widgetBaseShadow.setVisibility(View.VISIBLE);
-        binding.widgetBase.removeAllViews();
+        try
+        {
+            FactorApplication.getAppWidgetHost().deleteAppWidgetId(id);
+            binding.widgetBaseShadow.setVisibility(View.VISIBLE);
+            binding.widgetBase.removeAllViews();
+        }
+        catch (NullPointerException ne)
+        {
+            ne.printStackTrace();
+        }
         appWidgetId = -1;
         SharedPreferences p = requireActivity().getSharedPreferences("factor_widget", Context.MODE_PRIVATE);
         p.edit().putInt("widget_key", appWidgetId).apply();

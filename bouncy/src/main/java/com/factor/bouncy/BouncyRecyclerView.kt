@@ -26,6 +26,8 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
 
     var flingAnimationSize = 0.5f
 
+    var viewToAnimate : View = this
+
     var orientation : Int? = 1
         set(value)
         {
@@ -87,7 +89,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             if (adapter is DragDropAdapter<*>) callBack.setSwipeEnabled(value)
         }
 
-    var spring: SpringAnimation = SpringAnimation(this, SpringAnimation.TRANSLATION_Y)
+    var spring: SpringAnimation = SpringAnimation(viewToAnimate, SpringAnimation.TRANSLATION_Y)
         .setSpring(
             SpringForce()
                 .setFinalPosition(0f)
@@ -99,7 +101,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     //set translationY
     fun springTranslationY(distance : Float)
     {
-        this.translationY = distance * overscrollAnimationSize
+        viewToAnimate.translationY = distance * overscrollAnimationSize
         spring.cancel()
 
         if (connectedView != null)
@@ -113,7 +115,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     fun springTranslateTo(distance: Float)
     {
         spring.cancel()
-        this.animate().translationY(distance)
+        viewToAnimate.animate().translationY(distance)
 
         if (connectedView != null)
         {
@@ -135,6 +137,8 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
     var connectedSpringTop : SpringAnimation? = null
 
     var connectedView : View? = null
+
+
 
     override fun setAdapter(adapter: RecyclerView.Adapter<*>?)
     {
@@ -170,13 +174,13 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
         {
             when (orientation)
             {
-                HORIZONTAL -> spring = SpringAnimation(this, SpringAnimation.TRANSLATION_X)
+                HORIZONTAL -> spring = SpringAnimation(viewToAnimate, SpringAnimation.TRANSLATION_X)
                     .setSpring(SpringForce()
                         .setFinalPosition(0f)
                         .setDampingRatio(dampingRatio)
                         .setStiffness(stiffness))
 
-                VERTICAL -> spring = SpringAnimation(this, SpringAnimation.TRANSLATION_Y)
+                VERTICAL -> spring = SpringAnimation(viewToAnimate, SpringAnimation.TRANSLATION_Y)
                     .setSpring(SpringForce()
                         .setFinalPosition(0f)
                         .setDampingRatio(dampingRatio)
@@ -215,7 +219,7 @@ class BouncyRecyclerView(context: Context, attrs: AttributeSet?) : RecyclerView(
             }
 
 
-        val rc = this
+        val rc = viewToAnimate
 
 
         //create edge effect
