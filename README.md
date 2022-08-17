@@ -19,22 +19,22 @@ Join us on [Telegram](https://t.me/joinchat/GHNyjTyxQ3BwLxom)
 <img src="./Images/FactorHomeScreen.png" width="250"/>  <img src="./Images/FactorAppDrawer.png" width="250"/>  <img src="./Images/FactorSettingsScreen.png" width="250"/>
 
 
-# Version 0.65.6-alpha
+# Version 0.73
 
-- medium and large tiles now display more notification content
+- Icon pack support
 
-- some apps will display soundwave animation upon playing media 
+<img src="./Images/iconpack_support.gif" width="400"/>
 
-- added an option to blur the entire background instead of each individual tiles for better performance
+<p>&nbsp;</p>
 
+# Version 0.6
 
-
-*Please be aware that alpha builds include experimental features and may cause issues on some devices.
+- Now animations will play upon receiving notifications and playing media
+- More animation/live-tile features coming in the future
 
 <img src="./Images/notification_display.gif" width="300"/>  <img src="./Images/media_tile_notification.gif" width="300"/> 
 
 <p>&nbsp;</p>
-
 
 
 # My Other Projects
