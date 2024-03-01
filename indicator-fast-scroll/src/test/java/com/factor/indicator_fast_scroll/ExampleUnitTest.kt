@@ -1,6 +1,6 @@
 package com.factor.indicator_fast_scroll
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import org.junit.Assert.*
 

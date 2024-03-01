@@ -19,7 +19,6 @@ import com.factor.launcher.R;
 import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
-import com.factor.launcher.ui.ViewKt;
 import com.factor.launcher.ui.wave_animation.WaveView;
 import com.factor.launcher.ui.wave_animation.Waves;
 import com.factor.launcher.util.Util;
@@ -416,6 +415,6 @@ public class FactorMediumView extends ConstraintLayout implements LifecycleOwner
     @Override
     public Lifecycle getLifecycle()
     {
-        return ViewKt.getLifecycle(this);
+        return this.getLifecycle();
     }
 }

@@ -9,7 +9,7 @@ import android.util.TypedValue
 import android.view.ViewGroup
 import androidx.annotation.AttrRes
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.renderscript.*
+import android.renderscript.*
 import com.factor.launcher.R
 import kotlin.math.min
 
@@ -84,7 +84,7 @@ open class ElevationImageView : AppCompatImageView
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas?)
+    override fun onDraw(canvas: Canvas)
     {
         if (!isInEditMode && canvas != null)
         {
