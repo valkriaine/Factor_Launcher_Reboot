@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import com.factor.launcher.ui.ViewKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class WaveView extends View implements LifecycleOwner
     @Override
     public Lifecycle getLifecycle()
     {
-        return this.getLifecycle();
+        return ViewKt.getLifecycle(this);
     }
 
     public static class WaveData {

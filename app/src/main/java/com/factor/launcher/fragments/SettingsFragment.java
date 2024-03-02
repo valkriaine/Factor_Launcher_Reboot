@@ -558,25 +558,13 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
     private void requestStoragePermission()
     {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            EasyPermissions.requestPermissions
-                    (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, Manifest.permission.READ_MEDIA_IMAGES)
-                            .setRationale(R.string.storage_permission_rationale)
-                            .setPositiveButtonText(R.string.okay)
-                            .setNegativeButtonText(R.string.cancel)
-                            .setTheme(R.style.DialogTheme)
-                            .build());
-        }
-        else
-        {
-            EasyPermissions.requestPermissions
-                    (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
-                            .setRationale(R.string.storage_permission_rationale)
-                            .setPositiveButtonText(R.string.okay)
-                            .setNegativeButtonText(R.string.cancel)
-                            .setTheme(R.style.DialogTheme)
-                            .build());
-        }
+        EasyPermissions.requestPermissions
+                (new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
+                        .setRationale(R.string.storage_permission_rationale)
+                        .setPositiveButtonText(R.string.okay)
+                        .setNegativeButtonText(R.string.cancel)
+                        .setTheme(R.style.DialogTheme)
+                        .build());
     }
 
     //change UI enabled state and displayed text based on granted permissions
@@ -585,17 +573,14 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? getString(R.string.granted) : getString(R.string.request));
 
         if (getContext() != null)
-            if ((ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED)
-                    | (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
-            {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                 binding.storageAccessButton.setText(getString(R.string.granted));
                 binding.blurToggleLabel.setText(R.string.blur_effect);
                 binding.blurToggle.setClickable(true);
                 binding.blurToggleBase.setOnClickListener(null);
             }
-            else
-            {
+            else {
 
                 binding.storageAccessButton.setText(getString(R.string.request));
                 binding.blurToggleLabel.setText(R.string.blur_effect_missing_permission);

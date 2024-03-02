@@ -101,8 +101,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         binding.welcomeHomePager.addView(binding.notificationPage, 2);
         binding.welcomeHomePager.addView(binding.finishPage, 3);
 
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED)
-                | (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         {
             binding.turnOnBlurButton.setText(R.string.permission_granted);
             binding.skipButton.setText(R.string.next);
@@ -256,23 +255,11 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     private void toHomeScreen()
     {
         boolean isBlurred = AppSettingsManager.getInstance(getApplication()).getAppSettings().isBlurred();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && isBlurred)
         {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED && isBlurred)
-            {
-                AppSettingsManager.getInstance(getApplication()).getAppSettings().setBlurred(false);
-                AppSettingsManager.getInstance(getApplication()).updateSettings();
-            }
+            AppSettingsManager.getInstance(getApplication()).getAppSettings().setBlurred(false);
+            AppSettingsManager.getInstance(getApplication()).updateSettings();
         }
-        else
-        {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && isBlurred)
-            {
-                AppSettingsManager.getInstance(getApplication()).getAppSettings().setBlurred(false);
-                AppSettingsManager.getInstance(getApplication()).updateSettings();
-            }
-        }
-
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(intent);
     }

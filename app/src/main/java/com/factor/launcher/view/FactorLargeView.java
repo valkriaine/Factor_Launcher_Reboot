@@ -28,6 +28,7 @@ import com.factor.launcher.models.AppSettings;
 import com.factor.launcher.models.AppShortcut;
 import com.factor.launcher.models.Factor;
 import com.factor.launcher.ui.ElevationImageView;
+import com.factor.launcher.ui.ViewKt;
 import com.factor.launcher.ui.wave_animation.WaveView;
 import com.factor.launcher.ui.wave_animation.Waves;
 import com.factor.launcher.util.Util;
@@ -550,6 +551,6 @@ public class FactorLargeView extends ConstraintLayout implements LifecycleOwner
     @Override
     public Lifecycle getLifecycle()
     {
-        return this.getLifecycle();
+        return ViewKt.getLifecycle(this);
     }
 }
