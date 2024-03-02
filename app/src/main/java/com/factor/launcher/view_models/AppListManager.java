@@ -198,8 +198,7 @@ public class AppListManager extends ViewModel
                                 app.setPackageName(r.activityInfo.packageName);
                                 app.resetNotifications();
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                    app.setShortCuts(getShortcutsFromApp(app));
+                                app.setShortCuts(getShortcutsFromApp(app));
 
 
                                 if (iconPack != null)
@@ -223,15 +222,14 @@ public class AppListManager extends ViewModel
                                     else
                                         app.setIcon(r.activityInfo.loadIcon(packageManager));
 
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                        app.setShortCuts(getShortcutsFromApp(app));
+                                    app.setShortCuts(getShortcutsFromApp(app));
 
                                     userApps.add(app);
 
                                     app.setPinned(factorManager.isAppPinned(app));
                                     try
                                     {
-                                        Collections.sort(userApps, first_letter);
+                                        userApps.sort(first_letter);
                                     }
                                     catch (ConcurrentModificationException ignored){}
                                     }
@@ -270,8 +268,7 @@ public class AppListManager extends ViewModel
                                 app.setLabelNew(app.getLabelOld());
                                 app.setPackageName(r.activityInfo.packageName);
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                    app.setShortCuts(getShortcutsFromApp(app));
+                                app.setShortCuts(getShortcutsFromApp(app));
 
                                 app.setIcon(r.activityInfo.loadIcon(packageManager));
                                 userApps.add(app);
@@ -286,7 +283,7 @@ public class AppListManager extends ViewModel
 
                     try
                     {
-                        Collections.sort(userApps, first_letter);
+                        userApps.sort(first_letter);
                     }catch (ConcurrentModificationException ignored){}
 
 
@@ -428,15 +425,14 @@ public class AppListManager extends ViewModel
 
                     app.setLabelOld((String) packageManager.getApplicationLabel(info));
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                        app.setShortCuts(getShortcutsFromApp(app));
+                    app.setShortCuts(getShortcutsFromApp(app));
 
                     app.setLabelNew(app.getLabelOld());
                     daoReference.insert(app);
                     userApps.add(app);
                     try
                     {
-                        Collections.sort(userApps, first_letter);
+                        userApps.sort(first_letter);
                     }catch (ConcurrentModificationException ignored){}
 
                     if (adapter != null && getActivity()!=null)
@@ -492,13 +488,12 @@ public class AppListManager extends ViewModel
                             userApps.get(position).setLabelOld((String) packageManager.getApplicationLabel(info));
 
                             //retrieve shortcuts on api 25 and higher
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                                userApps.get(position).setShortCuts(getShortcutsFromApp(app));
+                            userApps.get(position).setShortCuts(getShortcutsFromApp(app));
 
                             daoReference.updateAppInfo(appToUpdate);
                             try
                             {
-                                Collections.sort(userApps, first_letter);
+                                userApps.sort(first_letter);
                             }
                             catch (ConcurrentModificationException ignored){}
 
@@ -613,7 +608,6 @@ public class AppListManager extends ViewModel
     }
 
     //retrieve list of app shortcuts
-    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
     public ArrayList<AppShortcut> getShortcutsFromApp(UserApp app)
     {
         ArrayList<AppShortcut> shortcuts = new ArrayList<>();
@@ -675,7 +669,6 @@ public class AppListManager extends ViewModel
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N_MR1)
     public void updateShortcuts()
     {
         ArrayList<UserApp> copyApps = new ArrayList<>(userApps);
@@ -715,7 +708,7 @@ public class AppListManager extends ViewModel
                 if (appToFind.isHidden())
                     newPosition = queryApps.indexOf(appToFind);
             }
-            if (queryApps.size() > 0)
+            if (!queryApps.isEmpty())
                 return queryApps.get(newPosition);
             else
                 return new UserApp();

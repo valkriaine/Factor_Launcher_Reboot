@@ -313,7 +313,7 @@ class FastScrollerView @JvmOverloads constructor(
       performHapticFeedback(
         // Semantically, dragging across the indicators is similar to moving a text handle
         if (Build.VERSION.SDK_INT >= 27) {
-          HapticFeedbackConstants.TEXT_HANDLE_MOVE
+          HapticFeedbackConstants.CONTEXT_CLICK
         } else {
           HapticFeedbackConstants.KEYBOARD_TAP
         }

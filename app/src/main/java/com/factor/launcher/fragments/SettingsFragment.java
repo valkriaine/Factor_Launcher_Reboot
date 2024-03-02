@@ -7,11 +7,12 @@ import android.app.role.RoleManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,10 +28,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.factor.launcher.BuildConfig;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
 import com.factor.launcher.models.AppSettings;
@@ -51,7 +52,7 @@ import pub.devrel.easypermissions.PermissionRequest;
 //todo: it's time to cleanup this page LOL
 public class SettingsFragment extends Fragment implements LifecycleOwner
 {
-    private final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private final String[] perms = {Manifest.permission.MANAGE_EXTERNAL_STORAGE};
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
@@ -207,7 +208,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.storageAccessButton.setOnClickListener(v -> requestStoragePermission());
         binding.defaultLauncherButton.setOnClickListener(v ->
         {
-            /**
+            /*
             PackageManager p = getContext().getPackageManager();
             ComponentName cN = new ComponentName(getContext(), EmptyHome.class);
             p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -583,6 +584,8 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                         .setNegativeButtonText(R.string.cancel)
                         .setTheme(R.style.DialogTheme)
                         .build());
+
+        startActivity(new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
     }
 
     //change UI enabled state and displayed text based on granted permissions
@@ -591,7 +594,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.notificationAccessButton.setText(isNotificationServiceEnabled() ? getString(R.string.granted) : getString(R.string.request));
 
         if (getContext() != null)
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (Environment.isExternalStorageManager()) {
 
                 binding.storageAccessButton.setText(getString(R.string.granted));
                 binding.blurToggleLabel.setText(R.string.blur_effect);

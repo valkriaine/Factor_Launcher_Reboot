@@ -1,6 +1,8 @@
 package com.factor.launcher.fragments;
 
-import android.Manifest;
+import static com.factor.launcher.util.Constants.REQUEST_CREATE_WIDGET;
+import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -10,23 +12,32 @@ import android.app.WallpaperManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.databinding.ViewDataBinding;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -37,6 +48,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+
 import com.factor.chips.chipslayoutmanager.ChipsLayoutManager;
 import com.factor.indicator_fast_scroll.FastScrollItemIndicator;
 import com.factor.launcher.FactorApplication;
@@ -55,16 +67,18 @@ import com.factor.launcher.receivers.NotificationBroadcastReceiver;
 import com.factor.launcher.receivers.PackageActionsReceiver;
 import com.factor.launcher.services.FactorNotificationListener;
 import com.factor.launcher.ui.FixedLinearLayoutManager;
-import com.factor.launcher.util.*;
+import com.factor.launcher.util.ChineseHelper;
+import com.factor.launcher.util.Constants;
+import com.factor.launcher.util.OnSystemActionsCallBack;
+import com.factor.launcher.util.Util;
+import com.factor.launcher.util.WidgetActivityResultContract;
 import com.factor.launcher.view_models.AppListManager;
 import com.factor.launcher.view_models.AppSettingsManager;
 import com.google.android.renderscript.Toolkit;
-import eightbitlab.com.blurview.RenderScriptBlur;
 
 import java.util.ArrayList;
 
-import static com.factor.launcher.util.Constants.REQUEST_CREATE_WIDGET;
-import static com.factor.launcher.util.Constants.REQUEST_PICK_WIDGET;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 
 public class HomeScreenFragment extends Fragment implements OnSystemActionsCallBack, LifecycleOwner
@@ -408,7 +422,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         appListManager.getAppsMutableLiveData().observe(getViewLifecycleOwner(), appsObserver);
 
         binding.appsList.setHasFixedSize(true);
-        binding.appsList.setItemViewCacheSize(appListManager.getListSize() * 2);
+        binding.appsList.setItemViewCacheSize(appListManager.getListSize()/2);
 
 
 
@@ -796,7 +810,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         binding.searchCard.setCardBackgroundColor(Color.parseColor("#" + appSettings.getSearchBarColor()));
 
         //static wallpaper
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+        if (Environment.isExternalStorageManager() &&
                 wm.getWallpaperInfo() == null && appSettings.isBlurred())
         {
             isLiveWallpaper = false;

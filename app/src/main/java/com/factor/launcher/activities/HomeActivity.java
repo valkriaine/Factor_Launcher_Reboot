@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.util.Log;
 import android.view.*;
 
@@ -57,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 
         //initialize variables to detect wallpaper changes
         wm = WallpaperManager.getInstance(this);
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED)
+        if (Environment.isExternalStorageManager())
         {
             if (wm.getWallpaperInfo() == null)
             {
@@ -146,7 +147,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             wm = WallpaperManager.getInstance(this);
 
         //if storage permission is not granted, fall back to live wallpaper
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (Environment.isExternalStorageManager()) {
             //live wallpaper
             if (wm.getWallpaperInfo() != null) {
 

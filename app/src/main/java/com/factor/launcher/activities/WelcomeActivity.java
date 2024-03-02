@@ -1,42 +1,43 @@
 package com.factor.launcher.activities;
 
+import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
+import static com.factor.launcher.util.Constants.PACKAGE_NAME;
+
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
+
+import com.factor.launcher.BuildConfig;
 import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityWelcomeBinding;
 import com.factor.launcher.view_models.AppSettingsManager;
-import com.factor.launcher.util.Constants;
-import eightbitlab.com.blurview.RenderScriptBlur;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
-import pub.devrel.easypermissions.PermissionRequest;
 
 import java.util.List;
 
-import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
-import static com.factor.launcher.util.Constants.PACKAGE_NAME;
+import eightbitlab.com.blurview.RenderScriptBlur;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class WelcomeActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LifecycleOwner
 {
-    private final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
@@ -100,7 +101,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         binding.welcomeHomePager.addView(binding.notificationPage, 2);
         binding.welcomeHomePager.addView(binding.finishPage, 3);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        if (Environment.isExternalStorageManager())
         {
             binding.turnOnBlurButton.setText(R.string.permission_granted);
             binding.skipButton.setText(R.string.next);
@@ -180,6 +181,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     //request storage permission
     public void requestPermission(View view)
     {
+        /*
         EasyPermissions.requestPermissions(
                 new PermissionRequest.Builder(this, Constants.STORAGE_PERMISSION_CODE, perms)
                         .setRationale("Factor launcher needs to access your external storage")
@@ -188,6 +190,10 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
                         .setTheme(R.style.DialogTheme)
                         .build());
 
+         */
+
+        //manage external storage request
+        startActivity(new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
 
     }
 
@@ -251,7 +257,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     private void toHomeScreen()
     {
         boolean isBlurred = AppSettingsManager.getInstance(getApplication()).getAppSettings().isBlurred();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && isBlurred)
+        if (!Environment.isExternalStorageManager() && isBlurred)
         {
             AppSettingsManager.getInstance(getApplication()).getAppSettings().setBlurred(false);
             AppSettingsManager.getInstance(getApplication()).updateSettings();

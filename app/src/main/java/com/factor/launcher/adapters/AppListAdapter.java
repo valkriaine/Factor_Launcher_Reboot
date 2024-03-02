@@ -241,10 +241,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 MenuInflater inflater = activity.getMenuInflater();
                 inflater.inflate(R.menu.app_list_item_menu, menu);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                {
-                    menu.setGroupDividerEnabled(true);
-                }
+                menu.setGroupDividerEnabled(true);
 
                 UserApp app = ((AppListItemBinding)holder.binding).getUserApp();
 
@@ -299,11 +296,6 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                         });
                     }
 
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-                    {
-                        // this is a divider lmao
-                        menu.add(1, menu.size()-1, menu.size()-1,  "_____________________").setEnabled(false);
-                    }
                 }
             });
 
@@ -355,9 +347,9 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
             if (binding instanceof AppListItemBinding)
             {
                 //after receiving notification, change the notification counter
-                if (appToChange.getCurrentNotifications().size() < 1 || appToChange.isBeingEdited())
+                if (appToChange.getCurrentNotifications().isEmpty() || appToChange.isBeingEdited())
                     ((AppListItemBinding) binding).notificationCount.setVisibility(View.GONE);
-                else if (appToChange.getCurrentNotifications().size() > 0 || !appToChange.isBeingEdited())
+                else if (!appToChange.getCurrentNotifications().isEmpty() || !appToChange.isBeingEdited())
                 {
                     ((AppListItemBinding) binding).notificationCount.setVisibility(View.VISIBLE);
                     ((AppListItemBinding) binding).notificationCount.setText(appToChange.retrieveNotificationCount());
@@ -421,7 +413,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                 if (!app.isBeingEdited())
                 {
                     setOnClickListener(app);
-                    if (app.getCurrentNotifications().size() > 0)
+                    if (!app.getCurrentNotifications().isEmpty())
                         appBinding.notificationCount.setText(app.retrieveNotificationCount());
                 }
                 else
@@ -520,7 +512,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListV
                     {
                         appListAdapter.appListManager.addToRecent(app);
                         itemView.getContext().startActivity(intent,
-                                ActivityOptionsCompat.makeClipRevealAnimation(itemView,0,0,100, 100).toBundle());
+                                ActivityOptionsCompat.makeClipRevealAnimation(itemView,0,0,itemView.getWidth(), itemView.getHeight()).toBundle());
                     }
                 });
             }
