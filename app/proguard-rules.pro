@@ -29,3 +29,5 @@ native <methods>;
 private <methods>; 
 public <methods>;
 }
+-dontwarn javax.annotation.processing.AbstractProcessor
+-dontwarn javax.annotation.processing.SupportedOptions

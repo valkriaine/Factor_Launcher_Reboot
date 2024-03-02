@@ -422,7 +422,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         appListManager.getAppsMutableLiveData().observe(getViewLifecycleOwner(), appsObserver);
 
         binding.appsList.setHasFixedSize(true);
-        binding.appsList.setItemViewCacheSize(appListManager.getListSize()/2);
+        binding.appsList.setItemViewCacheSize(appListManager.getListSize()*2);
 
 
 
