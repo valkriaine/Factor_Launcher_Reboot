@@ -26,7 +26,7 @@ class Factor
     var order: Int = 0
 
     @ColumnInfo(name = "size")
-    var size: Int = Size.small
+    var size: Int = Size.SMALL
 
     @Ignore
     var userApp : UserApp = UserApp()
@@ -59,8 +59,8 @@ class Factor
 
     object Size
     {
-        const val small : Int = 1
-        const val medium : Int = 2
-        const val large : Int = 3
+        const val SMALL : Int = 1
+        const val MEDIUM : Int = 2
+        const val LARGE : Int = 3
     }
 }

@@ -96,7 +96,7 @@ open class UserApp
 
     fun equals(userApp: UserApp) : Boolean
     {
-        return this.packageName.equals(userApp.packageName)
+        return this.packageName == userApp.packageName
     }
 
     //generate new factor

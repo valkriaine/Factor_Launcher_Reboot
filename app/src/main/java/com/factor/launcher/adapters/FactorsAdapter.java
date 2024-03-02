@@ -92,13 +92,13 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         //determine factor size
         switch (viewType)
         {
-            case Factor.Size.small:
+            case Factor.Size.SMALL:
                 id = R.layout.factor_small;
                 break;
-            case Factor.Size.medium:
+            case Factor.Size.MEDIUM:
                 id = R.layout.factor_medium;
                 break;
-            case Factor.Size.large:
+            case Factor.Size.LARGE:
                 id = R.layout.factor_large;
                 break;
 
@@ -114,15 +114,15 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
         switch (viewType)
         {
-            case Factor.Size.small:
+            case Factor.Size.SMALL:
                 layoutParams.width = scale/2;
                 layoutParams.height = scale/2;
                 break;
-            case Factor.Size.medium:
+            case Factor.Size.MEDIUM:
                 layoutParams.height = scale/2;
                 layoutParams.width = scale;
                 break;
-            case Factor.Size.large:
+            case Factor.Size.LARGE:
                 layoutParams.width = scale;
                 layoutParams.height = scale;
                 break;
@@ -176,9 +176,9 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
                 //resize
                 SubMenu subMenu = menu.getItem(1).getSubMenu();
-                subMenu.getItem(0).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.small));
-                subMenu.getItem(1).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.medium));
-                subMenu.getItem(2).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.large));
+                subMenu.getItem(0).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.SMALL));
+                subMenu.getItem(1).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.MEDIUM));
+                subMenu.getItem(2).setOnMenuItemClickListener(item -> factorManager.resizeFactor(selectedFactor, Factor.Size.LARGE));
 
                 //info
                 menu.getItem(2).setOnMenuItemClickListener(item ->
@@ -199,13 +199,13 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
                 switch (selectedFactor.getSize())
                 {
-                    case Factor.Size.small:
+                    case Factor.Size.SMALL:
                         subMenu.getItem(0).setEnabled(false);
                         break;
-                    case Factor.Size.medium:
+                    case Factor.Size.MEDIUM:
                         subMenu.getItem(1).setEnabled(false);
                         break;
-                    case Factor.Size.large:
+                    case Factor.Size.LARGE:
                         subMenu.getItem(2).setEnabled(false);
                         break;
                 }
@@ -235,18 +235,18 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
             else {
                 assert binding != null;
                 Factor factorToChange = userFactors.get(position);
-                if (userFactors.get(position).getSize() == Factor.Size.small)
+                if (userFactors.get(position).getSize() == Factor.Size.SMALL)
                 {
                     FactorSmallBinding tileBinding = (FactorSmallBinding)binding;
                     tileBinding.tile.setupContent(factorToChange);
                 }
-                else if (userFactors.get(position).getSize() == Factor.Size.medium)
+                else if (userFactors.get(position).getSize() == Factor.Size.MEDIUM)
                 {
                     FactorMediumBinding tileBinding = (FactorMediumBinding) binding;
                     tileBinding.tile.setupContent(factorToChange);
 
                 }
-                else if (userFactors.get(position).getSize() == Factor.Size.large)
+                else if (userFactors.get(position).getSize() == Factor.Size.LARGE)
                 {
                     FactorLargeBinding tileBinding = (FactorLargeBinding) binding;
                     tileBinding.tile.setupContent(factorToChange);
@@ -408,7 +408,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
             switch (size)
             {
-                case Factor.Size.small:
+                case Factor.Size.SMALL:
 
                     ((FactorSmallBinding) binding).setFactor(factor);
 
@@ -418,7 +418,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
 
                     break;
 
-                case Factor.Size.medium:
+                case Factor.Size.MEDIUM:
 
                     ((FactorMediumBinding) binding).setFactor(factor);
 
@@ -429,7 +429,7 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
                     break;
 
 
-                case Factor.Size.large:
+                case Factor.Size.LARGE:
 
                     ((FactorLargeBinding) binding).setFactor(factor);
                     if (factor.getIcon() == null)
@@ -453,15 +453,15 @@ public class FactorsAdapter extends BouncyRecyclerView.Adapter<FactorsAdapter.Fa
         //return the factor of this view holder
         public Factor getFactor()
         {
-            if (size == Factor.Size.small)
+            if (size == Factor.Size.SMALL)
             {
                 return ((FactorSmallBinding)binding).getFactor();
             }
-            else if (size == Factor.Size.medium)
+            else if (size == Factor.Size.MEDIUM)
             {
                 return ((FactorMediumBinding)binding).getFactor();
             }
-            else if (size == Factor.Size.large)
+            else if (size == Factor.Size.LARGE)
             {
                 return ((FactorLargeBinding)binding).getFactor();
             }
