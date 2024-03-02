@@ -1,7 +1,8 @@
 package com.factor.launcher.fragments;
 
+import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
+
 import android.Manifest;
-import android.app.Activity;
 import android.app.role.RoleManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,13 +11,15 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.*;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,25 +30,23 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
+
 import com.factor.launcher.R;
-import com.factor.launcher.activities.EmptyHome;
 import com.factor.launcher.databinding.FragmentSettingsBinding;
-import com.factor.launcher.models.IconPackProvider;
-import com.factor.launcher.ui.IconPackPickerView;
-import com.factor.launcher.view_models.AppSettingsManager;
 import com.factor.launcher.models.AppSettings;
+import com.factor.launcher.models.IconPackProvider;
 import com.factor.launcher.ui.CustomFlag;
+import com.factor.launcher.ui.IconPackPickerView;
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.util.Util;
+import com.factor.launcher.view_models.AppSettingsManager;
 import com.google.android.renderscript.Toolkit;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
+
 import eightbitlab.com.blurview.RenderScriptBlur;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
-
-
-import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
 
 //todo: it's time to cleanup this page LOL
 public class SettingsFragment extends Fragment implements LifecycleOwner

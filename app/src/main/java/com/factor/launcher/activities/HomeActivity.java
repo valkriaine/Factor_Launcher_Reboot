@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.Log;
 import android.view.*;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.PermissionChecker;
@@ -23,7 +23,6 @@ import com.factor.launcher.R;
 import com.factor.launcher.databinding.ActivityHomeBinding;
 import com.factor.launcher.fragments.HomeScreenFragment;
 import com.factor.launcher.util.OnSystemActionsCallBack;
-import com.factor.launcher.util.Util;
 import com.factor.launcher.view_models.AppSettingsManager;
 
 import static com.factor.launcher.util.Constants.PACKAGE_NAME;
@@ -84,14 +83,17 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             startActivity(intent);
         }
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
+                if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onBackPressed())
+                    finishAfterTransition();
+            }
+        });
+
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment_container);
-        if (!(fragment instanceof OnSystemActionsCallBack) || !((OnSystemActionsCallBack) fragment).onBackPressed()) finishAfterTransition();
-    }
 
     //if wallpaper is changed, reload fragment
     @SuppressLint("SourceLockedOrientationActivity")

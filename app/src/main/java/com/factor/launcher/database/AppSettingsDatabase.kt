@@ -43,26 +43,26 @@ abstract class AppSettingsDatabase : RoomDatabase()
             //tile list scale and tile margin
             val MIGRATION_CHANGE_TILE_LIST_RESIZING = object : Migration(1, 2)
             {
-                override fun migrate(database: SupportSQLiteDatabase)
+                override fun migrate(db: SupportSQLiteDatabase)
                 {
-                    database.execSQL("ALTER TABLE AppSettings ADD COLUMN tile_list_scale FLOAT NOT NULL DEFAULT 0.8")
-                    database.execSQL("ALTER TABLE AppSettings ADD COLUMN tile_margin INTEGER NOT NULL DEFAULT 5")
+                    db.execSQL("ALTER TABLE AppSettings ADD COLUMN tile_list_scale FLOAT NOT NULL DEFAULT 0.8")
+                    db.execSQL("ALTER TABLE AppSettings ADD COLUMN tile_margin INTEGER NOT NULL DEFAULT 5")
                 }
             }
 
             val MIGRATION_STATIC_BLUR = object : Migration(2, 3)
             {
-                override fun migrate(database: SupportSQLiteDatabase)
+                override fun migrate(db: SupportSQLiteDatabase)
                 {
-                    database.execSQL("ALTER TABLE AppSettings ADD COLUMN static_blur INTEGER NOT NULL DEFAULT 0")
+                    db.execSQL("ALTER TABLE AppSettings ADD COLUMN static_blur INTEGER NOT NULL DEFAULT 0")
                 }
             }
 
             val MIGRATION_ICON_PACK = object : Migration(3, 4)
             {
-                override fun migrate(database: SupportSQLiteDatabase)
+                override fun migrate(db: SupportSQLiteDatabase)
                 {
-                    database.execSQL("ALTER TABLE AppSettings ADD COLUMN icon_pack TEXT NOT NULL DEFAULT ''")
+                    db.execSQL("ALTER TABLE AppSettings ADD COLUMN icon_pack TEXT NOT NULL DEFAULT ''")
                 }
             }
         }
