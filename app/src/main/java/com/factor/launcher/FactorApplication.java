@@ -3,23 +3,19 @@ package com.factor.launcher;
 import android.app.Application;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
+
 import com.factor.launcher.util.Constants;
 import com.factor.launcher.view_models.AppSettingsManager;
 import org.acra.ACRA;
-import org.acra.annotation.AcraCore;
-import org.acra.annotation.AcraMailSender;
-import org.acra.annotation.AcraNotification;
+
 import org.acra.config.CoreConfigurationBuilder;
 import org.acra.config.MailSenderConfigurationBuilder;
-import org.acra.config.NotificationConfigurationBuilder;
+
+import org.acra.config.ToastConfigurationBuilder;
 import org.acra.data.StringFormat;
 
-@AcraCore(reportFormat= StringFormat.KEY_VALUE_LIST)
-@AcraNotification(
-        resText = R.string.crash_text,
-        resTitle = R.string.crash_report,
-        resChannelName = R.string.channel_name)
-@AcraMailSender(mailTo = "valkriaine@hotmail.com")
+
 public class FactorApplication extends Application
 {
     private static AppWidgetHost appWidgetHost;
@@ -51,4 +47,26 @@ public class FactorApplication extends Application
     public static AppWidgetHost getAppWidgetHost() { return appWidgetHost; }
 
     public static AppWidgetManager getAppWidgetManager() { return appWidgetManager; }
+
+    @Override
+    protected void attachBaseContext(Context base)
+    {
+        super.attachBaseContext(base);
+        ACRA.init(this, new CoreConfigurationBuilder()
+                //core configuration:
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withPluginConfigurations(
+                        new MailSenderConfigurationBuilder()
+                                //required
+                                .withMailTo("valkriaine@hotmail.com")
+                                //defaults to true
+                                .withReportAsFile(true)
+                                //defaults to ACRA-report.stacktrace
+                                .build()
+                )
+        );
+
+
+    }
 }

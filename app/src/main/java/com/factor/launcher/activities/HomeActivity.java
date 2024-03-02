@@ -31,8 +31,6 @@ import static com.factor.launcher.util.Constants.PACKAGE_NAME;
 public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 {
 
-    private Drawable wallpaper = null;
-
     private int wallpaperId = 0;
 
     private WallpaperManager wm;
@@ -41,12 +39,13 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
 
     private boolean areSettingsChanged = false;
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "SourceLockedOrientationActivity"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
+
 
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
 
@@ -63,10 +62,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
         {
             if (wm.getWallpaperInfo() == null)
             {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
-                else
-                if (wm.getWallpaperInfo() == null) wallpaper = wm.getFastDrawable();
+                wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
             }
         }
 
@@ -98,6 +94,7 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
     }
 
     //if wallpaper is changed, reload fragment
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onResume()
     {
@@ -147,38 +144,16 @@ public class HomeActivity extends AppCompatActivity implements LifecycleOwner
             wm = WallpaperManager.getInstance(this);
 
         //if storage permission is not granted, fall back to live wallpaper
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_GRANTED)
-            {
-                //live wallpaper
-                if (wm.getWallpaperInfo() != null)
-                {
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            //live wallpaper
+            if (wm.getWallpaperInfo() != null) {
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    {
-                        isWallpaperChanged = wallpaperId != 0;
-                        wallpaperId = 0;
-                    }
-                    else
-                    {
-                        isWallpaperChanged = wallpaper != null;
-                        wallpaper = null;
-                    }
-                }
-                else //static wallpaper
-                {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    {
-                        isWallpaperChanged = wallpaperId == 0 || wallpaperId != wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
-                        wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
-                    }
-                    else
-                    {
-                        isWallpaperChanged = wallpaper == null || !Util.bytesEqualTo(wallpaper, wm.getFastDrawable());
-                        wallpaper = wm.getFastDrawable();
-                    }
-                }
+                isWallpaperChanged = wallpaperId != 0;
+                wallpaperId = 0;
+            } else //static wallpaper
+            {
+                isWallpaperChanged = wallpaperId == 0 || wallpaperId != wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
+                wallpaperId = wm.getWallpaperId(WallpaperManager.FLAG_SYSTEM);
             }
         }
     }

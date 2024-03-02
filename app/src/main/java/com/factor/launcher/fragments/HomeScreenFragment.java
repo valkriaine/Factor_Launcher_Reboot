@@ -262,8 +262,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
             forceNotificationListener();
             binding.recentAppsList.smoothScrollToPosition(0);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                appListManager.updateShortcuts();
+            appListManager.updateShortcuts();
 
         }
     }
@@ -484,7 +483,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
                     char cap = '#';
                     if (item.getPackageName().isEmpty())
                         return new FastScrollItemIndicator.Text("");
-                    if (item.getLabelNew().toUpperCase().length() != 0)
+                    if (!item.getLabelNew().isEmpty())
                         cap =  item.getLabelNew().toUpperCase().charAt(0);
                     String capString = "";
                     try
@@ -496,7 +495,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
                     catch (NumberFormatException ignored)
                     {
                         // not number
-                        if (item.getLabelNew().length() != 0)
+                        if (!item.getLabelNew().isEmpty())
                             capString = "" + ChineseHelper.INSTANCE.getStringPinYin(item.getLabelNew()).toUpperCase().charAt(0);
                     }
                     return new FastScrollItemIndicator.Text(capString);
@@ -739,10 +738,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         binding.swipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.swipeRefreshLayout.setRefreshing(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                binding.emptyBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            binding.emptyBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             animatorExpand.start();
 
             if (getContext() != null)
@@ -759,10 +755,7 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         binding.drawerSwipeRefreshLayout.setOnRefreshListener(() ->
         {
             binding.drawerSwipeRefreshLayout.setRefreshing(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                binding.searchBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            binding.searchBase.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             searchBar.requestFocus();
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
@@ -875,8 +868,11 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         filterAppAction.addAction(Constants.BROADCAST_ACTION_RENAME);
         filterAppAction.addAction(Constants.SETTINGS_CHANGED);
         //filterAppAction.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        getContext().registerReceiver(appActionReceiver, filterAppAction);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getContext().registerReceiver(appActionReceiver, filterAppAction, Context.RECEIVER_EXPORTED);
+        }
+        else
+            getContext().registerReceiver(appActionReceiver, filterAppAction);
         packageActionsReceiver = new PackageActionsReceiver(appListManager);
         IntentFilter filterPackageAction = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filterPackageAction.addAction(Intent.ACTION_PACKAGE_REMOVED);
@@ -891,7 +887,13 @@ public class HomeScreenFragment extends Fragment implements OnSystemActionsCallB
         IntentFilter filterNotification = new IntentFilter();
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_CLEAR);
         filterNotification.addAction(Constants.NOTIFICATION_INTENT_ACTION_POST);
-        getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getContext().registerReceiver(notificationBroadcastReceiver, filterNotification, Context.RECEIVER_EXPORTED);
+        }
+        else
+        {
+            getContext().registerReceiver(notificationBroadcastReceiver, filterNotification);
+        }
 
         if (notificationListenerIntent != null)
         {

@@ -1,7 +1,10 @@
 package com.factor.launcher.fragments;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.role.RoleManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,6 +18,9 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.*;
 import android.widget.EditText;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -60,6 +66,9 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
 
     private String iconPack = "";
 
+    private ActivityResultLauncher<Intent> resultLauncher;
+
+
     public SettingsFragment()
     {
         // Required empty public constructor
@@ -68,6 +77,12 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // DEAL WITH ERROR
+            }
+    );
         super.onCreate(savedInstanceState);
     }
 
@@ -191,6 +206,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.storageAccessButton.setOnClickListener(v -> requestStoragePermission());
         binding.defaultLauncherButton.setOnClickListener(v ->
         {
+            /**
             PackageManager p = getContext().getPackageManager();
             ComponentName cN = new ComponentName(getContext(), EmptyHome.class);
             p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -198,6 +214,25 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
             selector.addCategory(Intent.CATEGORY_HOME);
             startActivity(selector);
             p.setComponentEnabledSetting(cN, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+             **/
+
+
+
+
+
+            RoleManager roleManager = (RoleManager) requireActivity().getSystemService(Context.ROLE_SERVICE);
+            if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME))
+            {
+                Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME);
+
+                resultLauncher.launch(intent);
+            }
+
+
+
+
+
+
         });
 
         ((EditText)(binding.searchView.findViewById(R.id.search_src_text))).setTextColor(settings.isDarkIcon()?Color.BLACK:Color.WHITE);
@@ -219,77 +254,59 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
         binding.blurToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.staticBlurToggle.setChecked(settings.getStaticBlur());
         binding.staticBlurToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.darkTextToggle.setChecked(settings.isDarkText());
         binding.darkTextToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.iconShadowToggle.setChecked(settings.getShowShadowAroundIcon());
         binding.iconShadowToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
         binding.darkIconToggle.setChecked(settings.isDarkIcon());
         binding.darkIconToggle.setOnClickListener(v ->
         {
             setUpDemoTile();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            v.performHapticFeedback(HapticFeedbackConstants.CONFIRM, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         });
 
 
         binding.blurRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             setUpDemoTile();
         });
 
         binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             setUpDemoTile();
         });
 
         binding.tileListScaleSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             setUpDemoTile();
         });
 
         binding.tileMarginSlider.addOnChangeListener((slider, value, fromUser) ->
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            }
+            slider.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             setUpDemoTile();
         });
 
@@ -589,6 +606,7 @@ public class SettingsFragment extends Fragment implements LifecycleOwner
                 binding.blurToggleBase.setOnClickListener(v -> requestStoragePermission());
             }
     }
+
 
 
 }
